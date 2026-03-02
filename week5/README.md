@@ -13,9 +13,9 @@ Now that you can build and train GPT, you need to know how to evaluate it, gener
 Run each lesson in order:
 
 ```bash
-python 01_evaluation.py      # ~25 min - Loss and perplexity
-python 02_decoding.py        # ~30 min - Sampling strategies
-python 03_saving_loading.py  # ~25 min - Model persistence
+python 01_evaluation.py      #  Loss and perplexity
+python 02_decoding.py        #  Sampling strategies
+python 03_saving_loading.py  #  Model persistence
 ```
 
 ## This Week's Project
