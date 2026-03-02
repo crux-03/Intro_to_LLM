@@ -14,10 +14,10 @@ This is the most important week in the course. Attention is the breakthrough tha
 Run each lesson in order:
 
 ```bash
-python 01_attention.py       # ~30 min - The attention mechanism
-python 02_self_attention.py  # ~30 min - Learnable projections
-python 03_causal_masking.py  # ~30 min - Masking for GPT
-python 04_multihead.py       # ~45 min - Multi-head attention
+python 01_attention.py       # The attention mechanism
+python 02_self_attention.py  # Learnable projections
+python 03_causal_masking.py  #  Masking for GPT
+python 04_multihead.py       #  Multi-head attention
 ```
 
 ## This Week's Project
