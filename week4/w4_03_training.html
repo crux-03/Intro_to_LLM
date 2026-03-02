@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week 4 &middot; Lesson 3: Training GPT</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#10080a;--surface:#1c1014;--surface2:#26161c;--border:#422838;
+  --text:#dcc0cc;--muted:#987080;--heading:#fff0f4;
+  --crimson:#e11d48;--cr-dim:rgba(225,29,72,.12);--cr-glow:rgba(225,29,72,.3);
+  --emerald:#10b981;--em-dim:rgba(16,185,129,.12);
+  --amber:#f59e0b;--am-dim:rgba(245,158,11,.12);
+  --sky:#0ea5e9;--sk-dim:rgba(14,165,233,.12);
+  --mono:'JetBrains Mono',monospace;--serif:'Lora',serif;--sans:'DM Sans',sans-serif;
+  --r:10px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);line-height:1.76;font-size:15.5px}
+.container{max-width:760px;margin:0 auto;padding:48px 24px 100px}
+.pbar{position:fixed;top:0;left:0;right:0;height:3px;background:var(--surface);z-index:999}.pfill{height:100%;width:0%;background:var(--crimson);box-shadow:0 0 8px var(--cr-glow);transition:width .3s}
+.hero{text-align:center;padding:32px 0 48px}.hero-tag{font-family:var(--mono);font-size:.72rem;color:var(--crimson);letter-spacing:.14em;text-transform:uppercase}.hero h1{font-family:var(--serif);font-size:2.5rem;font-weight:700;color:var(--heading);margin:8px 0}.hero h1 em{color:var(--crimson);font-style:italic}.hero p{color:var(--muted);font-size:1.05rem;max-width:560px;margin:0 auto}
+.section{margin-bottom:56px;opacity:0;transform:translateY(20px);transition:all .5s}.section.vis{opacity:1;transform:none}.stag{font-family:var(--mono);font-size:.72rem;color:var(--crimson);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}.section h2{font-family:var(--serif);font-size:1.55rem;color:var(--heading);margin-bottom:14px}.section h3{font-family:var(--serif);font-size:1.15rem;color:var(--heading);margin:20px 0 10px}.section p{margin-bottom:12px}.section p strong{color:var(--heading)}
+pre{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--crimson);border-radius:var(--r);padding:16px 18px;margin:14px 0;overflow-x:auto;font-family:var(--mono);font-size:.82rem;line-height:1.6;color:var(--text)}
+code.il{font-family:var(--mono);font-size:.86em;color:var(--crimson);background:var(--cr-dim);padding:2px 6px;border-radius:4px}
+.kw{color:#fca5a5}.fn{color:#93c5fd}.num{color:#fbbf24}.str{color:#86efac}.cm{color:var(--muted);font-style:italic}
+.callout{background:var(--cr-dim);border:1px solid rgba(225,29,72,.2);border-radius:var(--r);padding:16px 18px;margin:18px 0;font-size:.93rem}.callout.info{background:var(--sk-dim);border-color:rgba(14,165,233,.2)}.callout.green{background:var(--em-dim);border-color:rgba(16,185,129,.2)}.callout.warn{background:var(--am-dim);border-color:rgba(245,158,11,.2)}
+.analogy{border-left:3px solid var(--amber);padding:10px 16px;margin:16px 0;background:var(--am-dim);border-radius:0 var(--r) var(--r) 0;font-size:.93rem}.analogy strong{color:var(--heading)}
+hr.div{border:none;border-top:1px solid var(--border);margin:52px 0}
+.cw{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin:18px 0}.cw-title{font-family:var(--mono);font-size:.72rem;color:var(--crimson);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px}
+.ctrls{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.cbtn{font-family:var(--mono);font-size:.78rem;padding:7px 14px;border:1px solid var(--border);border-radius:6px;background:var(--surface2);color:var(--text);cursor:pointer;transition:all .2s}.cbtn:hover{border-color:var(--crimson);color:var(--crimson)}.cbtn.on{background:var(--cr-dim);border-color:var(--crimson);color:var(--crimson)}
+.out{background:#0a0406;border:1px solid var(--border);border-radius:6px;padding:14px 16px;font-family:var(--mono);font-size:.82rem;color:var(--emerald);line-height:1.6;margin:10px 0;white-space:pre-wrap;min-height:36px}
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}.sitem{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 14px}.sitem code{font-family:var(--mono);font-size:.82rem;color:var(--crimson)}.sitem .d{font-size:.86rem;color:var(--muted);margin-top:3px}
+.step{display:flex;gap:12px;margin:10px 0;align-items:flex-start}.step-n{font-family:var(--mono);font-size:.75rem;color:#fff;background:var(--crimson);width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;font-weight:600}.step-c{flex:1}
+.qcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:22px;margin:18px 0}.qq{font-family:var(--serif);font-size:1.05rem;color:var(--heading);margin-bottom:12px}.qopts{display:flex;flex-direction:column;gap:7px}.qo{display:flex;align-items:center;gap:10px;padding:11px 14px;border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:.9rem;transition:all .2s}.qo:hover{border-color:var(--crimson)}.qo.c{border-color:var(--emerald);background:var(--em-dim);color:var(--emerald)}.qo.w{border-color:var(--crimson);background:var(--cr-dim);color:var(--crimson)}.qo.d{pointer-events:none;opacity:.85}
+.ql{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.75rem;font-weight:600;background:var(--surface2);color:var(--muted);flex-shrink:0}.qo.c .ql{background:var(--emerald);color:#000}.qo.w .ql{background:var(--crimson);color:#fff}
+.qfb{margin-top:10px;padding:10px 12px;border-radius:6px;font-size:.88rem;display:none;line-height:1.6}.qfb.show{display:block}.qfb.p{background:var(--em-dim);color:var(--emerald);border-left:3px solid var(--emerald)}.qfb.f{background:var(--cr-dim);color:var(--crimson);border-left:3px solid var(--crimson)}
+canvas{display:block;width:100%;border-radius:6px}
+@media(max-width:600px){.hero h1{font-size:1.8rem}.sgrid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="pbar"><div class="pfill" id="pf"></div></div>
+<div class="container">
+<div class="hero"><div class="hero-tag">Week 4 &middot; Lesson 3</div><h1><em>Training</em> GPT</h1><p>Teach a GPT model to generate Shakespeare. Watch the loss curve drop and gibberish transform into coherent text.</p></div><hr class="div">
+
+<div class="section" id="s1"><div class="stag">Part 01</div><h2>Training Data</h2>
+<p>We use <strong>character-level tokenization</strong> &mdash; each character is a token. Simple but effective for learning the concepts.</p>
+<pre><span class="kw">class</span> <span class="fn">CharTokenizer</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, text):
+        chars = sorted(list(set(text)))
+        self.char_to_idx = {ch: i <span class="kw">for</span> i, ch <span class="kw">in</span> enumerate(chars)}
+        self.idx_to_char = {i: ch <span class="kw">for</span> i, ch <span class="kw">in</span> enumerate(chars)}
+        self.vocab_size = len(chars)</pre>
+<p>The input/target pairs are created by <strong>shifting by one position</strong>:</p>
+<div class="cw"><div class="cw-title">&#9656; Input/Target Alignment</div>
+<canvas id="shiftCanvas" height="140"></canvas></div>
+<div class="callout info"><strong>Every position is a training example!</strong> A sequence of length T gives us T predictions to learn from simultaneously. This is extremely efficient.</div>
+</div><hr class="div">
+
+<div class="section" id="s2"><div class="stag">Part 02</div><h2>The Training Loop</h2>
+<div class="step"><div class="step-n">1</div><div class="step-c"><strong>Forward:</strong> Get predictions and compute loss</div></div>
+<div class="step"><div class="step-n">2</div><div class="step-c"><strong>Backward:</strong> Compute gradients via backpropagation</div></div>
+<div class="step"><div class="step-n">3</div><div class="step-c"><strong>Clip:</strong> Prevent exploding gradients (max norm = 1.0)</div></div>
+<div class="step"><div class="step-n">4</div><div class="step-c"><strong>Step:</strong> Update weights with AdamW optimizer</div></div>
+<div class="step"><div class="step-n">5</div><div class="step-c"><strong>Repeat:</strong> Thousands of times!</div></div>
+<pre><span class="kw">for</span> x, y <span class="kw">in</span> loader:
+    logits, loss = model(x, y)          <span class="cm"># Forward</span>
+    optimizer.zero_grad()
+    loss.backward()                      <span class="cm"># Backward</span>
+    torch.nn.utils.clip_grad_norm_(      <span class="cm"># Clip</span>
+        model.parameters(), <span class="num">1.0</span>)
+    optimizer.step()                     <span class="cm"># Update</span></pre>
+
+<div class="qcard" id="q1"><div class="qq">&#129513; Why do we clip gradients?</div><div class="qopts">
+<div class="qo" onclick="ck('q1',this,false)"><span class="ql">A</span> To speed up training</div>
+<div class="qo" onclick="ck('q1',this,false)"><span class="ql">B</span> To reduce memory usage</div>
+<div class="qo" onclick="ck('q1',this,true)"><span class="ql">C</span> To prevent exploding gradients that destabilize training</div>
+<div class="qo" onclick="ck('q1',this,false)"><span class="ql">D</span> To make the model smaller</div>
+</div><div class="qfb" id="q1-fb"></div></div>
+</div><hr class="div">
+
+<div class="section" id="s3"><div class="stag">Part 03</div><h2>The Loss Curve</h2>
+<p>Loss measures how wrong our predictions are. We want it to go <strong>down</strong>.</p>
+<div class="cw"><div class="cw-title">&#9656; Simulated Training Loss</div>
+<canvas id="lossCanvas" height="240"></canvas>
+<div class="ctrls"><button class="cbtn on" onclick="animLoss()">&#9654; Run Training</button><button class="cbtn" onclick="resetLoss()">Reset</button></div>
+<div class="out" id="lossOut">Click "Run Training" to watch loss decrease...</div></div>
+
+<div class="analogy"><strong>&#127919; Analogy:</strong> Initial loss &asymp; ln(vocab_size) means the model is guessing randomly. As loss drops, the model learns patterns: first character frequencies, then common pairs, then words, then structure.</div>
+</div><hr class="div">
+
+<div class="section" id="s4"><div class="stag">Part 04</div><h2>What the Model Learns</h2>
+<div class="cw"><div class="cw-title">&#9656; Generation Quality Over Training</div>
+<div class="ctrls"><button class="cbtn on" onclick="showEpoch(0)">Epoch 0</button><button class="cbtn" onclick="showEpoch(5)">Epoch 5</button><button class="cbtn" onclick="showEpoch(10)">Epoch 10</button><button class="cbtn" onclick="showEpoch(15)">Epoch 15</button></div>
+<div class="out" id="epochOut" style="min-height:80px;"></div>
+<div id="epochNote" style="font-size:.86rem;color:var(--muted);margin-top:6px;"></div></div>
+</div><hr class="div">
+
+<div class="section" id="s5"><div class="stag">Part 05</div><h2>Temperature &amp; Sampling</h2>
+<p>Temperature controls the randomness of generation:</p>
+<div class="sgrid">
+<div class="sitem"><code>Low (0.3-0.5)</code><div class="d">Conservative, repetitive but coherent</div></div>
+<div class="sitem"><code>Medium (0.7-0.9)</code><div class="d">Balanced creativity</div></div>
+<div class="sitem"><code>Standard (1.0)</code><div class="d">Original model probabilities</div></div>
+<div class="sitem"><code>High (1.0+)</code><div class="d">Creative but potentially chaotic</div></div>
+</div>
+
+<div class="qcard" id="q2"><div class="qq">&#129513; What loss value means the model is guessing randomly among 50 tokens?</div><div class="qopts">
+<div class="qo" onclick="ck('q2',this,false)"><span class="ql">A</span> 0.0</div>
+<div class="qo" onclick="ck('q2',this,false)"><span class="ql">B</span> 1.0</div>
+<div class="qo" onclick="ck('q2',this,true)"><span class="ql">C</span> ln(50) &asymp; 3.91</div>
+<div class="qo" onclick="ck('q2',this,false)"><span class="ql">D</span> 50.0</div>
+</div><div class="qfb" id="q2-fb"></div></div>
+</div><hr class="div">
+
+<div class="section" id="s6"><div class="stag">Part 06</div><h2>Scaling Laws</h2>
+<p>Why is our tiny model not as good as GPT-3? It's all about <strong>scale</strong>:</p>
+<div class="cw"><div class="cw-title">&#9656; Scale Comparison</div>
+<div class="out" id="scaleOut"></div></div>
+<div class="callout green"><strong>The concepts are identical.</strong> GPT-3 is literally the same architecture you've built &mdash; just with more layers, more heads, more data, and more training time. The code is the same; only the numbers change.</div>
+
+<div class="qcard" id="q3"><div class="qq">&#129513; What is the key difference between our tiny GPT and GPT-3?</div><div class="qopts">
+<div class="qo" onclick="ck('q3',this,false)"><span class="ql">A</span> Completely different architecture</div>
+<div class="qo" onclick="ck('q3',this,false)"><span class="ql">B</span> Different programming language</div>
+<div class="qo" onclick="ck('q3',this,true)"><span class="ql">C</span> Scale: more parameters, data, and training</div>
+<div class="qo" onclick="ck('q3',this,false)"><span class="ql">D</span> GPT-3 uses a fundamentally different algorithm</div>
+</div><div class="qfb" id="q3-fb"></div></div>
+</div><hr class="div">
+
+<div class="section" id="s7"><div class="stag">Summary</div><h2>Key Takeaways</h2>
+<div class="sgrid">
+<div class="sitem"><code>Data</code><div class="d">Input shifted by 1 = targets</div></div>
+<div class="sitem"><code>Loop</code><div class="d">Forward &rarr; loss &rarr; backward &rarr; step</div></div>
+<div class="sitem"><code>Loss</code><div class="d">Cross-entropy; random &asymp; ln(vocab)</div></div>
+<div class="sitem"><code>Scale</code><div class="d">Same architecture, bigger = better</div></div>
+</div>
+<div class="callout"><strong>Next:</strong> Week 4 Project &mdash; Build and train your own complete GPT from scratch!</div>
+</div></div>
+
+<script>
+var secs=document.querySelectorAll('.section');
+function upd(){var st=window.scrollY,h=document.body.scrollHeight-innerHeight;document.getElementById('pf').style.width=Math.min(100,st/h*100)+'%';secs.forEach(function(s){if(s.getBoundingClientRect().top<innerHeight*.85)s.classList.add('vis')});}
+window.addEventListener('scroll',upd);upd();
+
+function drawShift(){
+  var c=document.getElementById('shiftCanvas'),dpr=devicePixelRatio||1,w=c.clientWidth;
+  c.width=w*dpr;c.height=140*dpr;var ctx=c.getContext('2d');ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,140);
+  var text='The cat sat';var n=text.length;
+  var bw=Math.min(40,(w-40)/n),ox=(w-n*bw)/2;
+  ctx.fillStyle='var(--heading)';ctx.font='500 11px "DM Sans"';ctx.textAlign='left';
+  ctx.fillText('Input:',10,35);ctx.fillText('Target:',10,85);
+  ctx.font='500 12px "JetBrains Mono"';ctx.textAlign='center';
+  for(var i=0;i<n-1;i++){
+    ctx.fillStyle='rgba(225,29,72,0.1)';ctx.strokeStyle='var(--border)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.roundRect(ox+i*bw,18,bw-2,30,4);ctx.fill();ctx.stroke();
+    ctx.fillStyle='var(--text)';ctx.fillText(text[i],ox+i*bw+bw/2,38);
+    ctx.fillStyle='rgba(16,185,129,0.1)';ctx.strokeStyle='var(--border)';
+    ctx.beginPath();ctx.roundRect(ox+i*bw,68,bw-2,30,4);ctx.fill();ctx.stroke();
+    ctx.fillStyle='var(--emerald)';ctx.fillText(text[i+1],ox+i*bw+bw/2,88);
+    ctx.strokeStyle='rgba(225,29,72,0.2)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(ox+i*bw+bw/2,48);ctx.lineTo(ox+i*bw+bw/2,68);ctx.stroke();
+  }
+  ctx.fillStyle='var(--muted)';ctx.font='400 10px "JetBrains Mono"';
+  ctx.fillText('predict next character at each position',w/2,125);
+}
+drawShift();window.addEventListener('resize',drawShift);
+
+var lossData=[],lossAnim=null;
+function animLoss(){
+  if(lossAnim)return;
+  lossData=[];var epoch=0;
+  function step(){
+    if(epoch>=20){lossAnim=null;return;}
+    var loss=3.9*Math.exp(-0.15*epoch)+0.8+Math.random()*0.15;
+    lossData.push({e:epoch,l:loss});epoch++;
+    drawLoss();
+    document.getElementById('lossOut').textContent='Epoch '+epoch+'/20 | Loss: '+loss.toFixed(4)+(epoch>=20?'\n\nTraining complete! Loss dropped from ~3.9 to ~'+loss.toFixed(1):'');
+    lossAnim=setTimeout(step,200);
+  }
+  step();
+}
+function resetLoss(){if(lossAnim){clearTimeout(lossAnim);lossAnim=null;}lossData=[];drawLoss();document.getElementById('lossOut').textContent='Click "Run Training" to watch loss decrease...';}
+function drawLoss(){
+  var c=document.getElementById('lossCanvas'),dpr=devicePixelRatio||1,w=c.clientWidth;
+  c.width=w*dpr;c.height=240*dpr;var ctx=c.getContext('2d');ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,240);
+  var ox=50,oy=20,gw=w-70,gh=190;
+  ctx.strokeStyle='var(--border)';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(ox,oy);ctx.lineTo(ox,oy+gh);ctx.lineTo(ox+gw,oy+gh);ctx.stroke();
+  ctx.fillStyle='var(--muted)';ctx.font='400 9px "JetBrains Mono"';ctx.textAlign='right';
+  [0,1,2,3,4].forEach(function(v){var y=oy+gh-v/4.5*gh;ctx.fillText(v.toFixed(0),ox-6,y+3);ctx.strokeStyle='rgba(66,40,56,0.3)';ctx.beginPath();ctx.moveTo(ox,y);ctx.lineTo(ox+gw,y);ctx.stroke();});
+  ctx.textAlign='center';ctx.fillText('Epoch',ox+gw/2,oy+gh+18);
+  if(lossData.length<2)return;
+  ctx.strokeStyle='var(--crimson)';ctx.lineWidth=2.5;ctx.beginPath();
+  lossData.forEach(function(d,i){var x=ox+d.e/20*gw,y=oy+gh-d.l/4.5*gh;if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);});
+  ctx.stroke();
+  lossData.forEach(function(d){var x=ox+d.e/20*gw,y=oy+gh-d.l/4.5*gh;
+    ctx.fillStyle='var(--crimson)';ctx.beginPath();ctx.arc(x,y,3,0,Math.PI*2);ctx.fill();});
+}
+drawLoss();
+
+var epochSamples=[
+  {t:'qX7!m\np@K#zLwR9&\n8dF$v',n:'Random noise. No patterns learned yet.'},
+  {t:'the he s t ane\nROMEO: the the',n:'Learning common characters (e, t, space). Starting to form fragments.'},
+  {t:'ROMEO: And is the seart,\nJULIET: What nome and',n:'Character names learned! Words mostly recognizable. Grammar emerging.'},
+  {t:"ROMEO: O, speak again! for thou art\nAs glorious to this night, being o'er",n:'Recognizable Shakespeare! Dialogue format, vocabulary, and rhythm learned.'}
+];
+function showEpoch(e){
+  document.querySelectorAll('.ctrls .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+  var idx=e===0?0:e===5?1:e===10?2:3;
+  document.getElementById('epochOut').textContent=epochSamples[idx].t;
+  document.getElementById('epochNote').textContent=epochSamples[idx].n;
+}
+showEpoch(0);
+
+document.getElementById('scaleOut').textContent=
+  'Dimension         Our GPT          GPT-3\n'+'-'.repeat(44)+'\n'+
+  'Parameters        ~100K            175B     (1.75M\u00d7)\n'+
+  'Training data     ~2K chars        300B tokens\n'+
+  'Training time     ~5 seconds       ~$5M compute\n'+
+  'Vocab size        ~50 chars        50,257 BPE\n'+
+  'Context length    64               2,048\n'+
+  'Layers            4                96\n'+
+  'd_model           64               12,288\n\n'+
+  'Same code. Different scale. That\'s it!';
+
+function ck(id,el,ok){
+  var card=document.getElementById(id);if(card.dataset.a)return;card.dataset.a='1';
+  card.querySelectorAll('.qo').forEach(function(o){o.classList.add('d')});var fb=document.getElementById(id+'-fb');
+  if(ok){el.classList.add('c');fb.className='qfb p show';fb.textContent='\u2705 Correct!';}
+  else{el.classList.add('w');card.querySelectorAll('.qo').forEach(function(o){if(o.onclick&&o.onclick.toString().indexOf('true')>-1)o.classList.add('c')});
+    fb.className='qfb f show';
+    var ex={q1:'Gradient clipping prevents individual gradient updates from being too large, which could destabilize training. We cap the total gradient norm at 1.0, ensuring smooth, stable weight updates.',q2:'Cross-entropy loss for random guessing among V tokens is ln(V). For 50 tokens: ln(50) \u2248 3.91. As the model learns, loss drops well below this baseline.',q3:'GPT-3 uses the exact same transformer architecture we built. The only difference is scale: 175B parameters vs ~100K, trained on 300B tokens of internet text instead of 2K characters of Shakespeare.'};
+    fb.textContent='\u274c '+ex[id];}
+}
+</script>
+</body>
+</html>

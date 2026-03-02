@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week 4 &middot; Lesson 2: The Complete GPT Model</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Fira+Code:wght@400;500&family=Nunito+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a1018;--surface:#111a26;--surface2:#172030;--border:#253248;
+  --text:#b8ccdf;--muted:#5c7a98;--heading:#e8f0ff;
+  --teal:#14b8a6;--te-dim:rgba(20,184,166,.12);--te-glow:rgba(20,184,166,.3);
+  --orange:#f97316;--or-dim:rgba(249,115,22,.12);
+  --rose:#f43f5e;--ro-dim:rgba(244,63,94,.12);
+  --sky:#38bdf8;--sk-dim:rgba(56,189,248,.12);
+  --gold:#eab308;--go-dim:rgba(234,179,8,.12);
+  --mono:'Fira Code',monospace;--serif:'Playfair Display',serif;--sans:'Nunito Sans',sans-serif;
+  --r:10px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);line-height:1.76;font-size:15.5px}
+.container{max-width:760px;margin:0 auto;padding:48px 24px 100px}
+.pbar{position:fixed;top:0;left:0;right:0;height:3px;background:var(--surface);z-index:999}.pfill{height:100%;width:0%;background:var(--teal);box-shadow:0 0 8px var(--te-glow);transition:width .3s}
+.hero{text-align:center;padding:32px 0 48px}.hero-tag{font-family:var(--mono);font-size:.72rem;color:var(--teal);letter-spacing:.14em;text-transform:uppercase}.hero h1{font-family:var(--serif);font-size:2.5rem;font-weight:700;color:var(--heading);margin:8px 0}.hero h1 em{color:var(--teal);font-style:italic}.hero p{color:var(--muted);font-size:1.05rem;max-width:560px;margin:0 auto}
+.section{margin-bottom:56px;opacity:0;transform:translateY(20px);transition:all .5s}.section.vis{opacity:1;transform:none}.stag{font-family:var(--mono);font-size:.72rem;color:var(--teal);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}.section h2{font-family:var(--serif);font-size:1.55rem;color:var(--heading);margin-bottom:14px}.section h3{font-family:var(--serif);font-size:1.15rem;color:var(--heading);margin:20px 0 10px}.section p{margin-bottom:12px}.section p strong{color:var(--heading)}
+pre{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--teal);border-radius:var(--r);padding:16px 18px;margin:14px 0;overflow-x:auto;font-family:var(--mono);font-size:.82rem;line-height:1.6;color:var(--text)}
+code.il{font-family:var(--mono);font-size:.86em;color:var(--teal);background:var(--te-dim);padding:2px 6px;border-radius:4px}
+.kw{color:#fca5a5}.fn{color:#93c5fd}.num{color:#fbbf24}.str{color:#86efac}.cm{color:var(--muted);font-style:italic}
+.callout{background:var(--te-dim);border:1px solid rgba(20,184,166,.2);border-radius:var(--r);padding:16px 18px;margin:18px 0;font-size:.93rem}.callout.info{background:var(--sk-dim);border-color:rgba(56,189,248,.2)}.callout.green{background:var(--te-dim)}.callout.warn{background:var(--or-dim);border-color:rgba(249,115,22,.2)}
+.analogy{border-left:3px solid var(--gold);padding:10px 16px;margin:16px 0;background:var(--go-dim);border-radius:0 var(--r) var(--r) 0;font-size:.93rem}.analogy strong{color:var(--heading)}
+hr.div{border:none;border-top:1px solid var(--border);margin:52px 0}
+.cw{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin:18px 0}.cw-title{font-family:var(--mono);font-size:.72rem;color:var(--teal);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px}
+.ctrls{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.cbtn{font-family:var(--mono);font-size:.78rem;padding:7px 14px;border:1px solid var(--border);border-radius:6px;background:var(--surface2);color:var(--text);cursor:pointer;transition:all .2s}.cbtn:hover{border-color:var(--teal);color:var(--teal)}.cbtn.on{background:var(--te-dim);border-color:var(--teal);color:var(--teal)}
+.out{background:#060c12;border:1px solid var(--border);border-radius:6px;padding:14px 16px;font-family:var(--mono);font-size:.82rem;color:var(--teal);line-height:1.6;margin:10px 0;white-space:pre-wrap;min-height:36px}
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}.sitem{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 14px}.sitem code{font-family:var(--mono);font-size:.82rem;color:var(--teal)}.sitem .d{font-size:.86rem;color:var(--muted);margin-top:3px}
+.step{display:flex;gap:12px;margin:10px 0;align-items:flex-start}.step-n{font-family:var(--mono);font-size:.75rem;color:#fff;background:var(--teal);width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;font-weight:600}.step-c{flex:1}
+.qcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:22px;margin:18px 0}.qq{font-family:var(--serif);font-size:1.05rem;color:var(--heading);margin-bottom:12px}.qopts{display:flex;flex-direction:column;gap:7px}.qo{display:flex;align-items:center;gap:10px;padding:11px 14px;border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:.9rem;transition:all .2s}.qo:hover{border-color:var(--teal)}.qo.c{border-color:var(--teal);background:var(--te-dim);color:var(--teal)}.qo.w{border-color:var(--rose);background:var(--ro-dim);color:var(--rose)}.qo.d{pointer-events:none;opacity:.85}
+.ql{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.75rem;font-weight:600;background:var(--surface2);color:var(--muted);flex-shrink:0}.qo.c .ql{background:var(--teal);color:#000}.qo.w .ql{background:var(--rose);color:#fff}
+.qfb{margin-top:10px;padding:10px 12px;border-radius:6px;font-size:.88rem;display:none;line-height:1.6}.qfb.show{display:block}.qfb.p{background:var(--te-dim);color:var(--teal);border-left:3px solid var(--teal)}.qfb.f{background:var(--ro-dim);color:var(--rose);border-left:3px solid var(--rose)}
+canvas{display:block;width:100%;border-radius:6px}
+@media(max-width:600px){.hero h1{font-size:1.8rem}.sgrid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="pbar"><div class="pfill" id="pf"></div></div>
+<div class="container">
+<div class="hero"><div class="hero-tag">Week 4 &middot; Lesson 2</div><h1>The Complete <em>GPT</em> Model</h1><p>Assemble all the pieces &mdash; embeddings, transformer blocks, and the output layer &mdash; into the full GPT architecture. This is the exact structure of GPT-2 and GPT-3.</p></div><hr class="div">
+
+<div class="section" id="s1"><div class="stag">Part 01</div><h2>The Architecture</h2>
+<div class="cw"><div class="cw-title">&#9656; Full GPT Architecture</div>
+<canvas id="archCanvas" height="460"></canvas></div>
+<p>Five components, each building on the previous weeks:</p>
+<div class="step"><div class="step-n">1</div><div class="step-c"><strong>Token Embedding:</strong> token_id &rarr; d_model vector (Week 2)</div></div>
+<div class="step"><div class="step-n">2</div><div class="step-c"><strong>Position Embedding:</strong> position &rarr; d_model vector (Week 2)</div></div>
+<div class="step"><div class="step-n">3</div><div class="step-c"><strong>Transformer Blocks:</strong> N stacked blocks (Lesson 1)</div></div>
+<div class="step"><div class="step-n">4</div><div class="step-c"><strong>Final LayerNorm:</strong> stabilize before output</div></div>
+<div class="step"><div class="step-n">5</div><div class="step-c"><strong>LM Head:</strong> d_model &rarr; vocab_size logits</div></div>
+</div><hr class="div">
+
+<div class="section" id="s2"><div class="stag">Part 02</div><h2>Weight Tying</h2>
+<p>A key trick: the input embedding and output projection share the <strong>same weight matrix</strong>.</p>
+<pre>self.lm_head.weight = self.token_embedding.weight  <span class="cm"># Same matrix!</span></pre>
+<div class="analogy"><strong>&#128218; Analogy &mdash; Dictionary:</strong> The embedding matrix is like a dictionary: look up a word &rarr; get its meaning (vector). The output projection is reading the dictionary in reverse: given a meaning (vector) &rarr; find the closest word. Using the same dictionary for both directions makes sense and saves parameters!</div>
+<div class="cw"><div class="cw-title">&#9656; Weight Tying Savings</div>
+<div class="ctrls"><button class="cbtn on" onclick="showTie(1000,64)">Small (v=1K,d=64)</button><button class="cbtn" onclick="showTie(50257,768)">GPT-2 Small</button><button class="cbtn" onclick="showTie(50257,1600)">GPT-2 XL</button></div>
+<div class="out" id="tieOut"></div></div>
+
+<div class="qcard" id="q1"><div class="qq">&#129513; What does weight tying do?</div><div class="qopts">
+<div class="qo" onclick="ck('q1',this,false)"><span class="ql">A</span> Doubles the embedding matrix for redundancy</div>
+<div class="qo" onclick="ck('q1',this,true)"><span class="ql">B</span> Shares the same matrix between input embedding and output projection</div>
+<div class="qo" onclick="ck('q1',this,false)"><span class="ql">C</span> Freezes the embedding weights during training</div>
+<div class="qo" onclick="ck('q1',this,false)"><span class="ql">D</span> Connects attention weights across layers</div>
+</div><div class="qfb" id="q1-fb"></div></div>
+</div><hr class="div">
+
+<div class="section" id="s3"><div class="stag">Part 03</div><h2>The Forward Pass</h2>
+<div class="cw"><div class="cw-title">&#9656; Trace Data Through GPT</div>
+<div class="ctrls" id="fwdBtns"><button class="cbtn on" onclick="showFwd(0)">1. Embed</button><button class="cbtn" onclick="showFwd(1)">2. Position</button><button class="cbtn" onclick="showFwd(2)">3. Blocks</button><button class="cbtn" onclick="showFwd(3)">4. Norm</button><button class="cbtn" onclick="showFwd(4)">5. Head</button><button class="cbtn" onclick="showFwd(5)">6. Loss</button></div>
+<div class="out" id="fwdOut"></div></div>
+<pre><span class="kw">def</span> <span class="fn">forward</span>(self, input_ids, targets=<span class="kw">None</span>):
+    B, T = input_ids.shape
+    tok_emb = self.token_embedding(input_ids)  <span class="cm"># (B,T,d)</span>
+    pos_emb = self.position_embedding(
+        torch.arange(T, device=input_ids.device))  <span class="cm"># (T,d)</span>
+    x = self.dropout(tok_emb + pos_emb)
+    <span class="kw">for</span> block <span class="kw">in</span> self.blocks:
+        x = block(x)
+    x = self.ln_final(x)
+    logits = self.lm_head(x)  <span class="cm"># (B,T,vocab_size)</span>
+    loss = <span class="kw">None</span>
+    <span class="kw">if</span> targets <span class="kw">is not None</span>:
+        loss = F.cross_entropy(
+            logits.view(-<span class="num">1</span>, logits.size(-<span class="num">1</span>)),
+            targets.view(-<span class="num">1</span>))
+    <span class="kw">return</span> logits, loss</pre>
+</div><hr class="div">
+
+<div class="section" id="s4"><div class="stag">Part 04</div><h2>GPT-2 Configurations</h2>
+<div class="cw"><div class="cw-title">&#9656; Compare GPT-2 Model Sizes</div>
+<div class="ctrls"><button class="cbtn on" onclick="showGPT('small')">Small</button><button class="cbtn" onclick="showGPT('medium')">Medium</button><button class="cbtn" onclick="showGPT('large')">Large</button><button class="cbtn" onclick="showGPT('xl')">XL</button></div>
+<canvas id="gptCanvas" height="180"></canvas>
+<div class="out" id="gptOut"></div></div>
+
+<div class="qcard" id="q2"><div class="qq">&#129513; How many parameters does GPT-2 Small have?</div><div class="qopts">
+<div class="qo" onclick="ck('q2',this,false)"><span class="ql">A</span> 12 million</div>
+<div class="qo" onclick="ck('q2',this,true)"><span class="ql">B</span> 124 million</div>
+<div class="qo" onclick="ck('q2',this,false)"><span class="ql">C</span> 774 million</div>
+<div class="qo" onclick="ck('q2',this,false)"><span class="ql">D</span> 1.5 billion</div>
+</div><div class="qfb" id="q2-fb"></div></div>
+</div><hr class="div">
+
+<div class="section" id="s5"><div class="stag">Part 05</div><h2>Text Generation</h2>
+<p>The generation loop is beautifully simple:</p>
+<div class="step"><div class="step-n">1</div><div class="step-c">Get logits for the <strong>last position</strong></div></div>
+<div class="step"><div class="step-n">2</div><div class="step-c">Divide by <strong>temperature</strong> (controls randomness)</div></div>
+<div class="step"><div class="step-n">3</div><div class="step-c">Apply <strong>softmax</strong> to get probabilities</div></div>
+<div class="step"><div class="step-n">4</div><div class="step-c"><strong>Sample</strong> next token from distribution</div></div>
+<div class="step"><div class="step-n">5</div><div class="step-c"><strong>Append</strong> and repeat!</div></div>
+<pre><span class="kw">for</span> _ <span class="kw">in</span> range(max_new_tokens):
+    logits, _ = model(input_ids[:, -max_seq:])
+    logits = logits[:, -<span class="num">1</span>, :] / temperature
+    probs = F.softmax(logits, dim=-<span class="num">1</span>)
+    next_token = torch.multinomial(probs, num_samples=<span class="num">1</span>)
+    input_ids = torch.cat([input_ids, next_token], dim=<span class="num">1</span>)</pre>
+
+<div class="cw"><div class="cw-title">&#9656; Temperature Visualization</div>
+<canvas id="tempCanvas" height="200"></canvas>
+<div class="ctrls"><button class="cbtn" onclick="showTemp(0.3)">Temp 0.3</button><button class="cbtn" onclick="showTemp(0.7)">Temp 0.7</button><button class="cbtn on" onclick="showTemp(1.0)">Temp 1.0</button><button class="cbtn" onclick="showTemp(1.5)">Temp 1.5</button></div>
+<div id="tempNote" style="font-size:.86rem;color:var(--muted);margin-top:6px;"></div></div>
+
+<div class="qcard" id="q3"><div class="qq">&#129513; What does lower temperature do during generation?</div><div class="qopts">
+<div class="qo" onclick="ck('q3',this,true)"><span class="ql">A</span> Makes output more deterministic / focused</div>
+<div class="qo" onclick="ck('q3',this,false)"><span class="ql">B</span> Makes output more random / creative</div>
+<div class="qo" onclick="ck('q3',this,false)"><span class="ql">C</span> Speeds up generation</div>
+<div class="qo" onclick="ck('q3',this,false)"><span class="ql">D</span> Reduces memory usage</div>
+</div><div class="qfb" id="q3-fb"></div></div>
+</div><hr class="div">
+
+<div class="section" id="s6"><div class="stag">Summary</div><h2>Key Takeaways</h2>
+<div class="sgrid">
+<div class="sitem"><code>Embeddings</code><div class="d">Token + Position, added together</div></div>
+<div class="sitem"><code>Blocks</code><div class="d">N stacked transformer blocks</div></div>
+<div class="sitem"><code>Weight Tying</code><div class="d">Embedding = output projection</div></div>
+<div class="sitem"><code>Generation</code><div class="d">Autoregressive: one token at a time</div></div>
+</div>
+<div class="callout"><strong>Next:</strong> Lesson 3 &mdash; Training GPT! We'll train this model on Shakespeare and watch it learn.</div>
+</div></div>
+
+<script>
+var secs=document.querySelectorAll('.section');
+function upd(){var st=window.scrollY,h=document.body.scrollHeight-innerHeight;document.getElementById('pf').style.width=Math.min(100,st/h*100)+'%';secs.forEach(function(s){if(s.getBoundingClientRect().top<innerHeight*.85)s.classList.add('vis')});}
+window.addEventListener('scroll',upd);upd();
+
+function drawArch(){
+  var c=document.getElementById('archCanvas'),dpr=devicePixelRatio||1,w=c.clientWidth;
+  c.width=w*dpr;c.height=460*dpr;var ctx=c.getContext('2d');ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,460);
+  var cx=w/2,bw=Math.min(260,w-80);
+  var boxes=[
+    {y:10,h:30,t:'Token IDs (B, T)',c:'#5c7a98'},
+    {y:52,h:30,t:'Token Embedding',c:'#14b8a6',s:'nn.Embedding(vocab, d)'},
+    {y:96,h:30,t:'+ Position Embedding',c:'#14b8a6',s:'nn.Embedding(max_seq, d)'},
+    {y:140,h:30,t:'Dropout',c:'#5c7a98'},
+    {y:186,h:80,t:'Transformer Blocks \u00d7 N',c:'#a855f7',s:'(LN \u2192 Attn \u2192 + | LN \u2192 FFN \u2192 +)'},
+    {y:282,h:30,t:'Final LayerNorm',c:'#38bdf8'},
+    {y:326,h:30,t:'LM Head (weight-tied)',c:'#f97316',s:'Linear(d, vocab)'},
+    {y:370,h:30,t:'Logits (B, T, vocab_size)',c:'#eab308'},
+    {y:416,h:30,t:'Cross-Entropy Loss',c:'#f43f5e',s:'(if targets provided)'}
+  ];
+  boxes.forEach(function(b){
+    ctx.fillStyle=b.c+'18';ctx.strokeStyle=b.c;ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.roundRect(cx-bw/2,b.y,bw,b.h,6);ctx.fill();ctx.stroke();
+    ctx.fillStyle=b.c;ctx.font='600 11px "Nunito Sans"';ctx.textAlign='center';
+    ctx.fillText(b.t,cx,b.y+b.h/2+(b.s?-2:4));
+    if(b.s){ctx.fillStyle=b.c+'90';ctx.font='400 9px "Fira Code"';ctx.fillText(b.s,cx,b.y+b.h/2+12);}
+  });
+  [40,82,126,170,266,312,356,400].forEach(function(y){ctx.strokeStyle='#253248';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(cx,y);ctx.lineTo(cx,y+12);ctx.stroke();});
+}
+drawArch();window.addEventListener('resize',drawArch);
+
+function showTie(v,d){
+  document.querySelectorAll('.ctrls .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+  var without=v*d*2,with_=v*d,saved=v*d;
+  var o='vocab_size='+v.toLocaleString()+', d_model='+d+'\n'+'-'.repeat(40)+'\n';
+  o+='Without tying: 2 \u00d7 ('+v.toLocaleString()+' \u00d7 '+d+') = '+without.toLocaleString()+'\n';
+  o+='With tying:    1 \u00d7 ('+v.toLocaleString()+' \u00d7 '+d+') = '+with_.toLocaleString()+'\n';
+  o+='Parameters saved: '+saved.toLocaleString()+' ('+(saved/1e6).toFixed(1)+'M)\n\n';
+  o+='Bonus: weight tying also improves performance!\n';
+  o+='The model learns a better shared representation.';
+  document.getElementById('tieOut').textContent=o;
+}
+showTie(1000,64);
+
+function showFwd(s){
+  document.querySelectorAll('#fwdBtns .cbtn').forEach(function(b){b.classList.remove('on')});
+  document.querySelectorAll('#fwdBtns .cbtn')[s].classList.add('on');
+  var B=2,T=10,D=64,V=1000;
+  var traces=[
+    'STEP 1: Token Embedding\n'+'-'.repeat(38)+'\ninput_ids: ('+B+', '+T+') \u2014 token indices\ntok_emb = token_embedding(input_ids)\ntok_emb: ('+B+', '+T+', '+D+')\n\nEach integer token ID becomes a '+D+'-dim vector.',
+    'STEP 2: Add Position Embedding\n'+'-'.repeat(38)+'\npositions = torch.arange('+T+')\npos_emb = position_embedding(positions)\npos_emb: ('+T+', '+D+') \u2014 broadcasts over batch\n\nx = dropout(tok_emb + pos_emb)\nx: ('+B+', '+T+', '+D+')',
+    'STEP 3: Transformer Blocks\n'+'-'.repeat(38)+'\nfor block in self.blocks:\n    x = block(x)\n\nEach block: ('+B+', '+T+', '+D+') \u2192 ('+B+', '+T+', '+D+')\n4 blocks total, each refining the representation.\nAttention mixes positions, FFN processes each.',
+    'STEP 4: Final LayerNorm\n'+'-'.repeat(38)+'\nx = ln_final(x)\nx: ('+B+', '+T+', '+D+')\n\nStabilizes activations before the output layer.\nWithout this, logits could have wild magnitudes.',
+    'STEP 5: LM Head\n'+'-'.repeat(38)+'\nlogits = lm_head(x)\nlogits: ('+B+', '+T+', '+V+')\n\nProjects from d_model='+D+' to vocab_size='+V+'.\nWeight-tied with token_embedding!\nEach position gets a score for every vocabulary token.',
+    'STEP 6: Loss (if training)\n'+'-'.repeat(38)+'\nloss = cross_entropy(logits, targets)\n\nlogits reshaped: ('+(B*T)+', '+V+')\ntargets reshaped: ('+(B*T)+',)\n\nCompares predicted distribution to actual next token.\nLoss \u2248 ln('+V+') = '+(Math.log(V)).toFixed(1)+' for random model.\nGoal: drive loss as low as possible!'
+  ];
+  document.getElementById('fwdOut').textContent=traces[s];
+}
+showFwd(0);
+
+var gptConfigs={small:{d:768,h:12,l:12,p:124},medium:{d:1024,h:16,l:24,p:350},large:{d:1280,h:20,l:36,p:774},xl:{d:1600,h:25,l:48,p:1500}};
+function showGPT(sz){
+  document.querySelectorAll('.ctrls .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+  var g=gptConfigs[sz],c=document.getElementById('gptCanvas'),dpr=devicePixelRatio||1,w=c.clientWidth;
+  c.width=w*dpr;c.height=180*dpr;var ctx=c.getContext('2d');ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,180);
+  var sizes={small:1,medium:2.8,large:6.2,xl:12.1};
+  var barW=Math.min(120,w/5),ox=(w-4*barW*1.3)/2;
+  ['small','medium','large','xl'].forEach(function(k,i){
+    var x=ox+i*barW*1.3,h=sizes[k]*12,y=150-h;
+    var active=k===sz;
+    ctx.fillStyle=active?'rgba(20,184,166,0.3)':'rgba(92,122,152,0.1)';
+    ctx.strokeStyle=active?'#14b8a6':'#253248';ctx.lineWidth=active?2:1;
+    ctx.beginPath();ctx.roundRect(x,y,barW,h,4);ctx.fill();ctx.stroke();
+    ctx.fillStyle=active?'#14b8a6':'#5c7a98';ctx.font=(active?'600':'400')+' 10px "Fira Code"';ctx.textAlign='center';
+    ctx.fillText(gptConfigs[k].p+'M',x+barW/2,y-6);
+    ctx.font='500 11px "Nunito Sans"';ctx.fillText(k.charAt(0).toUpperCase()+k.slice(1),x+barW/2,168);
+  });
+  var o='GPT-2 '+sz.charAt(0).toUpperCase()+sz.slice(1)+'\n'+'-'.repeat(32)+'\n';
+  o+='d_model:    '+g.d+'\nnum_heads:  '+g.h+'\nhead_dim:   '+(g.d/g.h)+'\nnum_layers: '+g.l+'\nmax_seq:    1024\nvocab_size: 50257\n\n';
+  o+='Parameters: ~'+g.p+'M';
+  document.getElementById('gptOut').textContent=o;
+}
+showGPT('small');
+
+function showTemp(t){
+  document.querySelectorAll('.ctrls .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+  var rawLogits=[3.2,2.8,1.5,0.3,-0.5,-1.2];
+  var labels=['the','a','his','my','our','her'];
+  var scaled=rawLogits.map(function(v){return v/t;});
+  var mx=Math.max.apply(null,scaled);
+  var exps=scaled.map(function(v){return Math.exp(v-mx);});
+  var sm=exps.reduce(function(a,b){return a+b;});
+  var probs=exps.map(function(v){return v/sm;});
+  var c=document.getElementById('tempCanvas'),dpr=devicePixelRatio||1,w=c.clientWidth;
+  c.width=w*dpr;c.height=200*dpr;var ctx=c.getContext('2d');ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,200);
+  var n=labels.length,bw=Math.min(60,(w-80)/n),ox=(w-n*bw)/2;
+  ctx.fillStyle='var(--heading)';ctx.font='500 12px "Nunito Sans"';ctx.textAlign='center';
+  ctx.fillText('Temperature = '+t.toFixed(1),w/2,18);
+  for(var i=0;i<n;i++){
+    var x=ox+i*bw,h=probs[i]*140,y=170-h;
+    ctx.fillStyle='rgba(20,184,166,'+(probs[i]+0.15)+')';
+    ctx.beginPath();ctx.roundRect(x+3,y,bw-6,h,3);ctx.fill();
+    ctx.fillStyle='#14b8a6';ctx.font='600 10px "Fira Code"';ctx.fillText((probs[i]*100).toFixed(1)+'%',x+bw/2,y-5);
+    ctx.fillStyle='var(--muted)';ctx.font='500 11px "Nunito Sans"';ctx.fillText(labels[i],x+bw/2,186);
+  }
+  var desc=t<0.5?'Very focused: top token dominates. Repetitive but safe.':t<0.9?'Balanced: top tokens preferred, some variety.':t<=1.0?'Standard: original probabilities preserved.':'Flattened: more equal chances. Creative but chaotic.';
+  document.getElementById('tempNote').textContent=desc;
+}
+showTemp(1.0);
+
+function ck(id,el,ok){
+  var card=document.getElementById(id);if(card.dataset.a)return;card.dataset.a='1';
+  card.querySelectorAll('.qo').forEach(function(o){o.classList.add('d')});var fb=document.getElementById(id+'-fb');
+  if(ok){el.classList.add('c');fb.className='qfb p show';fb.textContent='\u2705 Correct!';}
+  else{el.classList.add('w');card.querySelectorAll('.qo').forEach(function(o){if(o.onclick&&o.onclick.toString().indexOf('true')>-1)o.classList.add('c')});
+    fb.className='qfb f show';
+    var ex={q1:'Weight tying shares the same weight matrix between the input token embedding and the output LM head. This reduces parameters and actually improves performance since both operations work with the same token-vector mapping.',q2:'GPT-2 Small has approximately 124 million parameters (d=768, 12 heads, 12 layers). Medium has 350M, Large has 774M, and XL has 1.5B.',q3:'Lower temperature makes the probability distribution sharper \u2014 the top token gets a much higher probability, making output more deterministic and focused. Higher temperature flattens the distribution, increasing randomness.'};
+    fb.textContent='\u274c '+ex[id];}
+}
+</script>
+</body>
+</html>

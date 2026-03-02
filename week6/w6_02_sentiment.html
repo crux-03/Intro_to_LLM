@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week 6 &middot; Lesson 2: Sentiment Analysis</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;1,400&family=Source+Code+Pro:wght@400;500;600&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#080c14;--surface:#101820;--surface2:#182030;--border:#283848;--text:#b8cce0;--muted:#607890;--heading:#eef4ff;--teal:#2dd4bf;--te-dim:rgba(45,212,191,.12);--te-glow:rgba(45,212,191,.3);--orange:#fb923c;--or-dim:rgba(251,146,60,.12);--rose:#fb7185;--ro-dim:rgba(251,113,133,.12);--sky:#38bdf8;--sk-dim:rgba(56,189,248,.12);--lime:#a3e635;--li-dim:rgba(163,230,53,.12);--mono:'Source Code Pro',monospace;--serif:'Fraunces',serif;--sans:'Public Sans',sans-serif;--r:10px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);line-height:1.76;font-size:15.5px}
+.container{max-width:760px;margin:0 auto;padding:48px 24px 100px}
+.pbar{position:fixed;top:0;left:0;right:0;height:3px;background:var(--surface);z-index:999}.pfill{height:100%;width:0%;background:var(--teal);box-shadow:0 0 8px var(--te-glow);transition:width .3s}
+.hero{text-align:center;padding:32px 0 48px}.hero-tag{font-family:var(--mono);font-size:.72rem;color:var(--teal);letter-spacing:.14em;text-transform:uppercase}.hero h1{font-family:var(--serif);font-size:2.5rem;font-weight:700;color:var(--heading);margin:8px 0}.hero h1 em{color:var(--teal);font-style:italic}.hero p{color:var(--muted);font-size:1.05rem;max-width:560px;margin:0 auto}
+.section{margin-bottom:56px;opacity:0;transform:translateY(20px);transition:all .5s}.section.vis{opacity:1;transform:none}.stag{font-family:var(--mono);font-size:.72rem;color:var(--teal);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}.section h2{font-family:var(--serif);font-size:1.55rem;color:var(--heading);margin-bottom:14px}.section h3{font-family:var(--serif);font-size:1.2rem;color:var(--heading);margin:20px 0 10px}.section p{margin-bottom:12px}.section p strong{color:var(--heading)}
+pre{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--teal);border-radius:var(--r);padding:16px 18px;margin:14px 0;overflow-x:auto;font-family:var(--mono);font-size:.82rem;line-height:1.6;color:var(--text)}
+code.il{font-family:var(--mono);font-size:.86em;color:var(--teal);background:var(--te-dim);padding:2px 6px;border-radius:4px}
+.kw{color:#fca5a5}.fn{color:#93c5fd}.num{color:#fbbf24}.str{color:#86efac}.cm{color:var(--muted);font-style:italic}
+.callout{background:var(--te-dim);border:1px solid rgba(45,212,191,.2);border-radius:var(--r);padding:16px 18px;margin:18px 0;font-size:.93rem}.callout.warn{background:var(--or-dim);border-color:rgba(251,146,60,.2)}.callout.green{background:var(--li-dim);border-color:rgba(163,230,53,.2)}.callout.info{background:var(--sk-dim);border-color:rgba(56,189,248,.2)}
+.analogy{border-left:3px solid var(--orange);padding:10px 16px;margin:16px 0;background:var(--or-dim);border-radius:0 var(--r) var(--r) 0;font-size:.93rem}.analogy strong{color:var(--heading)}
+hr.div{border:none;border-top:1px solid var(--border);margin:52px 0}
+.cw{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin:18px 0}.cw-title{font-family:var(--mono);font-size:.72rem;color:var(--teal);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px}
+.ctrls{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.cbtn{font-family:var(--mono);font-size:.78rem;padding:7px 14px;border:1px solid var(--border);border-radius:6px;background:var(--surface2);color:var(--text);cursor:pointer;transition:all .2s}.cbtn:hover{border-color:var(--teal);color:var(--teal)}.cbtn.on{background:var(--te-dim);border-color:var(--teal);color:var(--teal)}
+.out{background:#04080e;border:1px solid var(--border);border-radius:6px;padding:14px 16px;font-family:var(--mono);font-size:.82rem;color:var(--lime);line-height:1.6;margin:10px 0;white-space:pre-wrap;min-height:36px}
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}.sitem{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 14px}.sitem code{font-family:var(--mono);font-size:.82rem;color:var(--teal)}.sitem .d{font-size:.86rem;color:var(--muted);margin-top:3px}
+.qcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:22px;margin:18px 0}.qq{font-family:var(--serif);font-size:1.05rem;color:var(--heading);margin-bottom:12px}.qopts{display:flex;flex-direction:column;gap:7px}.qo{display:flex;align-items:center;gap:10px;padding:11px 14px;border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:.9rem;transition:all .2s}.qo:hover{border-color:var(--teal)}.qo.c{border-color:var(--lime);background:var(--li-dim);color:var(--lime)}.qo.w{border-color:var(--rose);background:var(--ro-dim);color:var(--rose)}.qo.d{pointer-events:none;opacity:.85}
+.ql{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.75rem;font-weight:600;background:var(--surface2);color:var(--muted);flex-shrink:0}.qo.c .ql{background:var(--lime);color:#000}.qo.w .ql{background:var(--rose);color:#fff}
+.qfb{margin-top:10px;padding:10px 12px;border-radius:6px;font-size:.88rem;display:none;line-height:1.6}.qfb.show{display:block}.qfb.p{background:var(--li-dim);color:var(--lime);border-left:3px solid var(--lime)}.qfb.f{background:var(--ro-dim);color:var(--rose);border-left:3px solid var(--rose)}
+.text-input{width:100%;padding:10px 14px;font-family:var(--sans);font-size:.95rem;border:1px solid var(--border);border-radius:6px;background:var(--surface2);color:var(--text);margin:8px 0;outline:none}.text-input:focus{border-color:var(--teal)}
+.sent-result{display:flex;align-items:center;gap:12px;margin:8px 0;padding:12px;border-radius:8px;font-family:var(--mono);font-size:.88rem}.sent-pos{background:var(--li-dim);border:1px solid rgba(163,230,53,.2)}.sent-neg{background:var(--ro-dim);border:1px solid rgba(251,113,133,.2)}
+.conf-bar{height:8px;border-radius:4px;background:var(--surface2);overflow:hidden;flex:1;max-width:200px}.conf-fill{height:100%;border-radius:4px;transition:width .6s}
+.cm-grid{display:grid;grid-template-columns:auto auto auto;gap:2px;margin:14px auto;width:fit-content;font-family:var(--mono);font-size:.82rem;text-align:center}.cm-cell{padding:12px 20px;border-radius:4px}.cm-head{color:var(--muted);padding:8px 20px}
+canvas{display:block;width:100%;border-radius:6px}
+@media(max-width:600px){.hero h1{font-size:1.8rem}.sgrid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="pbar"><div class="pfill" id="pf"></div></div>
+<div class="container">
+
+<div class="hero">
+<div class="hero-tag">Week 6 &middot; Lesson 2</div>
+<h1>Sentiment <em>Analysis</em></h1>
+<p>Build a complete classifier that predicts whether movie reviews are positive or negative &mdash; and understand every metric used to evaluate it.</p>
+</div>
+<hr class="div">
+
+<!-- PART 1: THE TASK -->
+<div class="section" id="s1">
+<div class="stag">Part 01</div>
+<h2>The Sentiment Classification Task</h2>
+<p>Sentiment analysis is one of the most common NLP tasks. Given a piece of text, the model predicts its <strong>emotional tone</strong> &mdash; in our case, positive or negative.</p>
+
+<pre><span class="str">"This movie was amazing!"</span>       &rarr; <span class="fn">Positive</span>  (class 1)
+<span class="str">"Terrible waste of time."</span>       &rarr; <span class="fn">Negative</span>  (class 0)
+<span class="str">"A masterpiece of cinema!"</span>      &rarr; <span class="fn">Positive</span>  (class 1)
+<span class="str">"I couldn't wait for it to end."</span> &rarr; <span class="fn">Negative</span>  (class 0)</pre>
+
+<div class="cw">
+<div class="cw-title">&#9656; Try Sentiment Analysis</div>
+<p style="font-size:.88rem;color:var(--muted);margin-bottom:4px;">Type a movie review and our simple rule-based analyzer will classify it:</p>
+<input class="text-input" id="sentInput" value="This movie was absolutely brilliant! Best film ever!" oninput="analyzeSentiment()">
+<div id="sentResult"></div>
+<p style="font-size:.8rem;color:var(--muted);margin-top:6px;">This uses keyword matching. A trained model would be much more nuanced!</p>
+</div>
+
+<div class="analogy"><strong>Real-world applications:</strong> Sentiment analysis powers product review aggregation, brand monitoring on social media, stock market sentiment indicators, customer feedback analysis, and content recommendation systems.</div>
+</div>
+<hr class="div">
+
+<!-- PART 2: PIPELINE -->
+<div class="section" id="s2">
+<div class="stag">Part 02</div>
+<h2>The Training Pipeline</h2>
+<p>Building a sentiment classifier involves five clear steps. Each builds on what you learned in previous weeks.</p>
+
+<div class="cw">
+<div class="cw-title">&#9656; Pipeline Stages</div>
+<div class="ctrls">
+<button class="cbtn on" onclick="showPipe(1)">1. Data</button>
+<button class="cbtn" onclick="showPipe(2)">2. Tokenize</button>
+<button class="cbtn" onclick="showPipe(3)">3. Model</button>
+<button class="cbtn" onclick="showPipe(4)">4. Train</button>
+<button class="cbtn" onclick="showPipe(5)">5. Evaluate</button>
+</div>
+<div class="out" id="pipeOut"></div>
+</div>
+
+<pre><span class="cm"># The complete pipeline in code:</span>
+
+<span class="cm"># 1. Prepare data</span>
+texts = positive_reviews + negative_reviews
+labels = [<span class="num">1</span>] * <span class="fn">len</span>(positive) + [<span class="num">0</span>] * <span class="fn">len</span>(negative)
+
+<span class="cm"># 2. Build tokenizer and encode</span>
+tokenizer = SimpleTokenizer(texts)
+dataset = SentimentDataset(texts, labels, tokenizer, max_length=<span class="num">32</span>)
+
+<span class="cm"># 3. Create model</span>
+model = GPTClassifier(vocab_size, d_model=<span class="num">64</span>, num_classes=<span class="num">2</span>)
+
+<span class="cm"># 4. Train</span>
+optimizer = AdamW(model.parameters(), lr=<span class="num">1e-3</span>)
+<span class="kw">for</span> epoch <span class="kw">in</span> <span class="fn">range</span>(epochs):
+    <span class="kw">for</span> x, y <span class="kw">in</span> train_loader:
+        logits, loss = model(x, y)
+        loss.backward()
+        optimizer.step()
+
+<span class="cm"># 5. Evaluate</span>
+metrics = compute_metrics(model, test_loader)</pre>
+</div>
+<hr class="div">
+
+<!-- PART 3: EVALUATION METRICS -->
+<div class="section" id="s3">
+<div class="stag">Part 03</div>
+<h2>Evaluation Metrics</h2>
+<p>For classification, we care about much more than just accuracy. Different metrics tell us different things about model quality.</p>
+
+<h3>The Confusion Matrix</h3>
+<p>Everything starts with the confusion matrix &mdash; a 2x2 table of prediction outcomes:</p>
+
+<div class="cw">
+<div class="cw-title">&#9656; Interactive Confusion Matrix</div>
+<p style="font-size:.88rem;color:var(--muted);margin-bottom:8px;">Adjust the values to see how metrics change:</p>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0;">
+<label style="font-size:.86rem;">True Positives (TP): <input type="range" id="tp" min="0" max="20" value="15" oninput="updateCM()" style="width:100%"><span id="tpV">15</span></label>
+<label style="font-size:.86rem;">False Positives (FP): <input type="range" id="fp" min="0" max="20" value="2" oninput="updateCM()" style="width:100%"><span id="fpV">2</span></label>
+<label style="font-size:.86rem;">False Negatives (FN): <input type="range" id="fn" min="0" max="20" value="3" oninput="updateCM()" style="width:100%"><span id="fnV">3</span></label>
+<label style="font-size:.86rem;">True Negatives (TN): <input type="range" id="tn" min="0" max="20" value="14" oninput="updateCM()" style="width:100%"><span id="tnV">14</span></label>
+</div>
+<div class="cm-grid" id="cmGrid"></div>
+<div class="out" id="cmOut"></div>
+</div>
+
+<div class="sgrid">
+<div class="sitem"><code>Accuracy</code><div class="d">(TP+TN) / Total. Overall correct rate. Can be misleading with imbalanced data!</div></div>
+<div class="sitem"><code>Precision</code><div class="d">TP / (TP+FP). "When we predict positive, how often are we right?"</div></div>
+<div class="sitem"><code>Recall</code><div class="d">TP / (TP+FN). "Of all actual positives, how many did we catch?"</div></div>
+<div class="sitem"><code>F1 Score</code><div class="d">Harmonic mean of precision and recall. Best single metric for balanced evaluation.</div></div>
+</div>
+
+<div class="callout warn"><strong>Why accuracy isn't enough:</strong> If 95% of emails are not spam, a model that always predicts "not spam" gets 95% accuracy but catches zero spam! Precision and recall reveal this failure. Always look at multiple metrics.</div>
+
+<div class="qcard" id="q1"><div class="qq">A spam filter has high precision but low recall. What does this mean?</div><div class="qopts">
+<div class="qo" onclick="ck('q1',this,false)"><span class="ql">A</span> It catches all spam but also flags many legitimate emails</div>
+<div class="qo" onclick="ck('q1',this,true)"><span class="ql">B</span> When it says "spam", it's usually right, but it misses a lot of actual spam</div>
+<div class="qo" onclick="ck('q1',this,false)"><span class="ql">C</span> It's overall very accurate</div>
+<div class="qo" onclick="ck('q1',this,false)"><span class="ql">D</span> It classifies everything as spam</div>
+</div><div class="qfb" id="q1-fb"></div></div>
+</div>
+<hr class="div">
+
+<!-- PART 4: MAKING PREDICTIONS -->
+<div class="section" id="s4">
+<div class="stag">Part 04</div>
+<h2>Making Predictions</h2>
+<p>Once trained, making a prediction is straightforward: tokenize the input, run a forward pass, and take the argmax of the output logits.</p>
+
+<pre><span class="kw">def</span> <span class="fn">predict_sentiment</span>(model, tokenizer, text):
+    model.eval()
+    input_ids = torch.tensor([tokenizer.encode(text, max_length=<span class="num">32</span>)])
+
+    <span class="kw">with</span> torch.no_grad():
+        logits, _ = model(input_ids)
+        probs = F.softmax(logits, dim=<span class="num">-1</span>)
+        pred = logits.argmax(<span class="num">1</span>).item()
+
+    sentiment = <span class="str">"Positive"</span> <span class="kw">if</span> pred == <span class="num">1</span> <span class="kw">else</span> <span class="str">"Negative"</span>
+    confidence = probs[<span class="num">0</span>, pred].item()
+    <span class="kw">return</span> sentiment, confidence</pre>
+
+<div class="cw">
+<div class="cw-title">&#9656; Simulated Predictions</div>
+<p style="font-size:.88rem;color:var(--muted);margin-bottom:8px;">See how a trained model would classify these reviews:</p>
+<div class="ctrls">
+<button class="cbtn on" onclick="showPreds('easy')">Easy Cases</button>
+<button class="cbtn" onclick="showPreds('hard')">Hard Cases</button>
+<button class="cbtn" onclick="showPreds('tricky')">Tricky Cases</button>
+</div>
+<div id="predsList"></div>
+</div>
+
+<div class="qcard" id="q2"><div class="qq">Why do we call <code class="il">model.eval()</code> before making predictions?</div><div class="qopts">
+<div class="qo" onclick="ck('q2',this,false)"><span class="ql">A</span> It makes the model run faster</div>
+<div class="qo" onclick="ck('q2',this,true)"><span class="ql">B</span> It disables dropout so predictions are deterministic and consistent</div>
+<div class="qo" onclick="ck('q2',this,false)"><span class="ql">C</span> It reduces memory usage</div>
+<div class="qo" onclick="ck('q2',this,false)"><span class="ql">D</span> It loads the best weights</div>
+</div><div class="qfb" id="q2-fb"></div></div>
+</div>
+<hr class="div">
+
+<!-- PART 5: TRAINING CURVES -->
+<div class="section" id="s5">
+<div class="stag">Part 05</div>
+<h2>Training Dynamics</h2>
+<p>Watch how accuracy improves during training. The model starts at ~50% (random guessing for binary classification) and gradually learns to distinguish positive from negative reviews.</p>
+
+<div class="cw">
+<div class="cw-title">&#9656; Training Accuracy Simulator</div>
+<canvas id="trainCanvas" height="240"></canvas>
+<div class="ctrls"><button class="cbtn on" onclick="runTrain()">Run Training</button><button class="cbtn" onclick="resetTrain()">Reset</button></div>
+<div class="out" id="trainOut">Click "Run Training" to watch the model learn...</div>
+</div>
+
+<div class="callout info"><strong>Key observation:</strong> Training accuracy rises quickly at first (the model learns obvious patterns like "amazing" = positive), then plateaus as it encounters more nuanced examples. Test accuracy may start diverging from training accuracy &mdash; a sign of overfitting.</div>
+</div>
+<hr class="div">
+
+<!-- SUMMARY -->
+<div class="section" id="s6">
+<div class="stag">Summary</div>
+<h2>Key Takeaways</h2>
+<div class="sgrid">
+<div class="sitem"><code>Sentiment Task</code><div class="d">Classify text as positive or negative. One of the most common NLP tasks.</div></div>
+<div class="sitem"><code>Pipeline</code><div class="d">Data &rarr; Tokenize &rarr; Model &rarr; Train &rarr; Evaluate. Same pattern for all classification.</div></div>
+<div class="sitem"><code>Metrics</code><div class="d">Accuracy, Precision, Recall, F1. Always look at multiple metrics, not just accuracy.</div></div>
+<div class="sitem"><code>Predictions</code><div class="d">model.eval() + torch.no_grad() + softmax for confidence scores.</div></div>
+</div>
+<div class="callout green"><strong>Next:</strong> Lesson 3 &mdash; Spam Detection & Multi-class Classification! You'll apply the same techniques to spam filtering and 4-category topic classification.</div>
+</div>
+
+</div>
+
+<script>
+var secs=document.querySelectorAll('.section');
+function upd(){var st=window.scrollY,h=document.body.scrollHeight-innerHeight;document.getElementById('pf').style.width=Math.min(100,st/h*100)+'%';secs.forEach(function(s){if(s.getBoundingClientRect().top<innerHeight*.85)s.classList.add('vis')});}
+window.addEventListener('scroll',upd);upd();
+
+// Sentiment analyzer
+var posWords=['amazing','brilliant','fantastic','excellent','wonderful','great','superb','outstanding','incredible','masterpiece','loved','beautiful','touching','perfect','best','entertaining','recommend','triumphant','delightful','heartwarming'];
+var negWords=['terrible','awful','horrible','worst','boring','dreadful','waste','disappointing','disaster','poor','bad','hated','painful','embarrassing','forgettable','tedious','atrocious','insulting','nonsensical','predictable'];
+function analyzeSentiment(){
+  var text=document.getElementById('sentInput').value.toLowerCase();
+  var pos=0,neg=0;
+  posWords.forEach(function(w){if(text.indexOf(w)>-1)pos++});
+  negWords.forEach(function(w){if(text.indexOf(w)>-1)neg++});
+  var el=document.getElementById('sentResult');
+  if(pos+neg===0){el.innerHTML='<div class="sent-result" style="background:var(--surface2);border:1px solid var(--border)">Type a review with sentiment words to see the result...</div>';return;}
+  var isPos=pos>=neg;
+  var conf=Math.min(99,50+Math.abs(pos-neg)*15+Math.max(pos,neg)*5);
+  el.innerHTML='<div class="sent-result '+(isPos?'sent-pos':'sent-neg')+'"><span style="font-size:1.2rem;">'+(isPos?'&#128077;':'&#128078;')+'</span><span style="color:'+(isPos?'var(--lime)':'var(--rose)')+';">'+(isPos?'POSITIVE':'NEGATIVE')+'</span><div class="conf-bar"><div class="conf-fill" style="width:'+conf+'%;background:'+(isPos?'var(--lime)':'var(--rose)')+';"></div></div><span>'+conf+'%</span></div>';
+}
+analyzeSentiment();
+
+// Pipeline
+function showPipe(n){
+  document.querySelectorAll('#s2 .cbtn').forEach(function(b){b.classList.remove('on')});
+  document.querySelectorAll('#s2 .cbtn')[n-1].classList.add('on');
+  var o=document.getElementById('pipeOut');
+  var info={
+    1:'STEP 1: PREPARE DATA\n\nPositive reviews: 20 examples\n  "This movie was absolutely amazing!"\n  "I loved every minute of this film."\n  ...\n\nNegative reviews: 20 examples\n  "This movie was terrible."\n  "I hated every minute of this boring film."\n  ...\n\nSplit: 80% train (32 samples) / 20% test (8 samples)\nLabels: 1 = Positive, 0 = Negative',
+    2:'STEP 2: TOKENIZE\n\n"This movie was amazing!" \n  -> ["this", "movie", "was", "amazing"]\n  -> [42, 156, 23, 891, 0, 0, 0, ...]  (padded to max_length)\n\nVocabulary: ~150 unique words\nMax length: 32 tokens\nPadding: <PAD> token (ID 0) fills shorter sequences',
+    3:'STEP 3: BUILD MODEL\n\nGPTClassifier(\n  token_embedding:    Embedding(150, 64)\n  position_embedding: Embedding(32, 64)\n  transformer_blocks: 2 x TransformerBlock\n  layer_norm:         LayerNorm(64)\n  classifier:         Linear(64, 2)  <- NEW!\n)\n\nTotal parameters: ~85,000\nClassifier head: 130 parameters',
+    4:'STEP 4: TRAIN\n\nOptimizer: AdamW (lr=0.001)\nBatch size: 8\nEpochs: 20\nGradient clipping: max_norm=1.0\n\nEpoch  5 | Loss: 0.4823 | Train Acc: 78% | Test Acc: 75%\nEpoch 10 | Loss: 0.2156 | Train Acc: 91% | Test Acc: 88%\nEpoch 15 | Loss: 0.0834 | Train Acc: 97% | Test Acc: 88%\nEpoch 20 | Loss: 0.0312 | Train Acc: 100% | Test Acc: 88%',
+    5:'STEP 5: EVALUATE\n\nTest Set Metrics:\n  Accuracy:  87.5%\n  Precision: 85.7%\n  Recall:    100%\n  F1 Score:  92.3%\n\nConfusion Matrix:\n            Predicted\n            Neg    Pos\n  Actual Neg  [3]    [1]    <- 1 false positive\n  Actual Pos  [0]    [4]    <- 0 false negatives\n\nThe model catches all positives but sometimes\nmisclassifies a negative as positive.'
+  };
+  o.textContent=info[n];
+}
+showPipe(1);
+
+// Confusion matrix
+function updateCM(){
+  var tp=+document.getElementById('tp').value;
+  var fp=+document.getElementById('fp').value;
+  var fn=+document.getElementById('fn').value;
+  var tn=+document.getElementById('tn').value;
+  document.getElementById('tpV').textContent=tp;
+  document.getElementById('fpV').textContent=fp;
+  document.getElementById('fnV').textContent=fn;
+  document.getElementById('tnV').textContent=tn;
+  var total=tp+fp+fn+tn;
+  var acc=total>0?(tp+tn)/total:0;
+  var prec=(tp+fp)>0?tp/(tp+fp):0;
+  var rec=(tp+fn)>0?tp/(tp+fn):0;
+  var f1=(prec+rec)>0?2*prec*rec/(prec+rec):0;
+  var g=document.getElementById('cmGrid');
+  g.innerHTML='<div class="cm-head"></div><div class="cm-head">Pred Neg</div><div class="cm-head">Pred Pos</div>'+
+    '<div class="cm-head">Actual Neg</div><div class="cm-cell" style="background:var(--li-dim);color:var(--lime)">TN='+tn+'</div><div class="cm-cell" style="background:var(--ro-dim);color:var(--rose)">FP='+fp+'</div>'+
+    '<div class="cm-head">Actual Pos</div><div class="cm-cell" style="background:var(--ro-dim);color:var(--rose)">FN='+fn+'</div><div class="cm-cell" style="background:var(--li-dim);color:var(--lime)">TP='+tp+'</div>';
+  document.getElementById('cmOut').textContent='Accuracy:  '+(acc*100).toFixed(1)+'%  ('+tp+'+'+tn+') / '+total+'\nPrecision: '+(prec*100).toFixed(1)+'%  '+tp+' / ('+tp+'+'+fp+')\nRecall:    '+(rec*100).toFixed(1)+'%  '+tp+' / ('+tp+'+'+fn+')\nF1 Score:  '+(f1*100).toFixed(1)+'%  harmonic mean of precision & recall';
+}
+updateCM();
+
+// Predictions
+function showPreds(mode){
+  document.querySelectorAll('#s4 .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+  var preds={
+    easy:[
+      {text:'I absolutely loved this movie! Best film ever!',sent:'Positive',conf:97},
+      {text:'What a terrible waste of my time. Awful!',sent:'Negative',conf:95},
+      {text:'A masterpiece of modern cinema!',sent:'Positive',conf:93},
+      {text:'I want my two hours back. Dreadful.',sent:'Negative',conf:91}
+    ],
+    hard:[
+      {text:'It was okay, nothing special.',sent:'Negative',conf:58},
+      {text:'Not the worst movie, but not great either.',sent:'Negative',conf:62},
+      {text:'I didn\'t hate it, but I wouldn\'t watch it again.',sent:'Negative',conf:55},
+      {text:'Pretty good, though it could have been better.',sent:'Positive',conf:61}
+    ],
+    tricky:[
+      {text:'I fell asleep halfway through. Boring.',sent:'Negative',conf:88},
+      {text:'This movie is not bad at all!',sent:'Positive',conf:52},
+      {text:'I thought I\'d hate it but it was surprisingly good.',sent:'Positive',conf:65},
+      {text:'The acting was great but the plot was terrible.',sent:'Negative',conf:54}
+    ]
+  };
+  var el=document.getElementById('predsList');
+  var html='';
+  preds[mode].forEach(function(p){
+    var isPos=p.sent==='Positive';
+    html+='<div class="sent-result '+(isPos?'sent-pos':'sent-neg')+'" style="margin:6px 0;"><span style="min-width:70px;color:'+(isPos?'var(--lime)':'var(--rose)')+';">'+p.sent+'</span><span style="flex:1;font-family:var(--sans);font-size:.88rem;">'+p.text+'</span><span>'+p.conf+'%</span></div>';
+  });
+  el.innerHTML=html;
+}
+showPreds('easy');
+
+// Training simulator
+var trainAnim=null,trainData={train:[],test:[]};
+function runTrain(){
+  if(trainAnim)return;trainData={train:[],test:[]};var ep=0;
+  function step(){
+    if(ep>=20){trainAnim=null;document.getElementById('trainOut').textContent+='\\n\\nTraining complete! Best test accuracy at epoch ~12.';return;}
+    var tAcc=0.5+0.45*(1-Math.exp(-0.2*(ep+1)))+Math.random()*0.03;
+    var vAcc=0.5+0.38*(1-Math.exp(-0.15*(ep+1)))-(ep>12?0.02*(ep-12):0)+Math.random()*0.04;
+    tAcc=Math.min(1,tAcc);vAcc=Math.min(tAcc,vAcc);
+    trainData.train.push(tAcc);trainData.test.push(vAcc);ep++;
+    drawTrain();
+    document.getElementById('trainOut').textContent='Epoch '+ep+'/20 | Train Acc: '+(tAcc*100).toFixed(1)+'% | Test Acc: '+(vAcc*100).toFixed(1)+'%';
+    trainAnim=setTimeout(step,300);
+  }step();
+}
+function resetTrain(){if(trainAnim){clearTimeout(trainAnim);trainAnim=null;}trainData={train:[],test:[]};drawTrain();document.getElementById('trainOut').textContent='Click "Run Training"...';}
+function drawTrain(){
+  var c=document.getElementById('trainCanvas'),dpr=devicePixelRatio||1,w=c.clientWidth;
+  c.width=w*dpr;c.height=240*dpr;var ctx=c.getContext('2d');ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,240);
+  var ox=45,oy=15,gw=w-65,gh=195;
+  ctx.strokeStyle='#283848';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(ox,oy);ctx.lineTo(ox,oy+gh);ctx.lineTo(ox+gw,oy+gh);ctx.stroke();
+  ctx.fillStyle='#607890';ctx.font='400 9px "Source Code Pro"';ctx.textAlign='right';
+  [50,60,70,80,90,100].forEach(function(v){var y=oy+gh-(v-45)/60*gh;ctx.fillText(v+'%',ox-5,y+3);});
+  if(trainData.train.length<2)return;
+  [['train','#2dd4bf','Train'],['test','#fb923c','Test']].forEach(function(pair){
+    var data=trainData[pair[0]];ctx.strokeStyle=pair[1];ctx.lineWidth=2.5;ctx.beginPath();
+    data.forEach(function(v,i){var x=ox+i/19*gw,y=oy+gh-(v-0.45)/0.6*gh;if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);});ctx.stroke();
+  });
+}
+drawTrain();
+
+function ck(id,el,ok){var card=document.getElementById(id);if(card.dataset.a)return;card.dataset.a='1';card.querySelectorAll('.qo').forEach(function(o){o.classList.add('d')});var fb=document.getElementById(id+'-fb');if(ok){el.classList.add('c');fb.className='qfb p show';fb.textContent='\u2705 Correct!';}else{el.classList.add('w');card.querySelectorAll('.qo').forEach(function(o){if(o.onclick&&o.onclick.toString().indexOf('true')>-1)o.classList.add('c')});fb.className='qfb f show';var ex={q1:'High precision, low recall means: the model is conservative. When it flags something as spam, it\'s usually correct (few false positives), but it lets a lot of actual spam through (many false negatives). It\'s cautious but misses things.',q2:'model.eval() disables dropout layers. During training, dropout randomly zeros out neurons for regularization. During inference, we want deterministic, reproducible predictions \u2014 so we disable dropout with eval().'};fb.textContent='\u274c '+ex[id];}}
+</script>
+</body>
+</html>

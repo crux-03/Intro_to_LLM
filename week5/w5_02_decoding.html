@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week 5 &middot; Lesson 2: Decoding Strategies</title>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,700;1,400&family=Inconsolata:wght@400;500;600&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0c10;--surface:#12151e;--surface2:#1a1e2a;--border:#2a3040;--text:#c0c8e0;--muted:#6070a0;--heading:#eef0ff;--cyan:#06b6d4;--cy-dim:rgba(6,182,212,.12);--cy-glow:rgba(6,182,212,.3);--lime:#84cc16;--li-dim:rgba(132,204,22,.12);--rose:#f43f5e;--ro-dim:rgba(244,63,94,.12);--amber:#f59e0b;--am-dim:rgba(245,158,11,.12);--violet:#a78bfa;--vi-dim:rgba(167,139,250,.12);--mono:'Inconsolata',monospace;--serif:'Crimson Pro',serif;--sans:'Outfit',sans-serif;--r:10px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);line-height:1.76;font-size:15.5px}
+.container{max-width:760px;margin:0 auto;padding:48px 24px 100px}
+.pbar{position:fixed;top:0;left:0;right:0;height:3px;background:var(--surface);z-index:999}.pfill{height:100%;width:0%;background:var(--cyan);box-shadow:0 0 8px var(--cy-glow);transition:width .3s}
+.hero{text-align:center;padding:32px 0 48px}.hero-tag{font-family:var(--mono);font-size:.72rem;color:var(--cyan);letter-spacing:.14em;text-transform:uppercase}.hero h1{font-family:var(--serif);font-size:2.5rem;font-weight:700;color:var(--heading);margin:8px 0}.hero h1 em{color:var(--cyan);font-style:italic}.hero p{color:var(--muted);font-size:1.05rem;max-width:560px;margin:0 auto}
+.section{margin-bottom:56px;opacity:0;transform:translateY(20px);transition:all .5s}.section.vis{opacity:1;transform:none}.stag{font-family:var(--mono);font-size:.72rem;color:var(--cyan);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}.section h2{font-family:var(--serif);font-size:1.55rem;color:var(--heading);margin-bottom:14px}.section p{margin-bottom:12px}.section p strong{color:var(--heading)}
+pre{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--cyan);border-radius:var(--r);padding:16px 18px;margin:14px 0;overflow-x:auto;font-family:var(--mono);font-size:.82rem;line-height:1.6;color:var(--text)}
+code.il{font-family:var(--mono);font-size:.86em;color:var(--cyan);background:var(--cy-dim);padding:2px 6px;border-radius:4px}
+.kw{color:#fca5a5}.fn{color:#93c5fd}.num{color:#fbbf24}.cm{color:var(--muted);font-style:italic}
+.callout{background:var(--cy-dim);border:1px solid rgba(6,182,212,.2);border-radius:var(--r);padding:16px 18px;margin:18px 0;font-size:.93rem}.callout.info{background:var(--vi-dim);border-color:rgba(167,139,250,.2)}.callout.warn{background:var(--am-dim);border-color:rgba(245,158,11,.2)}
+.analogy{border-left:3px solid var(--amber);padding:10px 16px;margin:16px 0;background:var(--am-dim);border-radius:0 var(--r) var(--r) 0;font-size:.93rem}.analogy strong{color:var(--heading)}
+hr.div{border:none;border-top:1px solid var(--border);margin:52px 0}
+.cw{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin:18px 0}.cw-title{font-family:var(--mono);font-size:.72rem;color:var(--cyan);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px}
+.ctrls{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.cbtn{font-family:var(--mono);font-size:.78rem;padding:7px 14px;border:1px solid var(--border);border-radius:6px;background:var(--surface2);color:var(--text);cursor:pointer;transition:all .2s}.cbtn:hover{border-color:var(--cyan);color:var(--cyan)}.cbtn.on{background:var(--cy-dim);border-color:var(--cyan);color:var(--cyan)}
+.out{background:#060810;border:1px solid var(--border);border-radius:6px;padding:14px 16px;font-family:var(--mono);font-size:.82rem;color:var(--lime);line-height:1.6;margin:10px 0;white-space:pre-wrap;min-height:36px}
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}.sitem{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 14px}.sitem code{font-family:var(--mono);font-size:.82rem;color:var(--cyan)}.sitem .d{font-size:.86rem;color:var(--muted);margin-top:3px}
+.qcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:22px;margin:18px 0}.qq{font-family:var(--serif);font-size:1.05rem;color:var(--heading);margin-bottom:12px}.qopts{display:flex;flex-direction:column;gap:7px}.qo{display:flex;align-items:center;gap:10px;padding:11px 14px;border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:.9rem;transition:all .2s}.qo:hover{border-color:var(--cyan)}.qo.c{border-color:var(--lime);background:var(--li-dim);color:var(--lime)}.qo.w{border-color:var(--rose);background:var(--ro-dim);color:var(--rose)}.qo.d{pointer-events:none;opacity:.85}
+.ql{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.75rem;font-weight:600;background:var(--surface2);color:var(--muted);flex-shrink:0}.qo.c .ql{background:var(--lime);color:#000}.qo.w .ql{background:var(--rose);color:#fff}
+.qfb{margin-top:10px;padding:10px 12px;border-radius:6px;font-size:.88rem;display:none;line-height:1.6}.qfb.show{display:block}.qfb.p{background:var(--li-dim);color:var(--lime);border-left:3px solid var(--lime)}.qfb.f{background:var(--ro-dim);color:var(--rose);border-left:3px solid var(--rose)}
+canvas{display:block;width:100%;border-radius:6px}
+@media(max-width:600px){.hero h1{font-size:1.8rem}.sgrid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="pbar"><div class="pfill" id="pf"></div></div>
+<div class="container">
+<div class="hero"><div class="hero-tag">Week 5 &middot; Lesson 2</div><h1><em>Decoding</em> Strategies</h1><p>Temperature, top-k, and top-p sampling &mdash; how to pick the next token from a probability distribution to control creativity and coherence.</p></div><hr class="div">
+
+<div class="section" id="s1"><div class="stag">Part 01</div><h2>Greedy Decoding</h2>
+<p>The simplest strategy: always pick the most probable token. <code class="il">next = argmax(probs)</code></p>
+<p>Deterministic and coherent, but <strong>boring and repetitive</strong>. Often gets stuck in loops.</p>
+<div class="cw"><div class="cw-title">&#9656; Greedy Always Picks the Same</div>
+<canvas id="greedyCanvas" height="180"></canvas></div>
+</div><hr class="div">
+
+<div class="section" id="s2"><div class="stag">Part 02</div><h2>Temperature Sampling</h2>
+<p>Divide logits by temperature before softmax: <code class="il">probs = softmax(logits / T)</code></p>
+<div class="cw"><div class="cw-title">&#9656; Temperature Explorer</div>
+<canvas id="tempCanvas" height="220"></canvas>
+<div class="ctrls"><button class="cbtn" onclick="showT(0.3)">T=0.3</button><button class="cbtn" onclick="showT(0.5)">T=0.5</button><button class="cbtn" onclick="showT(0.7)">T=0.7</button><button class="cbtn on" onclick="showT(1.0)">T=1.0</button><button class="cbtn" onclick="showT(1.5)">T=1.5</button><button class="cbtn" onclick="showT(2.0)">T=2.0</button></div>
+<div class="out" id="tempOut"></div></div>
+
+<div class="qcard" id="q1"><div class="qq">&#129513; What does temperature = 0 converge to?</div><div class="qopts">
+<div class="qo" onclick="ck('q1',this,true)"><span class="ql">A</span> Greedy decoding (argmax)</div>
+<div class="qo" onclick="ck('q1',this,false)"><span class="ql">B</span> Uniform random sampling</div>
+<div class="qo" onclick="ck('q1',this,false)"><span class="ql">C</span> Top-k with k=1</div>
+</div><div class="qfb" id="q1-fb"></div></div>
+</div><hr class="div">
+
+<div class="section" id="s3"><div class="stag">Part 03</div><h2>Top-k Sampling</h2>
+<p>Only consider the <strong>k most likely</strong> tokens, zero out the rest, then sample. Prevents choosing wildly unlikely tokens.</p>
+<pre>top_k_logits, top_k_idx = torch.topk(logits, k)
+logits = torch.full_like(logits, float(<span class="str">'-inf'</span>))
+logits.scatter_(<span class="num">0</span>, top_k_idx, top_k_logits)
+probs = F.softmax(logits, dim=-<span class="num">1</span>)</pre>
+<div class="cw"><div class="cw-title">&#9656; Top-k Filtering</div>
+<canvas id="topkCanvas" height="180"></canvas>
+<div class="ctrls"><button class="cbtn" onclick="showK(2)">k=2</button><button class="cbtn on" onclick="showK(3)">k=3</button><button class="cbtn" onclick="showK(4)">k=4</button><button class="cbtn" onclick="showK(6)">k=6 (all)</button></div>
+<div class="out" id="topkOut"></div></div>
+</div><hr class="div">
+
+<div class="section" id="s4"><div class="stag">Part 04</div><h2>Top-p (Nucleus) Sampling</h2>
+<p>Keep the smallest set of tokens whose cumulative probability &ge; p. Unlike top-k, this <strong>adapts</strong> to the distribution &mdash; more tokens when uncertain, fewer when confident.</p>
+<div class="cw"><div class="cw-title">&#9656; Top-p Cumulative Cutoff</div>
+<canvas id="toppCanvas" height="200"></canvas>
+<div class="ctrls"><button class="cbtn" onclick="showP(0.5)">p=0.5</button><button class="cbtn" onclick="showP(0.7)">p=0.7</button><button class="cbtn on" onclick="showP(0.9)">p=0.9</button><button class="cbtn" onclick="showP(0.95)">p=0.95</button></div>
+<div class="out" id="toppOut"></div></div>
+<div class="analogy"><strong>&#128218; Top-p is like a VIP list:</strong> Only let in enough guests (tokens) to fill 90% of the venue. If one celebrity (high-prob token) takes up 80%, you only need 1-2 more. If the crowd is even, many get in. It adapts!</div>
+
+<div class="qcard" id="q2"><div class="qq">&#129513; Why is top-p preferred over top-k?</div><div class="qopts">
+<div class="qo" onclick="ck('q2',this,false)"><span class="ql">A</span> It's faster to compute</div>
+<div class="qo" onclick="ck('q2',this,true)"><span class="ql">B</span> It adapts to the distribution shape</div>
+<div class="qo" onclick="ck('q2',this,false)"><span class="ql">C</span> It always selects more tokens</div>
+</div><div class="qfb" id="q2-fb"></div></div>
+</div><hr class="div">
+
+<div class="section" id="s5"><div class="stag">Part 05</div><h2>Practical Guide</h2>
+<div class="sgrid">
+<div class="sitem"><code>Greedy</code><div class="d">Factual Q&amp;A, code gen</div></div>
+<div class="sitem"><code>T=0.3-0.7</code><div class="d">Professional writing, summaries</div></div>
+<div class="sitem"><code>T=0.7 + p=0.9</code><div class="d">ChatGPT default! Conversation</div></div>
+<div class="sitem"><code>T=1.0+</code><div class="d">Brainstorming, poetry</div></div>
+</div>
+<div class="callout info"><strong>ChatGPT uses temperature + top-p together.</strong> Temperature controls the overall sharpness, then top-p clips the long tail. This gives both coherence and variety.</div>
+
+<div class="qcard" id="q3"><div class="qq">&#129513; For a factual assistant, which strategy is best?</div><div class="qopts">
+<div class="qo" onclick="ck('q3',this,true)"><span class="ql">A</span> Greedy or very low temperature</div>
+<div class="qo" onclick="ck('q3',this,false)"><span class="ql">B</span> High temperature (T=1.5)</div>
+<div class="qo" onclick="ck('q3',this,false)"><span class="ql">C</span> Top-p with p=0.99</div>
+</div><div class="qfb" id="q3-fb"></div></div>
+</div><hr class="div">
+
+<div class="section" id="s6"><div class="stag">Summary</div><h2>Key Takeaways</h2>
+<div class="sgrid">
+<div class="sitem"><code>Greedy</code><div class="d">argmax, deterministic, repetitive</div></div>
+<div class="sitem"><code>Temperature</code><div class="d">logits/T, controls randomness</div></div>
+<div class="sitem"><code>Top-k</code><div class="d">Fixed k tokens, simple &amp; fast</div></div>
+<div class="sitem"><code>Top-p</code><div class="d">Adaptive set, industry standard</div></div>
+</div>
+<div class="callout"><strong>Next:</strong> Lesson 3 &mdash; Saving, Loading, and Pretrained Models!</div>
+</div></div>
+
+<script>
+var secs=document.querySelectorAll('.section');
+function upd(){var st=window.scrollY,h=document.body.scrollHeight-innerHeight;document.getElementById('pf').style.width=Math.min(100,st/h*100)+'%';secs.forEach(function(s){if(s.getBoundingClientRect().top<innerHeight*.85)s.classList.add('vis')});}
+window.addEventListener('scroll',upd);upd();
+
+var vocab=["the","a","cat","dog","sat","ran"],logits=[2.0,0.5,1.5,1.2,0.8,0.3];
+function softmax(arr,t){t=t||1;var mx=Math.max.apply(null,arr.map(function(v){return v/t}));var exps=arr.map(function(v){return Math.exp(v/t-mx)});var s=exps.reduce(function(a,b){return a+b});return exps.map(function(v){return v/s});}
+
+function drawBars(ctx,w,h,probs,labels,highlight,title,col){
+  ctx.clearRect(0,0,w,h);var n=probs.length,bw=Math.min(60,(w-60)/n),ox=(w-n*bw)/2;
+  if(title){ctx.fillStyle='var(--heading)';ctx.font='500 12px Outfit';ctx.textAlign='center';ctx.fillText(title,w/2,18);}
+  for(var i=0;i<n;i++){var x=ox+i*bw,bh=probs[i]*120,y=h-30-bh;var active=highlight===null||highlight.indexOf(i)>-1;
+    ctx.fillStyle=active?(col||'rgba(6,182,212,')+(probs[i]+0.15)+')':'rgba(42,48,64,0.3)';
+    ctx.beginPath();ctx.roundRect(x+2,y,bw-4,bh,3);ctx.fill();
+    ctx.fillStyle=active?(col?col.replace(',',''):'#06b6d4'):'#2a3040';ctx.font='600 10px Inconsolata';ctx.textAlign='center';
+    ctx.fillText(active?(probs[i]*100).toFixed(1)+'%':'',x+bw/2,y-5);
+    ctx.fillStyle=active?'var(--text)':'var(--muted)';ctx.font='500 11px Outfit';ctx.fillText(labels[i],x+bw/2,h-10);}
+}
+
+function drawGreedy(){
+  var c=document.getElementById('greedyCanvas'),dpr=devicePixelRatio||1,w=c.clientWidth;
+  c.width=w*dpr;c.height=180*dpr;var ctx=c.getContext('2d');ctx.scale(dpr,dpr);
+  var probs=softmax(logits);drawBars(ctx,w,180,probs,vocab,[0],'Greedy: always picks "the"','rgba(6,182,212,');
+}
+drawGreedy();window.addEventListener('resize',drawGreedy);
+
+function showT(t){
+  document.querySelectorAll('.ctrls .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+  var probs=softmax(logits,t);
+  var c=document.getElementById('tempCanvas'),dpr=devicePixelRatio||1,w=c.clientWidth;
+  c.width=w*dpr;c.height=220*dpr;var ctx=c.getContext('2d');ctx.scale(dpr,dpr);
+  drawBars(ctx,w,220,probs,vocab,null,'Temperature = '+t.toFixed(1),'rgba(6,182,212,');
+  var desc=t<0.5?'Very focused: top token dominates':t<0.9?'Balanced: top tokens preferred':t<=1.0?'Standard: original distribution':'Flattened: more equal, more random';
+  document.getElementById('tempOut').textContent=probs.map(function(p,i){return vocab[i]+': '+(p*100).toFixed(1)+'%'}).join('  |  ')+'\n'+desc;
+}
+showT(1.0);
+
+function showK(k){
+  document.querySelectorAll('.ctrls .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+  var probs=softmax(logits);var sorted=probs.map(function(p,i){return{p:p,i:i}}).sort(function(a,b){return b.p-a.p});
+  var kept=sorted.slice(0,k).map(function(x){return x.i});
+  var filt=probs.map(function(p,i){return kept.indexOf(i)>-1?p:0});var s=filt.reduce(function(a,b){return a+b});
+  filt=filt.map(function(p){return p/s});
+  var c=document.getElementById('topkCanvas'),dpr=devicePixelRatio||1,w=c.clientWidth;
+  c.width=w*dpr;c.height=180*dpr;var ctx=c.getContext('2d');ctx.scale(dpr,dpr);
+  drawBars(ctx,w,180,filt,vocab,kept,'Top-k = '+k+' ('+kept.length+' tokens kept)','rgba(6,182,212,');
+  document.getElementById('topkOut').textContent='Kept: '+kept.map(function(i){return vocab[i]+' ('+(filt[i]*100).toFixed(1)+'%)'}).join(', ')+'\nFiltered out: '+vocab.filter(function(_,i){return kept.indexOf(i)===-1}).join(', ');
+}
+showK(3);
+
+function showP(p){
+  document.querySelectorAll('.ctrls .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+  var probs=softmax(logits);var sorted=probs.map(function(pr,i){return{p:pr,i:i}}).sort(function(a,b){return b.p-a.p});
+  var cum=0,kept=[];
+  for(var j=0;j<sorted.length;j++){kept.push(sorted[j].i);cum+=sorted[j].p;if(cum>=p)break;}
+  var filt=probs.map(function(pr,i){return kept.indexOf(i)>-1?pr:0});var s=filt.reduce(function(a,b){return a+b});filt=filt.map(function(pr){return pr/s});
+  var c=document.getElementById('toppCanvas'),dpr=devicePixelRatio||1,w=c.clientWidth;
+  c.width=w*dpr;c.height=200*dpr;var ctx=c.getContext('2d');ctx.scale(dpr,dpr);
+  drawBars(ctx,w,200,filt,vocab,kept,'Top-p = '+p+' ('+kept.length+' tokens in nucleus)','rgba(6,182,212,');
+  document.getElementById('toppOut').textContent='Nucleus (cumsum >= '+p+'): '+kept.map(function(i){return vocab[i]}).join(', ')+'\nCumulative: '+(cum*100).toFixed(1)+'%';
+}
+showP(0.9);
+
+function ck(id,el,ok){var card=document.getElementById(id);if(card.dataset.a)return;card.dataset.a='1';card.querySelectorAll('.qo').forEach(function(o){o.classList.add('d')});var fb=document.getElementById(id+'-fb');if(ok){el.classList.add('c');fb.className='qfb p show';fb.textContent='\u2705 Correct!';}else{el.classList.add('w');card.querySelectorAll('.qo').forEach(function(o){if(o.onclick&&o.onclick.toString().indexOf('true')>-1)o.classList.add('c')});fb.className='qfb f show';var ex={q1:'As temperature approaches 0, the distribution becomes infinitely sharp \u2014 all probability concentrates on the highest-logit token. This is equivalent to greedy decoding (argmax).',q2:'Top-p adapts to the distribution shape. When the model is confident, only 1-2 tokens are included. When uncertain, many tokens are included. Top-k always uses the same fixed number regardless.',q3:'Factual tasks need consistency and accuracy, so greedy (T=0) or very low temperature works best. High randomness would produce unreliable, varying answers.'};fb.textContent='\u274c '+ex[id];}}
+</script>
+</body>
+</html>

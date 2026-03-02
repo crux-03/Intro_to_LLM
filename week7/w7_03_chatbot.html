@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week 7 &middot; Lesson 3: Building a Complete Chatbot</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;1,400&family=Source+Code+Pro:wght@400;500;600&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0e0812;--surface:#18121e;--surface2:#221830;--border:#3a2850;--text:#d0c0e8;--muted:#8870a8;--heading:#f8f0ff;--accent:#e879f9;--ac-dim:rgba(232,121,249,.12);--ac-glow:rgba(232,121,249,.3);--amber:#fbbf24;--am-dim:rgba(251,191,36,.12);--rose:#fb7185;--ro-dim:rgba(251,113,133,.12);--sky:#38bdf8;--sk-dim:rgba(56,189,248,.12);--lime:#a3e635;--li-dim:rgba(163,230,53,.12);--mono:'Source Code Pro',monospace;--serif:'Fraunces',serif;--sans:'Public Sans',sans-serif;--r:10px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);line-height:1.76;font-size:15.5px}
+.container{max-width:760px;margin:0 auto;padding:48px 24px 100px}
+.pbar{position:fixed;top:0;left:0;right:0;height:3px;background:var(--surface);z-index:999}.pfill{height:100%;width:0%;background:var(--accent);box-shadow:0 0 8px var(--ac-glow);transition:width .3s}
+.hero{text-align:center;padding:32px 0 48px}.hero-tag{font-family:var(--mono);font-size:.72rem;color:var(--accent);letter-spacing:.14em;text-transform:uppercase}.hero h1{font-family:var(--serif);font-size:2.5rem;font-weight:700;color:var(--heading);margin:8px 0}.hero h1 em{color:var(--accent);font-style:italic}.hero p{color:var(--muted);font-size:1.05rem;max-width:560px;margin:0 auto}
+.section{margin-bottom:56px;opacity:0;transform:translateY(20px);transition:all .5s}.section.vis{opacity:1;transform:none}.stag{font-family:var(--mono);font-size:.72rem;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}.section h2{font-family:var(--serif);font-size:1.55rem;color:var(--heading);margin-bottom:14px}.section h3{font-family:var(--serif);font-size:1.2rem;color:var(--heading);margin:20px 0 10px}.section p{margin-bottom:12px}.section p strong{color:var(--heading)}
+pre{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:var(--r);padding:16px 18px;margin:14px 0;overflow-x:auto;font-family:var(--mono);font-size:.82rem;line-height:1.6;color:var(--text)}
+code.il{font-family:var(--mono);font-size:.86em;color:var(--accent);background:var(--ac-dim);padding:2px 6px;border-radius:4px}
+.kw{color:#fca5a5}.fn{color:#93c5fd}.num{color:#fbbf24}.str{color:#86efac}.cm{color:var(--muted);font-style:italic}
+.callout{background:var(--ac-dim);border:1px solid rgba(232,121,249,.2);border-radius:var(--r);padding:16px 18px;margin:18px 0;font-size:.93rem}.callout.warn{background:var(--am-dim);border-color:rgba(251,191,36,.2)}.callout.green{background:var(--li-dim);border-color:rgba(163,230,53,.2)}.callout.info{background:var(--sk-dim);border-color:rgba(56,189,248,.2)}
+hr.div{border:none;border-top:1px solid var(--border);margin:52px 0}
+.cw{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin:18px 0}.cw-title{font-family:var(--mono);font-size:.72rem;color:var(--accent);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px}
+.ctrls{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.cbtn{font-family:var(--mono);font-size:.78rem;padding:7px 14px;border:1px solid var(--border);border-radius:6px;background:var(--surface2);color:var(--text);cursor:pointer;transition:all .2s}.cbtn:hover{border-color:var(--accent);color:var(--accent)}.cbtn.on{background:var(--ac-dim);border-color:var(--accent);color:var(--accent)}
+.out{background:#08040c;border:1px solid var(--border);border-radius:6px;padding:14px 16px;font-family:var(--mono);font-size:.82rem;color:var(--lime);line-height:1.6;margin:10px 0;white-space:pre-wrap;min-height:36px}
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}.sitem{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 14px}.sitem code{font-family:var(--mono);font-size:.82rem;color:var(--accent)}.sitem .d{font-size:.86rem;color:var(--muted);margin-top:3px}
+.qcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:22px;margin:18px 0}.qq{font-family:var(--serif);font-size:1.05rem;color:var(--heading);margin-bottom:12px}.qopts{display:flex;flex-direction:column;gap:7px}.qo{display:flex;align-items:center;gap:10px;padding:11px 14px;border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:.9rem;transition:all .2s}.qo:hover{border-color:var(--accent)}.qo.c{border-color:var(--lime);background:var(--li-dim);color:var(--lime)}.qo.w{border-color:var(--rose);background:var(--ro-dim);color:var(--rose)}.qo.d{pointer-events:none;opacity:.85}
+.ql{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.75rem;font-weight:600;background:var(--surface2);color:var(--muted);flex-shrink:0}.qo.c .ql{background:var(--lime);color:#000}.qo.w .ql{background:var(--rose);color:#fff}
+.qfb{margin-top:10px;padding:10px 12px;border-radius:6px;font-size:.88rem;display:none;line-height:1.6}.qfb.show{display:block}.qfb.p{background:var(--li-dim);color:var(--lime);border-left:3px solid var(--lime)}.qfb.f{background:var(--ro-dim);color:var(--rose);border-left:3px solid var(--rose)}
+.text-input{width:100%;padding:10px 14px;font-family:var(--sans);font-size:.95rem;border:1px solid var(--border);border-radius:6px;background:var(--surface2);color:var(--text);margin:8px 0;outline:none}.text-input:focus{border-color:var(--accent)}
+.chat-window{background:#08040c;border:1px solid var(--border);border-radius:var(--r);padding:16px;margin:10px 0;max-height:360px;overflow-y:auto}
+.chat-msg{margin:8px 0;display:flex;gap:8px;align-items:flex-start}.chat-avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0}.chat-bubble-inner{padding:8px 12px;border-radius:10px;font-size:.9rem;max-width:80%;line-height:1.5}
+.chat-user-av{background:var(--ac-dim);border:1px solid rgba(232,121,249,.2)}.chat-asst-av{background:var(--li-dim);border:1px solid rgba(163,230,53,.2)}
+.chat-user-bub{background:var(--ac-dim);border:1px solid rgba(232,121,249,.15);margin-left:auto;border-bottom-right-radius:4px}
+.chat-asst-bub{background:var(--surface2);border:1px solid var(--border);border-bottom-left-radius:4px}
+@media(max-width:600px){.hero h1{font-size:1.8rem}.sgrid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="pbar"><div class="pfill" id="pf"></div></div>
+<div class="container">
+
+<div class="hero">
+<div class="hero-tag">Week 7 &middot; Lesson 3</div>
+<h1>Building a <em>Chatbot</em></h1>
+<p>The final lesson! Build a complete chatbot with system prompts, conversation history, and an interactive interface.</p>
+</div>
+<hr class="div">
+
+<!-- PART 1: CHATBOT CLASS -->
+<div class="section" id="s1">
+<div class="stag">Part 01</div>
+<h2>The Chatbot Class</h2>
+<p>A chatbot is more than just a model. It wraps the model with <strong>conversation history</strong>, <strong>system prompts</strong>, and a clean interface.</p>
+
+<pre><span class="kw">class</span> <span class="fn">Chatbot</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, model, tokenizer, system_prompt=<span class="num">None</span>):
+        self.model = model
+        self.tokenizer = tokenizer
+        self.system_prompt = system_prompt
+        self.history = []
+
+    <span class="kw">def</span> <span class="fn">chat</span>(self, message, temperature=<span class="num">0.7</span>):
+        <span class="cm"># Encode prompt with optional system message</span>
+        prompt_ids = self.tokenizer.encode_prompt(
+            message, self.system_prompt
+        )
+        <span class="cm"># Generate response</span>
+        output = self.model.generate(prompt_ids, end_id=END)
+        response = self.tokenizer.decode(output)
+        <span class="cm"># Save to history</span>
+        self.history.append({<span class="str">'user'</span>: message, <span class="str">'assistant'</span>: response})
+        <span class="kw">return</span> response</pre>
+
+<div class="cw">
+<div class="cw-title">&#9656; Interactive Chat Demo</div>
+<div class="chat-window" id="chatWindow"></div>
+<div style="display:flex;gap:8px;margin-top:8px;">
+<input class="text-input" id="chatInput" placeholder="Type a message..." style="flex:1;margin:0;" onkeydown="if(event.key==='Enter')sendMsg()">
+<button class="cbtn" onclick="sendMsg()" style="padding:10px 18px;">Send</button>
+</div>
+<div class="ctrls"><button class="cbtn" onclick="clearChat()">Clear Chat</button></div>
+</div>
+</div>
+<hr class="div">
+
+<!-- PART 2: SYSTEM PROMPTS -->
+<div class="section" id="s2">
+<div class="stag">Part 02</div>
+<h2>System Prompts for Personality</h2>
+<p>System prompts let you <strong>customize the chatbot's behavior</strong> without retraining. The system message is prepended to the prompt with a <code class="il">&lt;SYS&gt;</code> token.</p>
+
+<pre><span class="cm"># With system prompt:</span>
+<span class="str">"&lt;SYS&gt; You are a friendly teacher. &lt;USER&gt; What is the sun? &lt;ASST&gt;"</span>
+
+<span class="cm"># Without system prompt:</span>
+<span class="str">"&lt;USER&gt; What is the sun? &lt;ASST&gt;"</span></pre>
+
+<div class="cw">
+<div class="cw-title">&#9656; Personality Demo</div>
+<p style="font-size:.88rem;color:var(--muted);margin-bottom:8px;">See how the same question gets different responses with different system prompts:</p>
+<div class="ctrls">
+<button class="cbtn on" onclick="showPersonality('default')">No System Prompt</button>
+<button class="cbtn" onclick="showPersonality('friendly')">Friendly Teacher</button>
+<button class="cbtn" onclick="showPersonality('pirate')">Pirate Captain</button>
+<button class="cbtn" onclick="showPersonality('scientist')">Scientist</button>
+</div>
+<div class="out" id="personalityOut"></div>
+</div>
+
+<div class="callout info"><strong>In production:</strong> System prompts are how companies customize ChatGPT for specific use cases. A customer support bot gets "You are a helpful support agent." A coding assistant gets "You are an expert programmer." Same model, different behavior!</div>
+
+<div class="qcard" id="q1"><div class="qq">What is the purpose of a system prompt?</div><div class="qopts">
+<div class="qo" onclick="ck('q1',this,false)"><span class="ql">A</span> To retrain the model for a new task</div>
+<div class="qo" onclick="ck('q1',this,true)"><span class="ql">B</span> To customize the chatbot's behavior and personality without retraining</div>
+<div class="qo" onclick="ck('q1',this,false)"><span class="ql">C</span> To fix bugs in the model</div>
+<div class="qo" onclick="ck('q1',this,false)"><span class="ql">D</span> To compress the conversation</div>
+</div><div class="qfb" id="q1-fb"></div></div>
+</div>
+<hr class="div">
+
+<!-- PART 3: EVERYTHING TOGETHER -->
+<div class="section" id="s3">
+<div class="stag">Part 03</div>
+<h2>The Complete Picture</h2>
+<p>This chatbot brings together <strong>everything from the entire course</strong>:</p>
+
+<div class="sgrid">
+<div class="sitem"><code>Week 2</code><div class="d">Tokenization with special tokens (&lt;USER&gt;, &lt;ASST&gt;, &lt;END&gt;)</div></div>
+<div class="sitem"><code>Week 3</code><div class="d">Multi-head causal attention in every transformer block</div></div>
+<div class="sitem"><code>Week 4</code><div class="d">Complete GPT architecture with residuals and layer norm</div></div>
+<div class="sitem"><code>Week 5</code><div class="d">Temperature-based sampling for response generation</div></div>
+<div class="sitem"><code>Week 6</code><div class="d">Fine-tuning techniques and evaluation principles</div></div>
+<div class="sitem"><code>Week 7</code><div class="d">Instruction following, loss masking, system prompts</div></div>
+</div>
+
+<div class="cw">
+<div class="cw-title">&#9656; Architecture Review</div>
+<div class="ctrls">
+<button class="cbtn on" onclick="showArch('tokens')">1. Tokenization</button>
+<button class="cbtn" onclick="showArch('model')">2. Model</button>
+<button class="cbtn" onclick="showArch('training')">3. Training</button>
+<button class="cbtn" onclick="showArch('generation')">4. Generation</button>
+</div>
+<div class="out" id="archOut"></div>
+</div>
+
+<div class="qcard" id="q2"><div class="qq">Which week's concepts are used in the loss masking for instruction tuning?</div><div class="qopts">
+<div class="qo" onclick="ck('q2',this,false)"><span class="ql">A</span> Week 2 (tokenization) only</div>
+<div class="qo" onclick="ck('q2',this,false)"><span class="ql">B</span> Week 5 (evaluation) only</div>
+<div class="qo" onclick="ck('q2',this,true)"><span class="ql">C</span> Week 2 (special tokens to find response start) + Week 5 (loss computation with ignore_index)</div>
+<div class="qo" onclick="ck('q2',this,false)"><span class="ql">D</span> Week 3 (attention masking)</div>
+</div><div class="qfb" id="q2-fb"></div></div>
+</div>
+<hr class="div">
+
+<!-- SUMMARY -->
+<div class="section" id="s4">
+<div class="stag">Summary</div>
+<h2>Key Takeaways</h2>
+<div class="sgrid">
+<div class="sitem"><code>Chatbot Class</code><div class="d">Wraps model with history, system prompts, and clean chat() interface.</div></div>
+<div class="sitem"><code>System Prompts</code><div class="d">&lt;SYS&gt; token customizes behavior without retraining. Like ChatGPT's system message.</div></div>
+<div class="sitem"><code>Full Stack</code><div class="d">Tokenizer + Dataset + GPT + Training + Generation = complete chatbot.</div></div>
+<div class="sitem"><code>Course Integration</code><div class="d">Uses concepts from every single week of the course.</div></div>
+</div>
+<div class="callout green"><strong>Final step:</strong> The Week 7 Project &mdash; Your Capstone! Build a complete chatbot from scratch with a comprehensive instruction dataset, personality support, and interactive mode. You'll graduate having built your own mini ChatGPT!</div>
+</div>
+
+</div>
+
+<script>
+var secs=document.querySelectorAll('.section');
+function upd(){var st=window.scrollY,h=document.body.scrollHeight-innerHeight;document.getElementById('pf').style.width=Math.min(100,st/h*100)+'%';secs.forEach(function(s){if(s.getBoundingClientRect().top<innerHeight*.85)s.classList.add('vis')});}
+window.addEventListener('scroll',upd);upd();
+
+// Chat demo
+var responses={'hello':'Hello! How can I help you today?','hi':'Hi there! What can I do for you?','how are you':'I\'m doing well, thank you! How can I help?','what is the capital of france':'The capital of France is Paris.','what is the capital of japan':'The capital of Japan is Tokyo.','what is 2 plus 2':'2 plus 2 equals 4.','what is 5 times 3':'5 times 3 equals 15.','say hello in spanish':'Hola!','thank you':'You\'re welcome! Anything else?','goodbye':'Goodbye! Have a wonderful day!','what can you do':'I can answer questions, chat, do math, and help with various tasks.','what is the sun':'The sun is a star at the center of our solar system that provides light and heat.','who are you':'I\'m an AI assistant here to help you!','what is gravity':'Gravity is a force that attracts objects with mass toward each other.'};
+var fallbacks=['I\'m not sure about that, but I\'m learning!','That\'s an interesting question! Let me think...','I\'d need more training data to answer that well.','Could you try rephrasing that?'];
+function getResponse(msg){
+  var key=msg.toLowerCase().replace(/[!?.,']/g,'').trim();
+  if(responses[key])return responses[key];
+  for(var k in responses){if(key.indexOf(k)>-1||k.indexOf(key)>-1)return responses[k];}
+  if(key.indexOf('capital')>-1)return 'I know many capitals! Try asking about France, Japan, Italy, or Spain.';
+  if(key.indexOf('plus')>-1||key.indexOf('times')>-1||key.indexOf('minus')>-1)return 'I can do basic math! Try "What is 2 plus 2?" or "What is 5 times 3?"';
+  return fallbacks[Math.floor(Math.random()*fallbacks.length)];
+}
+function addMsg(who,text){
+  var w=document.getElementById('chatWindow');
+  var isUser=who==='user';
+  w.innerHTML+='<div class="chat-msg" style="flex-direction:'+(isUser?'row-reverse':'row')+'"><div class="chat-avatar '+(isUser?'chat-user-av':'chat-asst-av')+'">'+(isUser?'U':'A')+'</div><div class="chat-bubble-inner '+(isUser?'chat-user-bub':'chat-asst-bub')+'">'+text+'</div></div>';
+  w.scrollTop=w.scrollHeight;
+}
+function sendMsg(){
+  var inp=document.getElementById('chatInput');
+  var msg=inp.value.trim();
+  if(!msg)return;
+  addMsg('user',msg);
+  inp.value='';
+  setTimeout(function(){addMsg('assistant',getResponse(msg));},300+Math.random()*400);
+}
+function clearChat(){document.getElementById('chatWindow').innerHTML='';addMsg('assistant','Hello! I\'m your AI assistant. Try asking me a question!');}
+clearChat();
+
+// Personality
+function showPersonality(mode){
+  document.querySelectorAll('#s2 .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+  var o=document.getElementById('personalityOut');
+  var info={
+    'default':'NO SYSTEM PROMPT\n\nUser: What is the sun?\nBot: The sun is a star at the center of our\n     solar system that provides light and heat.\n\nUser: Hello!\nBot: Hello! How can I help you today?',
+    friendly:'SYSTEM: "You are a friendly, encouraging teacher."\n\nUser: What is the sun?\nBot: Great question! The sun is a wonderful star at\n     the center of our solar system. It gives us light\n     and warmth every day. Isn\'t that amazing?\n\nUser: Hello!\nBot: Hey there, wonderful student! I\'m so happy\n     to see you today! What shall we learn?',
+    pirate:'SYSTEM: "You are a pirate captain."\n\nUser: What is the sun?\nBot: Arr, the sun be that great ball o\' fire in\n     the sky, matey! It guides us pirates across\n     the seven seas! Without it, we\'d be lost!\n\nUser: Hello!\nBot: Ahoy, landlubber! Welcome aboard me ship!\n     What treasure of knowledge do ye seek?',
+    scientist:'SYSTEM: "You are a precise scientist."\n\nUser: What is the sun?\nBot: The sun is a G-type main-sequence star (G2V)\n     with a surface temperature of approximately\n     5,778 K. It comprises 99.86% of the solar\n     system\'s mass.\n\nUser: Hello!\nBot: Greetings. How may I assist you with your\n     scientific inquiry today?'
+  };
+  o.textContent=info[mode];
+}
+showPersonality('default');
+
+// Architecture
+function showArch(mode){
+  document.querySelectorAll('#s3 .cw .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+  var o=document.getElementById('archOut');
+  var info={
+    tokens:'1. TOKENIZATION (Week 2 + Week 7)\n\nSpecial tokens: <PAD> <UNK> <SYS> <USER> <ASST> <END>\n\nTraining encoding:\n  <SYS> system prompt <USER> message <ASST> response <END>\n\nGeneration encoding:\n  <SYS> system prompt <USER> message <ASST>\n  (model generates from here)\n\nVocabulary: ~500 tokens from training data\nMax length: 48-64 tokens per sequence',
+    model:'2. MODEL ARCHITECTURE (Weeks 3-4)\n\nChatGPT(\n  tok_emb:    Embedding(500, 64)\n  pos_emb:    Embedding(48, 64)\n  blocks:     3 x TransformerBlock\n    - LayerNorm + Multi-Head Causal Attention\n    - LayerNorm + Feed-Forward Network\n    - Residual connections\n  ln_f:       LayerNorm(64)\n  lm_head:    Linear(64, 500)  [weight-tied]\n)\n\nParameters: ~85,000',
+    training:'3. TRAINING (Weeks 5-7)\n\nDataset: ~40-90 instruction-response pairs\nLoss: Cross-entropy with ignore_index=-100\n  - Prompt tokens: masked (no loss)\n  - Response tokens: loss computed\n\nOptimizer: AdamW (lr=0.001)\nGradient clipping: max_norm=1.0\nEpochs: 30-35\nBatch size: 8\n\nTraining time: ~30 seconds on CPU',
+    generation:'4. GENERATION (Week 5 + Week 7)\n\nProcess:\n  1. Encode prompt: <USER> msg <ASST>\n  2. Forward pass through model\n  3. Get logits for last position\n  4. Apply temperature (0.7)\n  5. Softmax -> probabilities\n  6. Sample next token\n  7. Append to sequence\n  8. Repeat until <END> or max_tokens\n  9. Decode response tokens\n\nTemperature: 0.7 (balanced creativity)\nMax new tokens: 30'
+  };
+  o.textContent=info[mode];
+}
+showArch('tokens');
+
+function ck(id,el,ok){var card=document.getElementById(id);if(card.dataset.a)return;card.dataset.a='1';card.querySelectorAll('.qo').forEach(function(o){o.classList.add('d')});var fb=document.getElementById(id+'-fb');if(ok){el.classList.add('c');fb.className='qfb p show';fb.textContent='\u2705 Correct!';}else{el.classList.add('w');card.querySelectorAll('.qo').forEach(function(o){if(o.onclick&&o.onclick.toString().indexOf('true')>-1)o.classList.add('c')});fb.className='qfb f show';var ex={q1:'System prompts customize behavior at inference time without any retraining. The same model can act as a teacher, pirate, scientist, or customer support agent just by changing the system prompt. This is how ChatGPT is adapted for different use cases.',q2:'Loss masking combines Week 2 concepts (special tokens like <ASST> to identify where the response starts) with Week 5 concepts (cross-entropy loss with ignore_index=-100 to skip masked positions). Both weeks\' knowledge is needed!'};fb.textContent='\u274c '+ex[id];}}
+</script>
+</body>
+</html>

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week 7 &middot; Lesson 1: Introduction to Instruction Fine-Tuning</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;1,400&family=Source+Code+Pro:wght@400;500;600&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0e0812;--surface:#18121e;--surface2:#221830;--border:#3a2850;--text:#d0c0e8;--muted:#8870a8;--heading:#f8f0ff;--accent:#e879f9;--ac-dim:rgba(232,121,249,.12);--ac-glow:rgba(232,121,249,.3);--amber:#fbbf24;--am-dim:rgba(251,191,36,.12);--rose:#fb7185;--ro-dim:rgba(251,113,133,.12);--sky:#38bdf8;--sk-dim:rgba(56,189,248,.12);--lime:#a3e635;--li-dim:rgba(163,230,53,.12);--mono:'Source Code Pro',monospace;--serif:'Fraunces',serif;--sans:'Public Sans',sans-serif;--r:10px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);line-height:1.76;font-size:15.5px}
+.container{max-width:760px;margin:0 auto;padding:48px 24px 100px}
+.pbar{position:fixed;top:0;left:0;right:0;height:3px;background:var(--surface);z-index:999}.pfill{height:100%;width:0%;background:var(--accent);box-shadow:0 0 8px var(--ac-glow);transition:width .3s}
+.hero{text-align:center;padding:32px 0 48px}.hero-tag{font-family:var(--mono);font-size:.72rem;color:var(--accent);letter-spacing:.14em;text-transform:uppercase}.hero h1{font-family:var(--serif);font-size:2.5rem;font-weight:700;color:var(--heading);margin:8px 0}.hero h1 em{color:var(--accent);font-style:italic}.hero p{color:var(--muted);font-size:1.05rem;max-width:560px;margin:0 auto}
+.section{margin-bottom:56px;opacity:0;transform:translateY(20px);transition:all .5s}.section.vis{opacity:1;transform:none}.stag{font-family:var(--mono);font-size:.72rem;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}.section h2{font-family:var(--serif);font-size:1.55rem;color:var(--heading);margin-bottom:14px}.section h3{font-family:var(--serif);font-size:1.2rem;color:var(--heading);margin:20px 0 10px}.section p{margin-bottom:12px}.section p strong{color:var(--heading)}
+pre{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:var(--r);padding:16px 18px;margin:14px 0;overflow-x:auto;font-family:var(--mono);font-size:.82rem;line-height:1.6;color:var(--text)}
+code.il{font-family:var(--mono);font-size:.86em;color:var(--accent);background:var(--ac-dim);padding:2px 6px;border-radius:4px}
+.kw{color:#fca5a5}.fn{color:#93c5fd}.num{color:#fbbf24}.str{color:#86efac}.cm{color:var(--muted);font-style:italic}
+.callout{background:var(--ac-dim);border:1px solid rgba(232,121,249,.2);border-radius:var(--r);padding:16px 18px;margin:18px 0;font-size:.93rem}.callout.warn{background:var(--am-dim);border-color:rgba(251,191,36,.2)}.callout.green{background:var(--li-dim);border-color:rgba(163,230,53,.2)}.callout.info{background:var(--sk-dim);border-color:rgba(56,189,248,.2)}
+.analogy{border-left:3px solid var(--amber);padding:10px 16px;margin:16px 0;background:var(--am-dim);border-radius:0 var(--r) var(--r) 0;font-size:.93rem}.analogy strong{color:var(--heading)}
+hr.div{border:none;border-top:1px solid var(--border);margin:52px 0}
+.cw{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin:18px 0}.cw-title{font-family:var(--mono);font-size:.72rem;color:var(--accent);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px}
+.ctrls{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.cbtn{font-family:var(--mono);font-size:.78rem;padding:7px 14px;border:1px solid var(--border);border-radius:6px;background:var(--surface2);color:var(--text);cursor:pointer;transition:all .2s}.cbtn:hover{border-color:var(--accent);color:var(--accent)}.cbtn.on{background:var(--ac-dim);border-color:var(--accent);color:var(--accent)}
+.out{background:#08040c;border:1px solid var(--border);border-radius:6px;padding:14px 16px;font-family:var(--mono);font-size:.82rem;color:var(--lime);line-height:1.6;margin:10px 0;white-space:pre-wrap;min-height:36px}
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}.sitem{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 14px}.sitem code{font-family:var(--mono);font-size:.82rem;color:var(--accent)}.sitem .d{font-size:.86rem;color:var(--muted);margin-top:3px}
+.qcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:22px;margin:18px 0}.qq{font-family:var(--serif);font-size:1.05rem;color:var(--heading);margin-bottom:12px}.qopts{display:flex;flex-direction:column;gap:7px}.qo{display:flex;align-items:center;gap:10px;padding:11px 14px;border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:.9rem;transition:all .2s}.qo:hover{border-color:var(--accent)}.qo.c{border-color:var(--lime);background:var(--li-dim);color:var(--lime)}.qo.w{border-color:var(--rose);background:var(--ro-dim);color:var(--rose)}.qo.d{pointer-events:none;opacity:.85}
+.ql{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.75rem;font-weight:600;background:var(--surface2);color:var(--muted);flex-shrink:0}.qo.c .ql{background:var(--lime);color:#000}.qo.w .ql{background:var(--rose);color:#fff}
+.qfb{margin-top:10px;padding:10px 12px;border-radius:6px;font-size:.88rem;display:none;line-height:1.6}.qfb.show{display:block}.qfb.p{background:var(--li-dim);color:var(--lime);border-left:3px solid var(--lime)}.qfb.f{background:var(--ro-dim);color:var(--rose);border-left:3px solid var(--rose)}
+.step{display:flex;gap:12px;margin:10px 0;align-items:flex-start}.step-n{font-family:var(--mono);font-size:.75rem;color:#fff;background:var(--accent);width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}.step-c{flex:1}
+.chat-bubble{padding:10px 14px;border-radius:12px;margin:6px 0;max-width:85%;font-size:.9rem}.chat-user{background:var(--ac-dim);border:1px solid rgba(232,121,249,.2);margin-left:auto;text-align:right;border-bottom-right-radius:4px}.chat-asst{background:var(--surface2);border:1px solid var(--border);border-bottom-left-radius:4px}.chat-label{font-family:var(--mono);font-size:.7rem;color:var(--muted);margin-bottom:3px}
+.mask-row{display:flex;gap:4px;margin:4px 0;flex-wrap:wrap}.mask-tok{padding:4px 8px;border-radius:4px;font-family:var(--mono);font-size:.78rem}
+@media(max-width:600px){.hero h1{font-size:1.8rem}.sgrid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="pbar"><div class="pfill" id="pf"></div></div>
+<div class="container">
+
+<div class="hero">
+<div class="hero-tag">Week 7 &middot; Lesson 1</div>
+<h1>Instruction <em>Fine-Tuning</em></h1>
+<p>The secret sauce that transforms a text predictor into ChatGPT &mdash; teaching a model to follow instructions and generate helpful responses.</p>
+</div>
+<hr class="div">
+
+<!-- PART 1: THE JOURNEY -->
+<div class="section" id="s1">
+<div class="stag">Part 01</div>
+<h2>The Journey to ChatGPT</h2>
+<p>ChatGPT didn't appear from nowhere. It's the result of three training stages, each building on the previous one:</p>
+
+<div class="step"><div class="step-n">1</div><div class="step-c"><strong>Pretraining</strong> (Weeks 4-5): Train on massive text data. The model learns language patterns, grammar, facts, and reasoning. Result: great at completing text, but doesn't follow instructions.</div></div>
+<div class="step"><div class="step-n">2</div><div class="step-c"><strong>Supervised Fine-Tuning (SFT)</strong> (This week!): Train on instruction-response pairs. The model learns to follow commands. Result: follows instructions like ChatGPT.</div></div>
+<div class="step"><div class="step-n">3</div><div class="step-c"><strong>RLHF</strong> (Advanced): Reinforcement Learning from Human Feedback. Humans rate responses and the model learns preferences. Result: more helpful, harmless, and honest.</div></div>
+
+<div class="cw">
+<div class="cw-title">&#9656; Base Model vs Instruction-Tuned</div>
+<div class="ctrls">
+<button class="cbtn on" onclick="showModel('base')">Base GPT</button>
+<button class="cbtn" onclick="showModel('instruct')">Instruction-Tuned</button>
+</div>
+<div class="out" id="modelOut"></div>
+</div>
+
+<div class="analogy"><strong>Analogy:</strong> A base model is like a brilliant librarian who has read every book but only knows how to continue sentences. Instruction tuning teaches that librarian to actually <em>answer questions</em> and <em>help people</em>. Same knowledge, different behavior.</div>
+
+<div class="qcard" id="q1"><div class="qq">What does a base (pretrained-only) GPT model do when given "Write a poem about cats"?</div><div class="qopts">
+<div class="qo" onclick="ck('q1',this,true)"><span class="ql">A</span> Continues the text: "Write a poem about cats and dogs. The poem should..."</div>
+<div class="qo" onclick="ck('q1',this,false)"><span class="ql">B</span> Writes a poem about cats</div>
+<div class="qo" onclick="ck('q1',this,false)"><span class="ql">C</span> Returns an error</div>
+<div class="qo" onclick="ck('q1',this,false)"><span class="ql">D</span> Classifies the text as "creative writing"</div>
+</div><div class="qfb" id="q1-fb"></div></div>
+</div>
+<hr class="div">
+
+<!-- PART 2: DATA FORMAT -->
+<div class="section" id="s2">
+<div class="stag">Part 02</div>
+<h2>Training Data Format</h2>
+<p>Instruction tuning uses pairs of <strong>(instruction, response)</strong>. We format them with special tokens so the model knows what's the user's input and what's the expected output.</p>
+
+<pre><span class="cm"># Format: &lt;USER&gt; instruction &lt;ASST&gt; response &lt;END&gt;</span>
+
+<span class="str">"&lt;USER&gt; What is the capital of France? &lt;ASST&gt; The capital of France is Paris. &lt;END&gt;"</span>
+<span class="str">"&lt;USER&gt; Say hello in Spanish. &lt;ASST&gt; Hola! &lt;END&gt;"</span>
+<span class="str">"&lt;USER&gt; What is 2 plus 2? &lt;ASST&gt; 2 plus 2 equals 4. &lt;END&gt;"</span></pre>
+
+<div class="cw">
+<div class="cw-title">&#9656; Instruction Categories</div>
+<p style="font-size:.88rem;color:var(--muted);margin-bottom:8px;">A diverse dataset covers many task types. Click to explore:</p>
+<div class="ctrls">
+<button class="cbtn on" onclick="showCategory('qa')">Q&A</button>
+<button class="cbtn" onclick="showCategory('math')">Math</button>
+<button class="cbtn" onclick="showCategory('translate')">Translation</button>
+<button class="cbtn" onclick="showCategory('creative')">Creative</button>
+<button class="cbtn" onclick="showCategory('chat')">Conversation</button>
+</div>
+<div id="catExamples"></div>
+</div>
+
+<div class="callout info"><strong>Diversity matters!</strong> The more diverse the instruction types, the more capable the model becomes. A model trained only on Q&A won't know how to translate. A model trained on all types becomes a general-purpose assistant.</div>
+</div>
+<hr class="div">
+
+<!-- PART 3: LOSS MASKING -->
+<div class="section" id="s3">
+<div class="stag">Part 03</div>
+<h2>Loss Masking: The Key Insight</h2>
+<p>The most important technical detail: we <strong>only compute loss on response tokens</strong>, not the prompt. This teaches the model to generate responses, not to predict what the user will say.</p>
+
+<div class="cw">
+<div class="cw-title">&#9656; Interactive Loss Masking Visualization</div>
+<div class="ctrls">
+<button class="cbtn on" onclick="showMask('simple')">Simple Example</button>
+<button class="cbtn" onclick="showMask('longer')">Longer Example</button>
+<button class="cbtn" onclick="showMask('math')">Math Example</button>
+</div>
+<div id="maskVis"></div>
+<div class="out" id="maskOut"></div>
+</div>
+
+<pre><span class="cm"># In PyTorch, -100 means "ignore this position"</span>
+
+labels = [<span class="num">-100</span>] * prompt_length + response_ids
+loss = F.cross_entropy(logits, labels, ignore_index=<span class="num">-100</span>)
+
+<span class="cm"># Loss is ONLY computed on response tokens!</span>
+<span class="cm"># The model learns: "given &lt;USER&gt; ... &lt;ASST&gt;, generate the right response"</span></pre>
+
+<div class="callout warn"><strong>Without loss masking</strong>, the model would try to predict the user's instruction too, which wastes capacity and can hurt response quality. It would spend effort learning to predict questions rather than learning to generate answers.</div>
+
+<div class="qcard" id="q2"><div class="qq">Why do we mask the prompt tokens in the loss computation?</div><div class="qopts">
+<div class="qo" onclick="ck('q2',this,false)"><span class="ql">A</span> To make training faster</div>
+<div class="qo" onclick="ck('q2',this,false)"><span class="ql">B</span> Because the prompt tokens are always the same</div>
+<div class="qo" onclick="ck('q2',this,true)"><span class="ql">C</span> We want the model to learn to generate responses, not predict the user's instructions</div>
+<div class="qo" onclick="ck('q2',this,false)"><span class="ql">D</span> To reduce memory usage</div>
+</div><div class="qfb" id="q2-fb"></div></div>
+</div>
+<hr class="div">
+
+<!-- PART 4: WHY IT WORKS -->
+<div class="section" id="s4">
+<div class="stag">Part 04</div>
+<h2>Why Instruction Tuning Works</h2>
+<p>The pretrained model <strong>already has the knowledge</strong>. It knows that Paris is the capital of France, that 2+2=4, and what a poem looks like. Instruction tuning just teaches it a <strong>new pattern</strong>: "When you see <code class="il">&lt;USER&gt; ... &lt;ASST&gt;</code>, generate a helpful response."</p>
+
+<div class="cw">
+<div class="cw-title">&#9656; Knowledge vs Pattern</div>
+<div class="ctrls">
+<button class="cbtn on" onclick="showWhy('knowledge')">Existing Knowledge</button>
+<button class="cbtn" onclick="showWhy('pattern')">New Pattern</button>
+<button class="cbtn" onclick="showWhy('result')">Combined Result</button>
+</div>
+<div class="out" id="whyOut"></div>
+</div>
+
+<p>This is why instruction tuning needs <strong>relatively little data</strong> &mdash; thousands of examples, not billions. You're not teaching new facts, just a new format for accessing existing knowledge.</p>
+
+<div class="qcard" id="q3"><div class="qq">Instruction tuning primarily teaches the model:</div><div class="qopts">
+<div class="qo" onclick="ck('q3',this,false)"><span class="ql">A</span> New facts and world knowledge</div>
+<div class="qo" onclick="ck('q3',this,false)"><span class="ql">B</span> Better grammar and syntax</div>
+<div class="qo" onclick="ck('q3',this,true)"><span class="ql">C</span> A new pattern for using its existing knowledge to answer questions</div>
+<div class="qo" onclick="ck('q3',this,false)"><span class="ql">D</span> How to do mathematics</div>
+</div><div class="qfb" id="q3-fb"></div></div>
+</div>
+<hr class="div">
+
+<!-- SUMMARY -->
+<div class="section" id="s5">
+<div class="stag">Summary</div>
+<h2>Key Takeaways</h2>
+<div class="sgrid">
+<div class="sitem"><code>Three Steps</code><div class="d">Pretraining &rarr; SFT (instruction tuning) &rarr; RLHF. We focus on step 2.</div></div>
+<div class="sitem"><code>Data Format</code><div class="d">&lt;USER&gt; instruction &lt;ASST&gt; response &lt;END&gt; with special tokens.</div></div>
+<div class="sitem"><code>Loss Masking</code><div class="d">Only compute loss on response tokens. Use -100 to mask the prompt.</div></div>
+<div class="sitem"><code>Task Diversity</code><div class="d">QA, math, translation, creative, conversation. More types = more capable.</div></div>
+</div>
+<div class="callout green"><strong>Next:</strong> Lesson 2 &mdash; Building an Instruction-Following Model! You'll implement the tokenizer, dataset with loss masking, and train a mini ChatGPT that can actually answer questions.</div>
+</div>
+
+</div>
+
+<script>
+var secs=document.querySelectorAll('.section');
+function upd(){var st=window.scrollY,h=document.body.scrollHeight-innerHeight;document.getElementById('pf').style.width=Math.min(100,st/h*100)+'%';secs.forEach(function(s){if(s.getBoundingClientRect().top<innerHeight*.85)s.classList.add('vis')});}
+window.addEventListener('scroll',upd);upd();
+
+function showModel(mode){
+  document.querySelectorAll('#s1 .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+  var o=document.getElementById('modelOut');
+  if(mode==='base'){
+    o.textContent='BASE GPT (pretrained only)\n\nInput:  "Write a poem about cats"\nOutput: "Write a poem about cats and dogs. The poem\n         should be at least 10 lines long and include\n         references to their behavior..."\n\nIt CONTINUES the text, not FOLLOWS the instruction!\nThe model sees your instruction as text to complete.\n\nInput:  "What is the capital of France?"\nOutput: "What is the capital of France? This question\n         has been asked by many students over the years..."';
+  } else {
+    o.textContent='INSTRUCTION-TUNED GPT\n\nInput:  "Write a poem about cats"\nOutput: "Soft paws padding through the night,\n         Whiskers twitching in moonlight,\n         Purring softly, warm and near,\n         A gentle friend, always here."\n\nIt FOLLOWS the instruction!\n\nInput:  "What is the capital of France?"\nOutput: "The capital of France is Paris."\n\nSame model, same knowledge \u2014 different behavior!';
+  }
+}
+showModel('base');
+
+function showCategory(cat){
+  document.querySelectorAll('#s2 .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+  var el=document.getElementById('catExamples');
+  var data={
+    qa:[['What is the capital of Japan?','The capital of Japan is Tokyo.'],['Who wrote Hamlet?','William Shakespeare wrote Hamlet.'],['What is the largest planet?','Jupiter is the largest planet in our solar system.']],
+    math:[['What is 2 plus 2?','2 plus 2 equals 4.'],['What is 5 times 3?','5 times 3 equals 15.'],['What is half of 100?','Half of 100 is 50.']],
+    translate:[['Say hello in Spanish.','Hola!'],['Say thank you in French.','Merci!'],['Say goodbye in German.','Auf Wiedersehen!']],
+    creative:[['Write a haiku about the ocean.','Waves crash on the shore,\nSalt and foam dance in the wind,\nEndless blue expanse.'],['Give me a metaphor for time.','Time is a river, flowing ever onward, never to return.']],
+    chat:[['Hello!','Hello! How can I help you today?'],['How are you?','I\'m doing well, thank you for asking!'],['Thank you!','You\'re welcome! Is there anything else I can help with?']]
+  };
+  var html='';
+  data[cat].forEach(function(pair){
+    html+='<div style="margin:8px 0;"><div class="chat-bubble chat-user"><div class="chat-label">USER</div>'+pair[0]+'</div><div class="chat-bubble chat-asst"><div class="chat-label">ASSISTANT</div>'+pair[1].replace(/\n/g,'<br>')+'</div></div>';
+  });
+  el.innerHTML=html;
+}
+showCategory('qa');
+
+function showMask(mode){
+  var el=document.getElementById('maskVis');
+  var o=document.getElementById('maskOut');
+  var examples={
+    simple:{prompt:['<USER>','What','is','2+2','?','<ASST>'],response:['4','.','<END>']},
+    longer:{prompt:['<USER>','What','is','the','capital','of','France','?','<ASST>'],response:['The','capital','of','France','is','Paris','.','<END>']},
+    math:{prompt:['<USER>','Calculate','5','times','3','.','<ASST>'],response:['5','times','3','equals','15','.','<END>']}
+  };
+  var ex=examples[mode];
+  var html='<div style="margin:8px 0;"><div style="font-size:.78rem;font-family:var(--mono);color:var(--muted);margin-bottom:4px;">TOKENS:</div><div class="mask-row">';
+  ex.prompt.forEach(function(t){html+='<span class="mask-tok" style="background:var(--ac-dim);color:var(--accent);border:1px solid rgba(232,121,249,.2);">'+t+'</span>';});
+  ex.response.forEach(function(t){html+='<span class="mask-tok" style="background:var(--li-dim);color:var(--lime);border:1px solid rgba(163,230,53,.2);">'+t+'</span>';});
+  html+='</div><div style="font-size:.78rem;font-family:var(--mono);color:var(--muted);margin:8px 0 4px;">LABELS (for loss):</div><div class="mask-row">';
+  ex.prompt.forEach(function(){html+='<span class="mask-tok" style="background:rgba(251,113,133,.08);color:var(--rose);border:1px solid rgba(251,113,133,.15);">-100</span>';});
+  ex.response.forEach(function(t){html+='<span class="mask-tok" style="background:var(--li-dim);color:var(--lime);border:1px solid rgba(163,230,53,.2);">'+t+'</span>';});
+  html+='</div></div>';
+  el.innerHTML=html;
+  o.textContent='Prompt tokens (pink): '+ex.prompt.length+' tokens \u2192 masked with -100 (no loss)\nResponse tokens (green): '+ex.response.length+' tokens \u2192 loss computed here\n\nThe model learns: "After seeing the prompt, generate these response tokens."';
+  document.querySelectorAll('#s3 .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+}
+showMask('simple');
+
+function showWhy(mode){
+  document.querySelectorAll('#s4 .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+  var o=document.getElementById('whyOut');
+  var info={
+    knowledge:'EXISTING KNOWLEDGE (from pretraining)\n\nThe model already knows:\n  \u2713 Paris is the capital of France\n  \u2713 2 + 2 = 4\n  \u2713 Shakespeare wrote Hamlet\n  \u2713 How to form grammatical sentences\n  \u2713 What a poem looks like\n  \u2713 How conversations flow\n\nThis knowledge was learned from billions of tokens\nduring months of pretraining.',
+    pattern:'NEW PATTERN (from instruction tuning)\n\nThe model learns ONE new pattern:\n\n  "<USER> {question}" \u2192 "<ASST> {helpful answer}"\n\nExamples:\n  "<USER> What is 2+2? <ASST>" \u2192 "4. <END>"\n  "<USER> Hello! <ASST>" \u2192 "Hello! How can I help? <END>"\n\nThis pattern becomes STRONGLY weighted after\njust thousands of examples.',
+    result:'COMBINED RESULT\n\nExisting knowledge + New pattern = ChatGPT behavior!\n\nUser: "What is the capital of France?"\n\n  1. Model recognizes the <USER>...<ASST> pattern\n  2. Knows it should generate a helpful response\n  3. Retrieves knowledge: Paris is the capital\n  4. Generates: "The capital of France is Paris. <END>"\n\nThe knowledge was always there.\nInstruction tuning just taught it WHEN and HOW\nto use that knowledge!'
+  };
+  o.textContent=info[mode];
+}
+showWhy('knowledge');
+
+function ck(id,el,ok){var card=document.getElementById(id);if(card.dataset.a)return;card.dataset.a='1';card.querySelectorAll('.qo').forEach(function(o){o.classList.add('d')});var fb=document.getElementById(id+'-fb');if(ok){el.classList.add('c');fb.className='qfb p show';fb.textContent='\u2705 Correct!';}else{el.classList.add('w');card.querySelectorAll('.qo').forEach(function(o){if(o.onclick&&o.onclick.toString().indexOf('true')>-1)o.classList.add('c')});fb.className='qfb f show';var ex={q1:'A base GPT model is trained on next-token prediction. It sees "Write a poem about cats" as text to continue, not an instruction to follow. So it generates text that naturally follows, like "...and dogs. The poem should..."',q2:'Loss masking ensures the model focuses its learning on generating good responses. Without masking, the model would waste capacity trying to predict the user\'s instruction (which is given, not generated). We want it to learn: given a prompt, generate the right response.',q3:'Instruction tuning primarily teaches a new behavioral pattern: "when you see <USER>...<ASST>, generate a helpful response." The factual knowledge already exists from pretraining. That\'s why it needs relatively little data \u2014 it\'s teaching a format, not new facts.'};fb.textContent='\u274c '+ex[id];}}
+</script>
+</body>
+</html>

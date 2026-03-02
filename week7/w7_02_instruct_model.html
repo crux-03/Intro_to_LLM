@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week 7 &middot; Lesson 2: Building an Instruction-Following Model</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;1,400&family=Source+Code+Pro:wght@400;500;600&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0e0812;--surface:#18121e;--surface2:#221830;--border:#3a2850;--text:#d0c0e8;--muted:#8870a8;--heading:#f8f0ff;--accent:#e879f9;--ac-dim:rgba(232,121,249,.12);--ac-glow:rgba(232,121,249,.3);--amber:#fbbf24;--am-dim:rgba(251,191,36,.12);--rose:#fb7185;--ro-dim:rgba(251,113,133,.12);--sky:#38bdf8;--sk-dim:rgba(56,189,248,.12);--lime:#a3e635;--li-dim:rgba(163,230,53,.12);--mono:'Source Code Pro',monospace;--serif:'Fraunces',serif;--sans:'Public Sans',sans-serif;--r:10px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);line-height:1.76;font-size:15.5px}
+.container{max-width:760px;margin:0 auto;padding:48px 24px 100px}
+.pbar{position:fixed;top:0;left:0;right:0;height:3px;background:var(--surface);z-index:999}.pfill{height:100%;width:0%;background:var(--accent);box-shadow:0 0 8px var(--ac-glow);transition:width .3s}
+.hero{text-align:center;padding:32px 0 48px}.hero-tag{font-family:var(--mono);font-size:.72rem;color:var(--accent);letter-spacing:.14em;text-transform:uppercase}.hero h1{font-family:var(--serif);font-size:2.5rem;font-weight:700;color:var(--heading);margin:8px 0}.hero h1 em{color:var(--accent);font-style:italic}.hero p{color:var(--muted);font-size:1.05rem;max-width:560px;margin:0 auto}
+.section{margin-bottom:56px;opacity:0;transform:translateY(20px);transition:all .5s}.section.vis{opacity:1;transform:none}.stag{font-family:var(--mono);font-size:.72rem;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}.section h2{font-family:var(--serif);font-size:1.55rem;color:var(--heading);margin-bottom:14px}.section h3{font-family:var(--serif);font-size:1.2rem;color:var(--heading);margin:20px 0 10px}.section p{margin-bottom:12px}.section p strong{color:var(--heading)}
+pre{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:var(--r);padding:16px 18px;margin:14px 0;overflow-x:auto;font-family:var(--mono);font-size:.82rem;line-height:1.6;color:var(--text)}
+code.il{font-family:var(--mono);font-size:.86em;color:var(--accent);background:var(--ac-dim);padding:2px 6px;border-radius:4px}
+.kw{color:#fca5a5}.fn{color:#93c5fd}.num{color:#fbbf24}.str{color:#86efac}.cm{color:var(--muted);font-style:italic}
+.callout{background:var(--ac-dim);border:1px solid rgba(232,121,249,.2);border-radius:var(--r);padding:16px 18px;margin:18px 0;font-size:.93rem}.callout.warn{background:var(--am-dim);border-color:rgba(251,191,36,.2)}.callout.green{background:var(--li-dim);border-color:rgba(163,230,53,.2)}.callout.info{background:var(--sk-dim);border-color:rgba(56,189,248,.2)}
+hr.div{border:none;border-top:1px solid var(--border);margin:52px 0}
+.cw{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin:18px 0}.cw-title{font-family:var(--mono);font-size:.72rem;color:var(--accent);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px}
+.ctrls{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.cbtn{font-family:var(--mono);font-size:.78rem;padding:7px 14px;border:1px solid var(--border);border-radius:6px;background:var(--surface2);color:var(--text);cursor:pointer;transition:all .2s}.cbtn:hover{border-color:var(--accent);color:var(--accent)}.cbtn.on{background:var(--ac-dim);border-color:var(--accent);color:var(--accent)}
+.out{background:#08040c;border:1px solid var(--border);border-radius:6px;padding:14px 16px;font-family:var(--mono);font-size:.82rem;color:var(--lime);line-height:1.6;margin:10px 0;white-space:pre-wrap;min-height:36px}
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}.sitem{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 14px}.sitem code{font-family:var(--mono);font-size:.82rem;color:var(--accent)}.sitem .d{font-size:.86rem;color:var(--muted);margin-top:3px}
+.qcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:22px;margin:18px 0}.qq{font-family:var(--serif);font-size:1.05rem;color:var(--heading);margin-bottom:12px}.qopts{display:flex;flex-direction:column;gap:7px}.qo{display:flex;align-items:center;gap:10px;padding:11px 14px;border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:.9rem;transition:all .2s}.qo:hover{border-color:var(--accent)}.qo.c{border-color:var(--lime);background:var(--li-dim);color:var(--lime)}.qo.w{border-color:var(--rose);background:var(--ro-dim);color:var(--rose)}.qo.d{pointer-events:none;opacity:.85}
+.ql{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.75rem;font-weight:600;background:var(--surface2);color:var(--muted);flex-shrink:0}.qo.c .ql{background:var(--lime);color:#000}.qo.w .ql{background:var(--rose);color:#fff}
+.qfb{margin-top:10px;padding:10px 12px;border-radius:6px;font-size:.88rem;display:none;line-height:1.6}.qfb.show{display:block}.qfb.p{background:var(--li-dim);color:var(--lime);border-left:3px solid var(--lime)}.qfb.f{background:var(--ro-dim);color:var(--rose);border-left:3px solid var(--rose)}
+canvas{display:block;width:100%;border-radius:6px}
+@media(max-width:600px){.hero h1{font-size:1.8rem}.sgrid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="pbar"><div class="pfill" id="pf"></div></div>
+<div class="container">
+
+<div class="hero">
+<div class="hero-tag">Week 7 &middot; Lesson 2</div>
+<h1>Building the <em>Instruct Model</em></h1>
+<p>Implement a complete instruction-following model from scratch &mdash; tokenizer with special tokens, dataset with loss masking, and a trainable mini ChatGPT.</p>
+</div>
+<hr class="div">
+
+<!-- PART 1: TOKENIZER -->
+<div class="section" id="s1">
+<div class="stag">Part 01</div>
+<h2>Tokenizer with Special Tokens</h2>
+<p>Our tokenizer needs <strong>special tokens</strong> to mark the boundaries between user input, assistant output, and sequence end.</p>
+
+<pre><span class="kw">class</span> <span class="fn">InstructionTokenizer</span>:
+    special_tokens = [<span class="str">'&lt;PAD&gt;'</span>, <span class="str">'&lt;UNK&gt;'</span>, <span class="str">'&lt;USER&gt;'</span>, <span class="str">'&lt;ASST&gt;'</span>, <span class="str">'&lt;END&gt;'</span>]
+
+    <span class="kw">def</span> <span class="fn">encode_instruction</span>(self, instruction, response):
+        <span class="cm"># Format: &lt;USER&gt; instruction &lt;ASST&gt; response &lt;END&gt;</span>
+        tokens = [<span class="str">'&lt;USER&gt;'</span>] + tokenize(instruction) + \
+                 [<span class="str">'&lt;ASST&gt;'</span>] + tokenize(response) + [<span class="str">'&lt;END&gt;'</span>]
+        <span class="kw">return</span> token_ids, response_start_position
+
+    <span class="kw">def</span> <span class="fn">encode_prompt</span>(self, instruction):
+        <span class="cm"># For generation: &lt;USER&gt; instruction &lt;ASST&gt;</span>
+        tokens = [<span class="str">'&lt;USER&gt;'</span>] + tokenize(instruction) + [<span class="str">'&lt;ASST&gt;'</span>]
+        <span class="kw">return</span> token_ids</pre>
+
+<div class="cw">
+<div class="cw-title">&#9656; Encoding Demo</div>
+<div class="ctrls">
+<button class="cbtn on" onclick="showEncode('train')">Training (Full Pair)</button>
+<button class="cbtn" onclick="showEncode('gen')">Generation (Prompt Only)</button>
+</div>
+<div class="out" id="encodeOut"></div>
+</div>
+
+<div class="callout info"><strong>Two encode methods:</strong> <code class="il">encode_instruction()</code> encodes the full pair for training (includes response). <code class="il">encode_prompt()</code> encodes just the prompt for generation (model generates the response).</div>
+</div>
+<hr class="div">
+
+<!-- PART 2: DATASET -->
+<div class="section" id="s2">
+<div class="stag">Part 02</div>
+<h2>Dataset with Loss Masking</h2>
+<p>The dataset creates <code class="il">input_ids</code> and <code class="il">labels</code> tensors. Labels have <code class="il">-100</code> for prompt positions (masked) and actual token IDs for response positions.</p>
+
+<pre><span class="kw">class</span> <span class="fn">InstructionDataset</span>(Dataset):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, instructions, tokenizer, max_length):
+        <span class="kw">for</span> instruction, response <span class="kw">in</span> instructions:
+            ids, resp_start = tokenizer.encode_instruction(
+                instruction, response, max_length
+            )
+            <span class="cm"># Create masked labels</span>
+            labels = [<span class="num">-100</span>] * resp_start + ids[resp_start:]
+            <span class="cm">#         ^^^^^ masked prompt    ^^^^^ actual response</span>
+            self.data.append({
+                <span class="str">'input_ids'</span>: torch.tensor(ids),
+                <span class="str">'labels'</span>: torch.tensor(labels)
+            })</pre>
+
+<div class="cw">
+<div class="cw-title">&#9656; Dataset Example</div>
+<div class="ctrls">
+<button class="cbtn on" onclick="showData('ex1')">Q&A Example</button>
+<button class="cbtn" onclick="showData('ex2')">Math Example</button>
+<button class="cbtn" onclick="showData('ex3')">Greeting Example</button>
+</div>
+<div class="out" id="dataOut"></div>
+</div>
+
+<div class="qcard" id="q1"><div class="qq">In the labels tensor, what does <code class="il">-100</code> mean?</div><div class="qopts">
+<div class="qo" onclick="ck('q1',this,false)"><span class="ql">A</span> A very negative sentiment</div>
+<div class="qo" onclick="ck('q1',this,true)"><span class="ql">B</span> "Ignore this position" &mdash; PyTorch skips it in loss computation</div>
+<div class="qo" onclick="ck('q1',this,false)"><span class="ql">C</span> An unknown token</div>
+<div class="qo" onclick="ck('q1',this,false)"><span class="ql">D</span> The padding token ID</div>
+</div><div class="qfb" id="q1-fb"></div></div>
+</div>
+<hr class="div">
+
+<!-- PART 3: MODEL & TRAINING -->
+<div class="section" id="s3">
+<div class="stag">Part 03</div>
+<h2>Model Architecture &amp; Training</h2>
+<p>The model is the same GPT architecture from Week 4, with one critical change in the loss computation: <code class="il">ignore_index=-100</code>.</p>
+
+<pre><span class="cm"># The key line in the forward method:</span>
+loss = F.cross_entropy(
+    shift_logits.view(<span class="num">-1</span>, vocab_size),
+    shift_labels.view(<span class="num">-1</span>),
+    ignore_index=<span class="num">-100</span>   <span class="cm"># Skip masked positions!</span>
+)</pre>
+
+<div class="cw">
+<div class="cw-title">&#9656; Training Loss Curve</div>
+<canvas id="lossCanvas" height="220"></canvas>
+<div class="ctrls"><button class="cbtn on" onclick="animLoss()">Run Training</button><button class="cbtn" onclick="resetLoss()">Reset</button></div>
+<div class="out" id="lossOut">Click "Run Training" to watch the model learn...</div>
+</div>
+
+<div class="callout"><strong>Weight tying:</strong> Like in pretraining, we tie the embedding weights to the output head: <code class="il">self.head.weight = self.tok_emb.weight</code>. This reduces parameters and improves performance since the same representations are used for both input and output.</div>
+</div>
+<hr class="div">
+
+<!-- PART 4: GENERATION -->
+<div class="section" id="s4">
+<div class="stag">Part 04</div>
+<h2>Generation: Answering Questions</h2>
+<p>After training, generation works by encoding the prompt, then autoregressively sampling tokens until <code class="il">&lt;END&gt;</code> is produced.</p>
+
+<pre><span class="kw">def</span> <span class="fn">chat</span>(model, tokenizer, instruction):
+    <span class="cm"># 1. Encode prompt</span>
+    prompt_ids = tokenizer.encode_prompt(instruction)
+    input_ids = torch.tensor([prompt_ids])
+
+    <span class="cm"># 2. Generate token by token</span>
+    output = model.generate(
+        input_ids,
+        max_new_tokens=<span class="num">30</span>,
+        temperature=<span class="num">0.7</span>,
+        end_token_id=tokenizer.end_id  <span class="cm"># Stop at &lt;END&gt;</span>
+    )
+
+    <span class="cm"># 3. Decode response (skip prompt tokens)</span>
+    response_ids = output[<span class="num">0</span>, <span class="fn">len</span>(prompt_ids):].tolist()
+    <span class="kw">return</span> tokenizer.decode(response_ids)</pre>
+
+<div class="cw">
+<div class="cw-title">&#9656; Simulated Chat</div>
+<div class="ctrls">
+<button class="cbtn on" onclick="showChat('known')">Known Questions</button>
+<button class="cbtn" onclick="showChat('novel')">Novel Questions</button>
+<button class="cbtn" onclick="showChat('limits')">Limitations</button>
+</div>
+<div class="out" id="chatOut"></div>
+</div>
+
+<div class="qcard" id="q2"><div class="qq">How does the model know when to stop generating?</div><div class="qopts">
+<div class="qo" onclick="ck('q2',this,false)"><span class="ql">A</span> It generates exactly 30 tokens every time</div>
+<div class="qo" onclick="ck('q2',this,true)"><span class="ql">B</span> It stops when it generates the &lt;END&gt; token</div>
+<div class="qo" onclick="ck('q2',this,false)"><span class="ql">C</span> The user manually stops it</div>
+<div class="qo" onclick="ck('q2',this,false)"><span class="ql">D</span> It counts the words in the instruction</div>
+</div><div class="qfb" id="q2-fb"></div></div>
+</div>
+<hr class="div">
+
+<!-- SUMMARY -->
+<div class="section" id="s5">
+<div class="stag">Summary</div>
+<h2>Key Takeaways</h2>
+<div class="sgrid">
+<div class="sitem"><code>Special Tokens</code><div class="d">&lt;USER&gt;, &lt;ASST&gt;, &lt;END&gt; mark boundaries between instruction, response, and sequence end.</div></div>
+<div class="sitem"><code>Loss Masking</code><div class="d">Labels use -100 for prompt positions. ignore_index=-100 in cross_entropy skips them.</div></div>
+<div class="sitem"><code>Same Architecture</code><div class="d">Same GPT model as pretraining. Only the loss computation changes.</div></div>
+<div class="sitem"><code>Generation</code><div class="d">Encode prompt, generate until &lt;END&gt;, decode response. Temperature controls randomness.</div></div>
+</div>
+<div class="callout green"><strong>Next:</strong> Lesson 3 &mdash; Building a Complete Chatbot! You'll add system prompts for personality, conversation history, and build an interactive chat interface.</div>
+</div>
+
+</div>
+
+<script>
+var secs=document.querySelectorAll('.section');
+function upd(){var st=window.scrollY,h=document.body.scrollHeight-innerHeight;document.getElementById('pf').style.width=Math.min(100,st/h*100)+'%';secs.forEach(function(s){if(s.getBoundingClientRect().top<innerHeight*.85)s.classList.add('vis')});}
+window.addEventListener('scroll',upd);upd();
+
+function showEncode(mode){
+  document.querySelectorAll('#s1 .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+  var o=document.getElementById('encodeOut');
+  if(mode==='train'){
+    o.textContent='TRAINING: encode_instruction("What is 2+2?", "4.")\n\nTokens: [<USER>] [what] [is] [2+2] [?] [<ASST>] [4] [.] [<END>]\nIDs:    [  2  ] [ 42 ] [15] [ 88] [33] [  3  ] [67] [28] [ 4 ]\n\nResponse starts at position 6 (after <ASST>)\nThis position is used to create the loss mask.\n\nPadded to max_length with <PAD> (ID 0) tokens.';
+  } else {
+    o.textContent='GENERATION: encode_prompt("What is 2+2?")\n\nTokens: [<USER>] [what] [is] [2+2] [?] [<ASST>]\nIDs:    [  2  ] [ 42 ] [15] [ 88] [33] [  3  ]\n\nNo response tokens! The model will generate them.\nGeneration starts from <ASST> and continues until\nthe model outputs <END>.';
+  }
+}
+showEncode('train');
+
+function showData(mode){
+  document.querySelectorAll('#s2 .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+  var o=document.getElementById('dataOut');
+  var data={
+    ex1:'Q&A EXAMPLE\n\nInstruction: "What is the capital of France?"\nResponse:    "The capital of France is Paris."\n\ninput_ids: [2, 42, 15, 8, 67, 23, 91, 33, 3, 8, 67, 23, 91, 15, 55, 28, 4, 0, 0, ...]\n           |<-- prompt tokens -->|           |<-- response tokens -->|  |<-pad->|\n\nlabels:    [-100, -100, -100, -100, -100, -100, -100, -100, -100, 8, 67, 23, 91, 15, 55, 28, 4, -100, -100, ...]\n           |<-------- masked (no loss) -------->|              |<-- loss computed here -->|  |<-pad->|',
+    ex2:'MATH EXAMPLE\n\nInstruction: "What is 5 times 3?"\nResponse:    "5 times 3 equals 15."\n\ninput_ids: [2, 42, 15, 77, 44, 18, 33, 3, 77, 44, 18, 60, 85, 28, 4, 0, 0, ...]\n           |<-- prompt tokens -->|     |<-- response tokens -->|  |<-pad->|\n\nlabels:    [-100, -100, -100, -100, -100, -100, -100, -100, 77, 44, 18, 60, 85, 28, 4, -100, ...]\n           |<-------- masked -------->|              |<-- loss here -->|',
+    ex3:'GREETING EXAMPLE\n\nInstruction: "Hello!"\nResponse:    "Hello! How can I help you today?"\n\ninput_ids: [2, 31, 33, 3, 31, 33, 9, 48, 12, 56, 71, 39, 33, 4, 0, 0, ...]\n           |<prompt>|  |<------- response tokens -------->|  |<pad>|\n\nlabels:    [-100, -100, -100, -100, 31, 33, 9, 48, 12, 56, 71, 39, 33, 4, -100, ...]\n           |<-masked->|      |<-------- loss computed here -------->|'
+  };
+  o.textContent=data[mode];
+}
+showData('ex1');
+
+// Training loss animation
+var lossAnim=null,lossData=[];
+function animLoss(){
+  if(lossAnim)return;lossData=[];var ep=0;
+  function step(){
+    if(ep>=30){lossAnim=null;document.getElementById('lossOut').textContent+='\\n\\nTraining complete! The model has learned the instruction-following pattern.';return;}
+    var loss=4.5*Math.exp(-0.12*(ep+1))+0.3+Math.random()*0.15;
+    lossData.push(loss);ep++;drawLoss();
+    document.getElementById('lossOut').textContent='Epoch '+ep+'/30 | Loss: '+loss.toFixed(4);
+    lossAnim=setTimeout(step,200);
+  }step();
+}
+function resetLoss(){if(lossAnim){clearTimeout(lossAnim);lossAnim=null;}lossData=[];drawLoss();document.getElementById('lossOut').textContent='Click "Run Training"...';}
+function drawLoss(){
+  var c=document.getElementById('lossCanvas'),dpr=devicePixelRatio||1,w=c.clientWidth;
+  c.width=w*dpr;c.height=220*dpr;var ctx=c.getContext('2d');ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,220);
+  var ox=45,oy=15,gw=w-65,gh=175;
+  ctx.strokeStyle='#3a2850';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(ox,oy);ctx.lineTo(ox,oy+gh);ctx.lineTo(ox+gw,oy+gh);ctx.stroke();
+  ctx.fillStyle='#8870a8';ctx.font='400 9px "Source Code Pro"';ctx.textAlign='right';
+  [0,1,2,3,4,5].forEach(function(v){var y=oy+gh-v/5.5*gh;ctx.fillText(v.toFixed(1),ox-5,y+3);});
+  if(lossData.length<2)return;
+  ctx.strokeStyle='#e879f9';ctx.lineWidth=2.5;ctx.shadowColor='rgba(232,121,249,.3)';ctx.shadowBlur=6;ctx.beginPath();
+  lossData.forEach(function(v,i){var x=ox+i/29*gw,y=oy+gh-v/5.5*gh;if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);});ctx.stroke();ctx.shadowBlur=0;
+  ctx.fillStyle='#f8f0ff';ctx.font='500 11px "Public Sans"';ctx.textAlign='left';ctx.fillText('Training Loss',ox+10,oy+12);
+}
+drawLoss();
+
+function showChat(mode){
+  document.querySelectorAll('#s4 .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+  var o=document.getElementById('chatOut');
+  var info={
+    known:'KNOWN QUESTIONS (from training data)\n\nUser: Hello!\nAssistant: Hello! How can I help you today?\n\nUser: What is the capital of France?\nAssistant: The capital of France is Paris.\n\nUser: What is 5 times 3?\nAssistant: 5 times 3 equals 15.\n\nUser: Say hello in Spanish.\nAssistant: Hola!\n\nThese work well because similar examples\nwere in the training data.',
+    novel:'NOVEL QUESTIONS (not in training data)\n\nUser: What is 3 plus 5?\nAssistant: 3 plus 5 equals 8.\n  -> Generalized from similar math patterns!\n\nUser: What is the capital of England?\nAssistant: The capital of England is London.\n  -> May work if the model learned the pattern\n\nUser: How are you doing?\nAssistant: I\'m doing well, thank you!\n  -> Similar to "How are you?" in training\n\nThe model can generalize to similar questions!',
+    limits:'LIMITATIONS\n\nUser: Explain quantum computing in detail.\nAssistant: (may produce incoherent text)\n  -> Too different from training examples\n\nUser: Write me a Python function.\nAssistant: (may produce garbled code)\n  -> No code examples in training data\n\nUser: What happened yesterday?\nAssistant: (random response)\n  -> No temporal knowledge\n\nWith only ~45 training examples, the model\ncan only generalize within familiar patterns.\nReal ChatGPT uses millions of examples!'
+  };
+  o.textContent=info[mode];
+}
+showChat('known');
+
+function ck(id,el,ok){var card=document.getElementById(id);if(card.dataset.a)return;card.dataset.a='1';card.querySelectorAll('.qo').forEach(function(o){o.classList.add('d')});var fb=document.getElementById(id+'-fb');if(ok){el.classList.add('c');fb.className='qfb p show';fb.textContent='\u2705 Correct!';}else{el.classList.add('w');card.querySelectorAll('.qo').forEach(function(o){if(o.onclick&&o.onclick.toString().indexOf('true')>-1)o.classList.add('c')});fb.className='qfb f show';var ex={q1:'In PyTorch, -100 is the default ignore_index for cross_entropy loss. When the label is -100, that position is completely skipped in the loss computation. This is how we implement loss masking \u2014 the model doesn\'t learn to predict prompt tokens.',q2:'The model generates tokens one at a time. After each token, it checks if the generated token is <END>. If so, generation stops. If not, it continues until either <END> is produced or the maximum token limit is reached.'};fb.textContent='\u274c '+ex[id];}}
+</script>
+</body>
+</html>

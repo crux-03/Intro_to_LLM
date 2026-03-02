@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week 4 &middot; Lesson 1: The Transformer Block</title>
+<link href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0c0a12;--surface:#151320;--surface2:#1c1930;--border:#2e2a48;
+  --text:#c8c0e8;--muted:#7a70a0;--heading:#f0ecff;
+  --violet:#a855f7;--vi-dim:rgba(168,85,247,.12);--vi-glow:rgba(168,85,247,.3);
+  --lime:#84cc16;--li-dim:rgba(132,204,22,.12);
+  --rose:#fb7185;--ro-dim:rgba(251,113,133,.12);
+  --sky:#38bdf8;--sk-dim:rgba(56,189,248,.12);
+  --amber:#fbbf24;--am-dim:rgba(251,191,36,.12);
+  --mono:'IBM Plex Mono',monospace;--serif:'Bitter',serif;--sans:'Inter',sans-serif;
+  --r:10px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);line-height:1.76;font-size:15.5px}
+.container{max-width:760px;margin:0 auto;padding:48px 24px 100px}
+.pbar{position:fixed;top:0;left:0;right:0;height:3px;background:var(--surface);z-index:999}.pfill{height:100%;width:0%;background:var(--violet);box-shadow:0 0 8px var(--vi-glow);transition:width .3s}
+.hero{text-align:center;padding:32px 0 48px}.hero-tag{font-family:var(--mono);font-size:.72rem;color:var(--violet);letter-spacing:.14em;text-transform:uppercase}.hero h1{font-family:var(--serif);font-size:2.5rem;font-weight:700;color:var(--heading);margin:8px 0}.hero h1 em{color:var(--violet);font-style:italic}.hero p{color:var(--muted);font-size:1.05rem;max-width:560px;margin:0 auto}
+.section{margin-bottom:56px;opacity:0;transform:translateY(20px);transition:all .5s}.section.vis{opacity:1;transform:none}.stag{font-family:var(--mono);font-size:.72rem;color:var(--violet);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}.section h2{font-family:var(--serif);font-size:1.55rem;color:var(--heading);margin-bottom:14px}.section h3{font-family:var(--serif);font-size:1.15rem;color:var(--heading);margin:20px 0 10px}.section p{margin-bottom:12px}.section p strong{color:var(--heading)}
+pre{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--violet);border-radius:var(--r);padding:16px 18px;margin:14px 0;overflow-x:auto;font-family:var(--mono);font-size:.82rem;line-height:1.6;color:var(--text)}
+code.il{font-family:var(--mono);font-size:.86em;color:var(--violet);background:var(--vi-dim);padding:2px 6px;border-radius:4px}
+.kw{color:#f0a0c0}.fn{color:#93c5fd}.num{color:#fbbf24}.str{color:#86efac}.cm{color:var(--muted);font-style:italic}
+.callout{background:var(--vi-dim);border:1px solid rgba(168,85,247,.2);border-radius:var(--r);padding:16px 18px;margin:18px 0;font-size:.93rem}.callout.info{background:var(--sk-dim);border-color:rgba(56,189,248,.2)}.callout.green{background:var(--li-dim);border-color:rgba(132,204,22,.2)}.callout.warn{background:var(--ro-dim);border-color:rgba(251,113,133,.2)}
+.analogy{border-left:3px solid var(--amber);padding:10px 16px;margin:16px 0;background:var(--am-dim);border-radius:0 var(--r) var(--r) 0;font-size:.93rem}.analogy strong{color:var(--heading)}
+hr.div{border:none;border-top:1px solid var(--border);margin:52px 0}
+.cw{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin:18px 0}.cw-title{font-family:var(--mono);font-size:.72rem;color:var(--violet);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px}
+.ctrls{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.cbtn{font-family:var(--mono);font-size:.78rem;padding:7px 14px;border:1px solid var(--border);border-radius:6px;background:var(--surface2);color:var(--text);cursor:pointer;transition:all .2s}.cbtn:hover{border-color:var(--violet);color:var(--violet)}.cbtn.on{background:var(--vi-dim);border-color:var(--violet);color:var(--violet)}
+.out{background:#08060e;border:1px solid var(--border);border-radius:6px;padding:14px 16px;font-family:var(--mono);font-size:.82rem;color:var(--lime);line-height:1.6;margin:10px 0;white-space:pre-wrap;min-height:36px}
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}.sitem{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 14px}.sitem code{font-family:var(--mono);font-size:.82rem;color:var(--violet)}.sitem .d{font-size:.86rem;color:var(--muted);margin-top:3px}
+.step{display:flex;gap:12px;margin:10px 0;align-items:flex-start}.step-n{font-family:var(--mono);font-size:.75rem;color:#fff;background:var(--violet);width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;font-weight:600}.step-c{flex:1}
+.qcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:22px;margin:18px 0}.qq{font-family:var(--serif);font-size:1.05rem;color:var(--heading);margin-bottom:12px}.qopts{display:flex;flex-direction:column;gap:7px}.qo{display:flex;align-items:center;gap:10px;padding:11px 14px;border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:.9rem;transition:all .2s}.qo:hover{border-color:var(--violet)}.qo.c{border-color:var(--lime);background:var(--li-dim);color:var(--lime)}.qo.w{border-color:var(--rose);background:var(--ro-dim);color:var(--rose)}.qo.d{pointer-events:none;opacity:.85}
+.ql{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.75rem;font-weight:600;background:var(--surface2);color:var(--muted);flex-shrink:0}.qo.c .ql{background:var(--lime);color:#000}.qo.w .ql{background:var(--rose);color:#fff}
+.qfb{margin-top:10px;padding:10px 12px;border-radius:6px;font-size:.88rem;display:none;line-height:1.6}.qfb.show{display:block}.qfb.p{background:var(--li-dim);color:var(--lime);border-left:3px solid var(--lime)}.qfb.f{background:var(--ro-dim);color:var(--rose);border-left:3px solid var(--rose)}
+canvas{display:block;width:100%;border-radius:6px}
+@media(max-width:600px){.hero h1{font-size:1.8rem}.sgrid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="pbar"><div class="pfill" id="pf"></div></div>
+<div class="container">
+<div class="hero"><div class="hero-tag">Week 4 &middot; Lesson 1</div><h1>The <em>Transformer Block</em></h1><p>The repeating building block of GPT. Layer normalization, feed-forward networks, and residual connections &mdash; combined into a stackable unit.</p></div><hr class="div">
+
+<div class="section" id="s1"><div class="stag">Part 01</div><h2>Layer Normalization</h2>
+<p>Deep networks suffer from <strong>unstable activations</strong> &mdash; values can explode or vanish as they pass through layers. LayerNorm fixes this by normalizing each sample to mean=0, variance=1, then applying learnable scale and shift.</p>
+<div class="cw"><div class="cw-title">&#9656; LayerNorm in Action</div>
+<p style="font-size:.88rem;color:var(--muted);margin-bottom:8px;">See how normalization tames wild activations:</p>
+<div class="ctrls"><button class="cbtn on" onclick="showLN('wild')">Wild Input</button><button class="cbtn" onclick="showLN('normal')">After LayerNorm</button><button class="cbtn" onclick="showLN('learned')">+ Learned Scale/Shift</button></div>
+<canvas id="lnCanvas" height="200"></canvas>
+<div class="out" id="lnOut"></div></div>
+<pre><span class="cm"># PyTorch makes it simple</span>
+layer_norm = nn.LayerNorm(d_model)
+<span class="cm"># Learnable parameters:</span>
+<span class="cm">#   weight (gamma): scale factor, shape (d_model,)</span>
+<span class="cm">#   bias (beta): shift factor, shape (d_model,)</span></pre>
+<div class="qcard" id="q1"><div class="qq">&#129513; What does LayerNorm do?</div><div class="qopts">
+<div class="qo" onclick="ck('q1',this,false)"><span class="ql">A</span> Removes all negative values</div>
+<div class="qo" onclick="ck('q1',this,true)"><span class="ql">B</span> Normalizes to mean=0, var=1, then applies learned scale &amp; shift</div>
+<div class="qo" onclick="ck('q1',this,false)"><span class="ql">C</span> Clips values to a fixed range</div>
+<div class="qo" onclick="ck('q1',this,false)"><span class="ql">D</span> Sorts the activation values</div>
+</div><div class="qfb" id="q1-fb"></div></div>
+</div><hr class="div">
+
+<div class="section" id="s2"><div class="stag">Part 02</div><h2>Feed-Forward Network (FFN)</h2>
+<p>Attention mixes information <strong>between</strong> positions. The FFN processes <strong>each position independently</strong>, applying a deep non-linear transformation.</p>
+<div class="step"><div class="step-n">1</div><div class="step-c"><strong>Expand:</strong> d_model &rarr; 4&times;d_model (creates capacity)</div></div>
+<div class="step"><div class="step-n">2</div><div class="step-c"><strong>GELU:</strong> Smooth non-linear activation</div></div>
+<div class="step"><div class="step-n">3</div><div class="step-c"><strong>Contract:</strong> 4&times;d_model &rarr; d_model (back to original)</div></div>
+<pre><span class="kw">class</span> <span class="fn">FeedForward</span>(nn.Module):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, d_model, d_ff=<span class="kw">None</span>, dropout=<span class="num">0.1</span>):
+        <span class="fn">super</span>().__init__()
+        <span class="kw">if</span> d_ff <span class="kw">is None</span>: d_ff = <span class="num">4</span> * d_model
+        self.fc1 = nn.Linear(d_model, d_ff)   <span class="cm"># Expand</span>
+        self.fc2 = nn.Linear(d_ff, d_model)   <span class="cm"># Contract</span>
+        self.dropout = nn.Dropout(dropout)
+
+    <span class="kw">def</span> <span class="fn">forward</span>(self, x):
+        x = F.gelu(self.fc1(x))    <span class="cm"># Expand + activate</span>
+        x = self.dropout(x)
+        x = self.fc2(x)            <span class="cm"># Contract back</span>
+        <span class="kw">return</span> self.dropout(x)</pre>
+<div class="analogy"><strong>&#128218; Analogy &mdash; Bottleneck Workshop:</strong> Imagine a narrow hallway (d_model) opening into a huge workshop (4&times;d_model). Raw materials enter, get transformed in many parallel workstations, then the finished products funnel back through a narrow exit. The expansion creates room for complex processing.</div>
+
+<div class="cw"><div class="cw-title">&#9656; GELU vs ReLU</div>
+<canvas id="geluCanvas" height="220"></canvas>
+<div id="geluNote" style="font-size:.86rem;color:var(--muted);margin-top:6px;">GELU is smooth and allows small negative values through. ReLU has a hard cutoff at 0.</div></div>
+
+<div class="cw"><div class="cw-title">&#9656; FFN Parameter Calculator</div>
+<div class="ctrls"><button class="cbtn on" onclick="showFFN(64)">d=64</button><button class="cbtn" onclick="showFFN(256)">d=256</button><button class="cbtn" onclick="showFFN(768)">d=768</button></div>
+<div class="out" id="ffnOut"></div></div>
+
+<div class="qcard" id="q2"><div class="qq">&#129513; What is the expansion factor in a standard FFN?</div><div class="qopts">
+<div class="qo" onclick="ck('q2',this,false)"><span class="ql">A</span> 2&times;</div>
+<div class="qo" onclick="ck('q2',this,true)"><span class="ql">B</span> 4&times;</div>
+<div class="qo" onclick="ck('q2',this,false)"><span class="ql">C</span> 8&times;</div>
+<div class="qo" onclick="ck('q2',this,false)"><span class="ql">D</span> 16&times;</div>
+</div><div class="qfb" id="q2-fb"></div></div>
+</div><hr class="div">
+
+<div class="section" id="s3"><div class="stag">Part 03</div><h2>Residual Connections</h2>
+<p>The secret to training deep networks: <code class="il">output = x + sublayer(x)</code></p>
+<p>Instead of learning a complete transformation, each layer only needs to learn the <strong>residual</strong> &mdash; a small correction to the input. If a layer has nothing useful to add, it can output near-zero and the input passes through unchanged.</p>
+
+<div class="cw"><div class="cw-title">&#9656; Gradient Flow Comparison</div>
+<canvas id="resCanvas" height="200"></canvas>
+<div class="ctrls"><button class="cbtn on" onclick="showRes('without')">Without Residuals</button><button class="cbtn" onclick="showRes('with')">With Residuals</button></div>
+<div id="resNote" style="font-size:.86rem;color:var(--muted);margin-top:6px;"></div></div>
+
+<div class="callout info"><strong>Why it works:</strong> Without residuals, gradients must pass through every layer sequentially &mdash; they vanish exponentially. With residuals, gradients have a <em>shortcut path</em> that bypasses all layers, ensuring every layer receives a strong learning signal.</div>
+
+<div class="qcard" id="q3"><div class="qq">&#129513; What is the residual connection formula?</div><div class="qopts">
+<div class="qo" onclick="ck('q3',this,false)"><span class="ql">A</span> output = sublayer(x)</div>
+<div class="qo" onclick="ck('q3',this,true)"><span class="ql">B</span> output = x + sublayer(x)</div>
+<div class="qo" onclick="ck('q3',this,false)"><span class="ql">C</span> output = x &times; sublayer(x)</div>
+<div class="qo" onclick="ck('q3',this,false)"><span class="ql">D</span> output = max(x, sublayer(x))</div>
+</div><div class="qfb" id="q3-fb"></div></div>
+</div><hr class="div">
+
+<div class="section" id="s4"><div class="stag">Part 04</div><h2>The Complete Block</h2>
+<p>GPT uses <strong>Pre-LayerNorm</strong> &mdash; normalize <em>before</em> each sublayer (not after):</p>
+<div class="cw"><div class="cw-title">&#9656; Block Architecture</div>
+<canvas id="blockCanvas" height="380"></canvas></div>
+<pre><span class="kw">class</span> <span class="fn">TransformerBlock</span>(nn.Module):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, d_model, num_heads, d_ff=<span class="kw">None</span>,
+                 max_seq_length=<span class="num">512</span>, dropout=<span class="num">0.1</span>):
+        <span class="fn">super</span>().__init__()
+        self.ln1 = nn.LayerNorm(d_model)
+        self.ln2 = nn.LayerNorm(d_model)
+        self.attn = MultiHeadCausalAttention(
+            d_model, num_heads, max_seq_length, dropout)
+        self.ffn = FeedForward(d_model, d_ff, dropout)
+
+    <span class="kw">def</span> <span class="fn">forward</span>(self, x):
+        x = x + self.attn(self.ln1(x))   <span class="cm"># Attention + residual</span>
+        x = x + self.ffn(self.ln2(x))    <span class="cm"># FFN + residual</span>
+        <span class="kw">return</span> x</pre>
+<div class="callout green"><strong>Same shape in, same shape out!</strong> Input (batch, seq, d_model) &rarr; Output (batch, seq, d_model). This means blocks can be stacked arbitrarily deep.</div>
+</div><hr class="div">
+
+<div class="section" id="s5"><div class="stag">Part 05</div><h2>Stacking Blocks</h2>
+<div class="cw"><div class="cw-title">&#9656; Parameter Scaling</div>
+<div class="ctrls"><button class="cbtn on" onclick="showStack(4,64,4)">4 blocks, d=64</button><button class="cbtn" onclick="showStack(12,768,12)">GPT-2 Small</button><button class="cbtn" onclick="showStack(24,1024,16)">GPT-2 Medium</button><button class="cbtn" onclick="showStack(48,1600,25)">GPT-2 XL</button></div>
+<div class="out" id="stackOut"></div></div>
+
+<div class="qcard" id="q4"><div class="qq">&#129513; How many transformer blocks does GPT-2 Small use?</div><div class="qopts">
+<div class="qo" onclick="ck('q4',this,false)"><span class="ql">A</span> 6</div>
+<div class="qo" onclick="ck('q4',this,true)"><span class="ql">B</span> 12</div>
+<div class="qo" onclick="ck('q4',this,false)"><span class="ql">C</span> 24</div>
+<div class="qo" onclick="ck('q4',this,false)"><span class="ql">D</span> 48</div>
+</div><div class="qfb" id="q4-fb"></div></div>
+</div><hr class="div">
+
+<div class="section" id="s6"><div class="stag">Summary</div><h2>Key Takeaways</h2>
+<div class="sgrid">
+<div class="sitem"><code>LayerNorm</code><div class="d">Normalizes activations, learned scale &amp; shift</div></div>
+<div class="sitem"><code>FFN</code><div class="d">Expand 4&times;, GELU, contract back</div></div>
+<div class="sitem"><code>Residuals</code><div class="d">output = x + sublayer(x)</div></div>
+<div class="sitem"><code>Pre-LN Block</code><div class="d">LN &rarr; Attn &rarr; + &nbsp;|&nbsp; LN &rarr; FFN &rarr; +</div></div>
+</div>
+<div class="callout"><strong>Next:</strong> Lesson 2 &mdash; The Complete GPT Model! We add embeddings and the output layer to build the full architecture.</div>
+</div></div>
+
+<script>
+var secs=document.querySelectorAll('.section');
+function upd(){var st=window.scrollY,h=document.body.scrollHeight-innerHeight;document.getElementById('pf').style.width=Math.min(100,st/h*100)+'%';secs.forEach(function(s){if(s.getBoundingClientRect().top<innerHeight*.85)s.classList.add('vis')});}
+window.addEventListener('scroll',upd);upd();
+
+function showLN(mode){
+  document.querySelectorAll('.ctrls .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+  var c=document.getElementById('lnCanvas'),dpr=devicePixelRatio||1,w=c.clientWidth;
+  c.width=w*dpr;c.height=200*dpr;var ctx=c.getContext('2d');ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,200);
+  var vals,title,col;
+  if(mode==='wild'){vals=[52,3,-18,87,120,-45,68,31,-72,95,5,44];title='Raw activations (mean~30, std~55)';col='#fb7185';}
+  else if(mode==='normal'){vals=[0.38,-0.49,-0.87,1.03,1.63,-1.36,0.69,0.02,-1.85,1.17,-0.45,0.25];title='After normalization (mean\u22480, std\u22481)';col='#a855f7';}
+  else{vals=[0.95,-0.23,-0.61,1.55,2.14,-0.84,1.18,0.28,-1.33,1.68,-0.19,0.76];title='After learned \u03b3 and \u03b2 (scaled+shifted)';col='#84cc16';}
+  var n=vals.length,bw=Math.min(40,(w-80)/n),ox=(w-n*bw)/2;
+  var mn=Math.min.apply(null,vals),mx=Math.max.apply(null,vals),rng=mx-mn||1;
+  ctx.fillStyle='var(--heading)';ctx.font='500 12px Inter';ctx.textAlign='center';ctx.fillText(title,w/2,18);
+  var base=170,top=40,h0=base-top;
+  ctx.strokeStyle='var(--border)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(ox,base);ctx.lineTo(ox+n*bw,base);ctx.stroke();
+  for(var i=0;i<n;i++){
+    var v=vals[i],bh=(v-mn)/rng*h0,y=base-bh;
+    ctx.fillStyle=col+'40';ctx.strokeStyle=col;ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.roundRect(ox+i*bw+2,y,bw-4,bh,3);ctx.fill();ctx.stroke();
+    ctx.fillStyle=col;ctx.font='500 9px "IBM Plex Mono"';ctx.textAlign='center';
+    ctx.fillText(v.toFixed?v.toFixed(mode==='wild'?0:2):v,ox+i*bw+bw/2,y-5);
+  }
+  var mean=vals.reduce(function(a,b){return a+b},0)/n;
+  var std=Math.sqrt(vals.reduce(function(a,b){return a+(b-mean)*(b-mean)},0)/n);
+  document.getElementById('lnOut').textContent='mean = '+mean.toFixed(2)+'    std = '+std.toFixed(2)+'    range = ['+Math.min.apply(null,vals).toFixed(2)+', '+Math.max.apply(null,vals).toFixed(2)+']';
+}
+showLN('wild');
+
+function drawGelu(){
+  var c=document.getElementById('geluCanvas'),dpr=devicePixelRatio||1,w=c.clientWidth;
+  c.width=w*dpr;c.height=220*dpr;var ctx=c.getContext('2d');ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,220);
+  var ox=60,oy=110,sx=(w-120)/6,sy=30;
+  ctx.strokeStyle='var(--border)';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(ox-3*sx,oy);ctx.lineTo(ox+3*sx,oy);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(ox,oy+3.5*sy);ctx.lineTo(ox,oy-3.5*sy);ctx.stroke();
+  ctx.fillStyle='var(--muted)';ctx.font='400 10px "IBM Plex Mono"';ctx.textAlign='center';
+  for(var i=-3;i<=3;i++){ctx.fillText(i,ox+i*sx,oy+16);if(i!==0){ctx.beginPath();ctx.moveTo(ox+i*sx,oy-2);ctx.lineTo(ox+i*sx,oy+2);ctx.stroke();}}
+  function relu(x){return Math.max(0,x);}
+  function gelu(x){return 0.5*x*(1+Math.tanh(Math.sqrt(2/Math.PI)*(x+0.044715*x*x*x)));}
+  [[relu,'#fb7185','ReLU'],[gelu,'#a855f7','GELU']].forEach(function(pair){
+    var fn=pair[0],col=pair[1],name=pair[2];
+    ctx.strokeStyle=col;ctx.lineWidth=2.5;ctx.beginPath();
+    for(var px=0;px<w-120;px++){var x=(px/sx)-3;var y=fn(x);if(px===0)ctx.moveTo(ox+x*sx,oy-y*sy);else ctx.lineTo(ox+x*sx,oy-y*sy);}
+    ctx.stroke();
+  });
+  ctx.fillStyle='#fb7185';ctx.font='600 11px Inter';ctx.textAlign='left';ctx.fillText('ReLU',ox+2.2*sx,oy-2.5*sy);
+  ctx.fillStyle='#a855f7';ctx.fillText('GELU',ox+2.2*sx,oy-2.5*sy+16);
+}
+drawGelu();window.addEventListener('resize',drawGelu);
+
+function showFFN(d){
+  document.querySelectorAll('.ctrls .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+  var dff=4*d,p1=d*dff+dff,p2=dff*d+d,tot=p1+p2;
+  var o='d_model = '+d+', d_ff = '+dff+'\n'+'-'.repeat(36)+'\n';
+  o+='fc1: '+d+' \u00d7 '+dff+' + '+dff+' bias = '+p1.toLocaleString()+'\n';
+  o+='fc2: '+dff+' \u00d7 '+d+' + '+d+' bias  = '+p2.toLocaleString()+'\n';
+  o+='Total FFN parameters: '+tot.toLocaleString()+'\n\n';
+  o+='Note: FFN typically has MORE parameters than attention!\n';
+  var attnP=d*(3*d)+(3*d)+d*d+d;
+  o+='Attention params (same d): ~'+attnP.toLocaleString()+'\n';
+  o+='FFN / Attention ratio: '+(tot/attnP).toFixed(2)+'x';
+  document.getElementById('ffnOut').textContent=o;
+}
+showFFN(64);
+
+function showRes(mode){
+  document.querySelectorAll('.ctrls .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+  var c=document.getElementById('resCanvas'),dpr=devicePixelRatio||1,w=c.clientWidth;
+  c.width=w*dpr;c.height=200*dpr;var ctx=c.getContext('2d');ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,200);
+  var n=8,bw=50,gap=(w-n*bw)/(n+1);
+  for(var i=0;i<n;i++){
+    var x=gap+(gap+bw)*i;
+    ctx.fillStyle='var(--surface2)';ctx.strokeStyle='var(--border)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.roundRect(x,60,bw,50,6);ctx.fill();ctx.stroke();
+    ctx.fillStyle='var(--muted)';ctx.font='500 10px "IBM Plex Mono"';ctx.textAlign='center';
+    ctx.fillText('Layer '+(i+1),x+bw/2,90);
+    if(mode==='without'){
+      var grad=Math.pow(0.7,n-1-i);
+      ctx.fillStyle='rgba(251,113,133,'+(grad*0.8+0.1)+')';
+      ctx.beginPath();ctx.roundRect(x+5,120,bw-10,12+grad*30,4);ctx.fill();
+      ctx.fillStyle='var(--text)';ctx.font='400 9px "IBM Plex Mono"';
+      ctx.fillText((grad*100).toFixed(0)+'%',x+bw/2,155+grad*30);
+    }else{
+      ctx.fillStyle='rgba(132,204,22,0.6)';
+      ctx.beginPath();ctx.roundRect(x+5,120,bw-10,35,4);ctx.fill();
+      ctx.fillStyle='var(--text)';ctx.font='400 9px "IBM Plex Mono"';
+      ctx.fillText('100%',x+bw/2,170);
+      if(i<n-1){ctx.strokeStyle='rgba(132,204,22,0.3)';ctx.lineWidth=1;ctx.setLineDash([3,3]);
+        ctx.beginPath();ctx.moveTo(x+bw,55);ctx.lineTo(x+bw+gap,55);ctx.stroke();ctx.setLineDash([]);}
+    }
+  }
+  ctx.fillStyle='var(--heading)';ctx.font='500 12px Inter';ctx.textAlign='center';
+  ctx.fillText(mode==='without'?'Gradient strength decays through layers':'Shortcut path preserves gradient strength',w/2,20);
+  document.getElementById('resNote').textContent=mode==='without'?'Gradients shrink exponentially. Early layers barely learn.':'Residual connections provide a direct gradient highway through all layers.';
+}
+showRes('without');
+
+function drawBlock(){
+  var c=document.getElementById('blockCanvas'),dpr=devicePixelRatio||1,w=c.clientWidth;
+  c.width=w*dpr;c.height=380*dpr;var ctx=c.getContext('2d');ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,380);
+  var cx=w/2,bw=Math.min(200,w-100);
+  var boxes=[
+    {y:10,h:28,t:'Input x',c:'#7a70a0'},{y:50,h:28,t:'LayerNorm',c:'#38bdf8'},
+    {y:92,h:32,t:'Multi-Head Attention',c:'#a855f7'},{y:136,h:28,t:'+ (residual)',c:'#84cc16'},
+    {y:178,h:28,t:'LayerNorm',c:'#38bdf8'},{y:220,h:32,t:'Feed-Forward Network',c:'#a855f7'},
+    {y:266,h:28,t:'+ (residual)',c:'#84cc16'},{y:310,h:28,t:'Output',c:'#7a70a0'}
+  ];
+  boxes.forEach(function(b){
+    ctx.fillStyle=b.c+'18';ctx.strokeStyle=b.c;ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.roundRect(cx-bw/2,b.y,bw,b.h,6);ctx.fill();ctx.stroke();
+    ctx.fillStyle=b.c;ctx.font='600 11px Inter';ctx.textAlign='center';ctx.fillText(b.t,cx,b.y+b.h/2+4);
+  });
+  [38,78,124,164,206,252,294].forEach(function(y){ctx.strokeStyle='#2e2a48';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(cx,y);ctx.lineTo(cx,y+12);ctx.stroke();});
+  // Residual arrows
+  var rx=cx+bw/2+15;
+  [[10,136,'#84cc16'],[178,266,'#84cc16']].forEach(function(a){
+    ctx.strokeStyle=a[2]+'60';ctx.lineWidth=1.5;ctx.setLineDash([4,3]);
+    ctx.beginPath();ctx.moveTo(rx,a[0]+14);ctx.lineTo(rx,a[1]+14);ctx.stroke();ctx.setLineDash([]);
+    ctx.beginPath();ctx.moveTo(rx-4,a[1]+10);ctx.lineTo(rx,a[1]+14);ctx.lineTo(rx-4,a[1]+18);ctx.stroke();
+  });
+  ctx.fillStyle='#84cc1680';ctx.font='400 9px "IBM Plex Mono"';ctx.textAlign='left';
+  ctx.fillText('residual',rx+4,80);ctx.fillText('residual',rx+4,230);
+}
+drawBlock();window.addEventListener('resize',drawBlock);
+
+function showStack(blocks,d,h){
+  document.querySelectorAll('.ctrls .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+  var hd=d/h,dff=4*d;
+  var attnP=d*(3*d)+(3*d)+d*d+d;
+  var ffnP=d*dff+dff+dff*d+d;
+  var lnP=d*4;
+  var blockP=attnP+ffnP+lnP;
+  var totalP=blockP*blocks;
+  var o=blocks+' blocks, d_model='+d+', heads='+h+', head_dim='+(d/h)+'\n'+'-'.repeat(44)+'\n\n';
+  o+='Per block:\n';
+  o+='  Attention:  '+attnP.toLocaleString()+'\n';
+  o+='  FFN:        '+ffnP.toLocaleString()+'\n';
+  o+='  LayerNorms: '+lnP.toLocaleString()+'\n';
+  o+='  Subtotal:   '+blockP.toLocaleString()+'\n\n';
+  o+='Total ('+blocks+' blocks): '+(totalP).toLocaleString()+' parameters\n';
+  if(d>=768) o+='\n(Plus ~'+((50257*d+1024*d+d*2).toLocaleString())+' embedding params)';
+  document.getElementById('stackOut').textContent=o;
+}
+showStack(4,64,4);
+
+function ck(id,el,ok){
+  var card=document.getElementById(id);if(card.dataset.a)return;card.dataset.a='1';
+  card.querySelectorAll('.qo').forEach(function(o){o.classList.add('d')});var fb=document.getElementById(id+'-fb');
+  if(ok){el.classList.add('c');fb.className='qfb p show';fb.textContent='\u2705 Correct!';}
+  else{el.classList.add('w');card.querySelectorAll('.qo').forEach(function(o){if(o.onclick&&o.onclick.toString().indexOf('true')>-1)o.classList.add('c')});
+    fb.className='qfb f show';
+    var ex={q1:'LayerNorm normalizes activations to mean=0, variance=1, then applies learnable scale (\u03b3) and shift (\u03b2) parameters. This keeps values stable during training.',q2:'The standard expansion factor is 4\u00d7. For d_model=768, the FFN inner dimension is 3072. This creates enough capacity for complex transformations.',q3:'output = x + sublayer(x). The original input x is added to the sublayer output, creating a shortcut path for gradients and allowing layers to learn small corrections.',q4:'GPT-2 Small stacks 12 transformer blocks. Medium uses 24, Large uses 36, and XL uses 48.'};
+    fb.textContent='\u274c '+ex[id];}
+}
+</script>
+</body>
+</html>

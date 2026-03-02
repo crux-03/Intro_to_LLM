@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week 3 · Lesson 1: Understanding Attention</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0d1117;--surface:#161b22;--surface2:#1c2333;--border:#30363d;
+  --text:#c9d1d9;--muted:#7d8590;--heading:#f0f6fc;
+  --flame:#f0883e;--fl-dim:rgba(240,136,62,.12);--fl-glow:rgba(240,136,62,.3);
+  --cyan:#58a6ff;--cy-dim:rgba(88,166,255,.12);
+  --green:#3fb950;--gn-dim:rgba(63,185,80,.12);
+  --pink:#f778ba;--pk-dim:rgba(247,120,186,.12);
+  --mono:'JetBrains Mono',monospace;--serif:'Playfair Display',serif;--sans:'Source Sans 3',sans-serif;
+  --r:10px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);line-height:1.76;font-size:15.5px}
+.container{max-width:760px;margin:0 auto;padding:48px 24px 100px}
+.pbar{position:fixed;top:0;left:0;right:0;height:3px;background:var(--surface);z-index:999}.pfill{height:100%;width:0%;background:var(--flame);box-shadow:0 0 8px var(--fl-glow);transition:width .3s}
+.hero{text-align:center;padding:32px 0 48px}.hero-tag{font-family:var(--mono);font-size:.76rem;color:var(--flame);letter-spacing:.14em;text-transform:uppercase}.hero h1{font-family:var(--serif);font-size:2.5rem;font-weight:700;color:var(--heading);margin:8px 0}.hero h1 em{color:var(--flame);font-style:italic}.hero p{color:var(--muted);font-size:1.05rem;max-width:560px;margin:0 auto}
+.section{margin-bottom:56px;opacity:0;transform:translateY(20px);transition:all .5s}.section.vis{opacity:1;transform:none}.stag{font-family:var(--mono);font-size:.72rem;color:var(--flame);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}.section h2{font-family:var(--serif);font-size:1.55rem;color:var(--heading);margin-bottom:14px}.section h3{font-family:var(--serif);font-size:1.15rem;color:var(--heading);margin:20px 0 10px}.section p{margin-bottom:12px}.section p strong{color:var(--heading)}
+pre{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--flame);border-radius:var(--r);padding:16px 18px;margin:14px 0;overflow-x:auto;font-family:var(--mono);font-size:.84rem;line-height:1.6;color:var(--text)}
+code.il{font-family:var(--mono);font-size:.86em;color:var(--flame);background:var(--fl-dim);padding:2px 6px;border-radius:4px}
+.kw{color:#ff7b72}.fn{color:#79c0ff}.num{color:#f0883e}.str{color:#a5d6ff}.cm{color:var(--muted);font-style:italic}.op{color:#ff7b72}
+.callout{background:var(--fl-dim);border:1px solid rgba(240,136,62,.2);border-radius:var(--r);padding:16px 18px;margin:18px 0;font-size:.93rem}.callout.info{background:var(--cy-dim);border-color:rgba(88,166,255,.2)}.callout.warn{background:var(--pk-dim);border-color:rgba(247,120,186,.2)}.callout.green{background:var(--gn-dim);border-color:rgba(63,185,80,.2)}
+.analogy{border-left:3px solid var(--cyan);padding:10px 16px;margin:16px 0;background:var(--cy-dim);border-radius:0 var(--r) var(--r) 0;font-size:.93rem}.analogy strong{color:var(--heading)}
+hr.div{border:none;border-top:1px solid var(--border);margin:52px 0}
+.cw{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin:18px 0}.cw-title{font-family:var(--mono);font-size:.76rem;color:var(--flame);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px}
+.ctrls{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.cbtn{font-family:var(--mono);font-size:.8rem;padding:7px 14px;border:1px solid var(--border);border-radius:6px;background:var(--surface2);color:var(--text);cursor:pointer;transition:all .2s}.cbtn:hover{border-color:var(--flame);color:var(--flame)}.cbtn.on{background:var(--fl-dim);border-color:var(--flame);color:var(--flame)}
+.out{background:#010409;border:1px solid var(--border);border-radius:6px;padding:14px 16px;font-family:var(--mono);font-size:.84rem;color:var(--green);line-height:1.6;margin:10px 0;white-space:pre-wrap;min-height:36px}
+.step{display:flex;gap:12px;margin:10px 0;align-items:flex-start}.step-n{font-family:var(--mono);font-size:.75rem;color:#000;background:var(--flame);width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;font-weight:600}.step-c{flex:1}
+.qcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:22px;margin:18px 0}.qq{font-family:var(--serif);font-size:1.05rem;color:var(--heading);margin-bottom:12px}.qopts{display:flex;flex-direction:column;gap:7px}.qo{display:flex;align-items:center;gap:10px;padding:11px 14px;border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:.9rem;transition:all .2s}.qo:hover{border-color:var(--flame)}.qo.c{border-color:var(--green);background:var(--gn-dim);color:var(--green)}.qo.w{border-color:var(--pink);background:var(--pk-dim);color:var(--pink)}.qo.d{pointer-events:none;opacity:.85}
+.ql{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.75rem;font-weight:600;background:var(--surface2);color:var(--muted);flex-shrink:0}.qo.c .ql{background:var(--green);color:#000}.qo.w .ql{background:var(--pink);color:#fff}
+.qfb{margin-top:10px;padding:10px 12px;border-radius:6px;font-size:.88rem;display:none;line-height:1.6}.qfb.show{display:block}.qfb.p{background:var(--gn-dim);color:var(--green);border-left:3px solid var(--green)}.qfb.f{background:var(--pk-dim);color:var(--pink);border-left:3px solid var(--pink)}
+.matrix-grid{display:inline-grid;gap:2px;margin:10px 0}.mcell{width:56px;height:40px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.78rem;border-radius:3px;transition:all .3s;cursor:default}.mlabel{font-family:var(--mono);font-size:.75rem;color:var(--muted);text-align:center;padding:2px}
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}.sitem{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 14px}.sitem code{font-family:var(--mono);font-size:.84rem;color:var(--flame)}.sitem .d{font-size:.86rem;color:var(--muted);margin-top:3px}
+canvas{display:block;width:100%;border-radius:6px}
+@media(max-width:600px){.hero h1{font-size:1.8rem}.sgrid{grid-template-columns:1fr}.mcell{width:44px;height:34px;font-size:.7rem}}
+</style>
+</head>
+<body>
+<div class="pbar"><div class="pfill" id="pf"></div></div>
+<div class="container">
+
+<div class="hero">
+  <div class="hero-tag">Week 3 · Lesson 1</div>
+  <h1>Understanding <em>Attention</em></h1>
+  <p>Attention is the breakthrough that made transformers possible — the mechanism that lets every word directly "look at" every other word and decide which ones matter.</p>
+</div>
+<hr class="div">
+
+<!-- ═══ PART 1: THE PROBLEM ═══ -->
+<div class="section" id="s1">
+  <div class="stag">Part 01</div>
+  <h2>The Problem Attention Solves</h2>
+
+  <p>Consider this sentence: <strong>"The cat sat on the mat because it was tired."</strong> What does "it" refer to? The cat, obviously. For us, this is trivial. For a model, it's surprisingly hard.</p>
+
+  <p>"it" is 7 words away from "cat", and there's another noun ("mat") in between. The model needs to somehow connect these distant words and figure out the correct reference.</p>
+
+  <div class="cw">
+    <div class="cw-title">▸ RNN vs Attention — Distance Problem</div>
+    <p style="font-size:.88rem;color:var(--muted);margin-bottom:8px;">Click a word to see how each approach connects it to the rest of the sentence:</p>
+    <div class="ctrls" id="wordBtns"></div>
+    <canvas id="distCanvas" height="180"></canvas>
+    <div id="distNote" style="font-size:.86rem;color:var(--muted);margin-top:6px;"></div>
+  </div>
+
+  <p>Old approach (<strong>RNNs</strong>): Process words one at a time, passing information forward through hidden states. Information gets "diluted" over distance — by the time you reach "it", the signal from "cat" is faint.</p>
+
+  <p>New approach (<strong>Attention</strong>): Let every word directly look at every other word. Compute "how relevant is each word to my current prediction?" Distance doesn't matter — "it" can attend directly to "cat" regardless of how far apart they are.</p>
+
+  <div class="analogy">
+    <strong>🔍 Analogy — Searching a Room:</strong> An RNN is like looking for your keys by checking each room in order, one at a time, and trying to remember what you saw. Attention is like having a bird's-eye view of every room simultaneously — you can instantly spot the keys no matter which room they're in.
+  </div>
+</div>
+<hr class="div">
+
+<!-- ═══ PART 2: QKV FRAMEWORK ═══ -->
+<div class="section" id="s2">
+  <div class="stag">Part 02</div>
+  <h2>The Query-Key-Value Framework</h2>
+
+  <p>Attention uses three concepts: <strong>Query (Q)</strong>, <strong>Key (K)</strong>, and <strong>Value (V)</strong>. Think of it like searching a library:</p>
+
+  <div class="sgrid">
+    <div class="sitem"><code>Query (Q)</code><div class="d">What you're looking for: "books about cats"</div></div>
+    <div class="sitem"><code>Key (K)</code><div class="d">The label on each book: "animals", "cooking"</div></div>
+    <div class="sitem"><code>Value (V)</code><div class="d">The actual content of each book</div></div>
+    <div class="sitem"><code>Score</code><div class="d">How well each key matches your query</div></div>
+  </div>
+
+  <p>The process works in three steps:</p>
+
+  <div class="step"><div class="step-n">1</div><div class="step-c">Compare your <strong>Query</strong> to all <strong>Keys</strong> — measure similarity</div></div>
+  <div class="step"><div class="step-n">2</div><div class="step-c">Convert similarities to <strong>attention weights</strong> (probabilities that sum to 1)</div></div>
+  <div class="step"><div class="step-n">3</div><div class="step-c">Use weights to create a <strong>weighted combination</strong> of Values</div></div>
+
+  <div class="cw">
+    <div class="cw-title">▸ Library Search Analogy</div>
+    <p style="font-size:.88rem;color:var(--muted);margin-bottom:8px;">Select a query to see how it matches different keys:</p>
+    <div class="ctrls" id="qkvBtns">
+      <button class="cbtn on" onclick="showQKV('noun')">Query: "What noun am I?"</button>
+      <button class="cbtn" onclick="showQKV('verb')">Query: "What verb relates?"</button>
+      <button class="cbtn" onclick="showQKV('adj')">Query: "What describes me?"</button>
+    </div>
+    <div class="out" id="qkvOut"></div>
+  </div>
+
+  <p>For <code class="il">"The cat sat on the mat because it was tired"</code>, the word "it" sends a Query saying "what noun am I referring to?" — the Key for "cat" scores highest because it's the most relevant noun, so "it" attends strongly to "cat" and absorbs its meaning.</p>
+
+  <!-- Quiz 1 -->
+  <div class="qcard" id="q1">
+    <div class="qq">🧩 In the QKV framework, what determines how much one word "pays attention" to another?</div>
+    <div class="qopts">
+      <div class="qo" onclick="ck('q1',this,false)"><span class="ql">A</span> The distance between the two words in the sentence</div>
+      <div class="qo" onclick="ck('q1',this,true)"><span class="ql">B</span> The similarity between the Query of one word and the Key of another</div>
+      <div class="qo" onclick="ck('q1',this,false)"><span class="ql">C</span> The Value vectors of both words</div>
+      <div class="qo" onclick="ck('q1',this,false)"><span class="ql">D</span> The position of the word in the vocabulary</div>
+    </div>
+    <div class="qfb" id="q1-fb"></div>
+  </div>
+</div>
+<hr class="div">
+
+<!-- ═══ PART 3: THE FORMULA ═══ -->
+<div class="section" id="s3">
+  <div class="stag">Part 03</div>
+  <h2>The Attention Formula</h2>
+
+  <p>The complete attention mechanism fits in a single formula:</p>
+
+  <pre style="text-align:center;font-size:1rem;border-left:3px solid var(--cyan);">
+Attention(Q, K, V) = <span class="fn">softmax</span>(Q × K<sup>T</sup> / √d) × V</pre>
+
+  <p>Let's break this down piece by piece:</p>
+
+  <div class="step"><div class="step-n">1</div><div class="step-c"><code class="il">Q × Kᵀ</code> — Dot product between query and all keys. Measures similarity: higher = more similar.</div></div>
+  <div class="step"><div class="step-n">2</div><div class="step-c"><code class="il">/ √d</code> — Scale by square root of dimension. Prevents scores from getting too large (which would make softmax "peaky").</div></div>
+  <div class="step"><div class="step-n">3</div><div class="step-c"><code class="il">softmax(...)</code> — Convert scores to probabilities that sum to 1. These are the attention weights.</div></div>
+  <div class="step"><div class="step-n">4</div><div class="step-c"><code class="il">× V</code> — Weight values by attention weights. Return weighted combination.</div></div>
+
+  <div class="cw">
+    <div class="cw-title">▸ Step-by-Step Computation</div>
+    <p style="font-size:.88rem;color:var(--muted);margin-bottom:8px;">Walk through each step of the attention formula with 4 words. Click each step to see the transformation:</p>
+    <div class="ctrls">
+      <button class="cbtn on" id="stepBtn0" onclick="showStep(0)">1. Scores (Q×Kᵀ)</button>
+      <button class="cbtn" id="stepBtn1" onclick="showStep(1)">2. Scale (÷√d)</button>
+      <button class="cbtn" id="stepBtn2" onclick="showStep(2)">3. Softmax</button>
+      <button class="cbtn" id="stepBtn3" onclick="showStep(3)">4. Output (×V)</button>
+    </div>
+    <div class="out" id="stepOut"></div>
+    <div id="stepNote" style="font-size:.86rem;color:var(--muted);margin-top:6px;"></div>
+  </div>
+
+  <div class="callout info">
+    <strong>🔢 Why scale by √d?</strong> Without scaling, as the dimension d grows, dot products get larger (they sum more terms). Large values pushed through softmax produce near-one-hot distributions — almost all weight goes to a single position, making gradients tiny. Dividing by √d keeps the variance of the scores at ~1 regardless of dimension.
+  </div>
+</div>
+<hr class="div">
+
+<!-- ═══ PART 4: VISUALIZING ATTENTION ═══ -->
+<div class="section" id="s4">
+  <div class="stag">Part 04</div>
+  <h2>Visualizing Attention Patterns</h2>
+
+  <p>The attention weights form a matrix where each entry [i,j] tells us how much word i attends to word j. Each row sums to 1 — it's a probability distribution over all positions.</p>
+
+  <div class="cw">
+    <div class="cw-title">▸ Interactive Attention Heatmap</div>
+    <p style="font-size:.88rem;color:var(--muted);margin-bottom:8px;">Hover over cells to see attention weights. Click different sentences to see how patterns change:</p>
+    <div class="ctrls" id="sentBtns">
+      <button class="cbtn on" onclick="showSent(0)">The cat is sleeping</button>
+      <button class="cbtn" onclick="showSent(1)">She gave him the book</button>
+      <button class="cbtn" onclick="showSent(2)">Dogs and cats play</button>
+    </div>
+    <canvas id="heatCanvas" height="260"></canvas>
+    <div id="heatNote" style="font-size:.86rem;color:var(--muted);margin-top:6px;">Hover over cells to see weights. Brighter = stronger attention.</div>
+  </div>
+
+  <p>Reading the heatmap: each <strong>row</strong> shows what that word attends to. A bright cell means strong attention. After training, meaningful patterns emerge — for example, pronouns strongly attending to their referent nouns, verbs attending to their subjects, etc.</p>
+
+  <!-- Quiz 2 -->
+  <div class="qcard" id="q2">
+    <div class="qq">🧩 What does each ROW in an attention weight matrix represent?</div>
+    <div class="qopts">
+      <div class="qo" onclick="ck('q2',this,false)"><span class="ql">A</span> The key vector for that position</div>
+      <div class="qo" onclick="ck('q2',this,true)"><span class="ql">B</span> A probability distribution showing how much that position attends to every other position</div>
+      <div class="qo" onclick="ck('q2',this,false)"><span class="ql">C</span> The output embedding for that position</div>
+      <div class="qo" onclick="ck('q2',this,false)"><span class="ql">D</span> The value vector for that position</div>
+    </div>
+    <div class="qfb" id="q2-fb"></div>
+  </div>
+</div>
+<hr class="div">
+
+<!-- ═══ PART 5: IMPLEMENTATION ═══ -->
+<div class="section" id="s5">
+  <div class="stag">Part 05</div>
+  <h2>Implementation in Code</h2>
+
+  <p>The attention function is surprisingly compact — just a few lines of code:</p>
+
+  <pre><span class="kw">def</span> <span class="fn">attention</span>(Q, K, V):
+    <span class="str">"""Basic attention mechanism."""</span>
+    d_k = K.shape[-<span class="num">1</span>]
+
+    <span class="cm"># Step 1-2: Compute scaled attention scores</span>
+    scores = Q @ K.T / math.sqrt(d_k)
+
+    <span class="cm"># Step 3: Convert to probabilities</span>
+    weights = F.softmax(scores, dim=-<span class="num">1</span>)
+
+    <span class="cm"># Step 4: Weighted combination of values</span>
+    output = weights @ V
+
+    <span class="kw">return</span> output, weights</pre>
+
+  <p>For basic attention, Q = K = V = the input embeddings. The function returns both the output (weighted combination of values) and the attention weights (for visualization).</p>
+
+  <h3>Handling Batches</h3>
+
+  <p>In practice, we process multiple sequences at once. The shapes become <code class="il">(batch_size, seq_length, d_model)</code> and we need to transpose the last two dimensions of K:</p>
+
+  <pre><span class="cm"># Batched attention — same formula, extra batch dimension</span>
+scores = Q @ K.transpose(-<span class="num">2</span>, -<span class="num">1</span>) / math.sqrt(d_k)
+<span class="cm"># K.transpose(-2, -1): (batch, seq, d) → (batch, d, seq)</span>
+<span class="cm"># Result: (batch, seq, seq) — attention matrix per sequence</span></pre>
+
+  <div class="cw">
+    <div class="cw-title">▸ Shape Calculator</div>
+    <p style="font-size:.88rem;color:var(--muted);margin-bottom:8px;">Adjust dimensions to see how tensor shapes flow through attention:</p>
+    <div class="ctrls">
+      <button class="cbtn on" onclick="showShapes(2,4,8)">batch=2, seq=4, d=8</button>
+      <button class="cbtn" onclick="showShapes(8,16,64)">batch=8, seq=16, d=64</button>
+      <button class="cbtn" onclick="showShapes(32,128,512)">batch=32, seq=128, d=512</button>
+    </div>
+    <div class="out" id="shapeOut"></div>
+  </div>
+
+  <!-- Quiz 3 -->
+  <div class="qcard" id="q3">
+    <div class="qq">🧩 Why do we divide by √d in the attention formula?</div>
+    <div class="qopts">
+      <div class="qo" onclick="ck('q3',this,false)"><span class="ql">A</span> To reduce the number of parameters</div>
+      <div class="qo" onclick="ck('q3',this,false)"><span class="ql">B</span> To make the computation faster</div>
+      <div class="qo" onclick="ck('q3',this,true)"><span class="ql">C</span> To prevent dot products from growing too large, which would make softmax too "peaky"</div>
+      <div class="qo" onclick="ck('q3',this,false)"><span class="ql">D</span> To normalize the output values between 0 and 1</div>
+    </div>
+    <div class="qfb" id="q3-fb"></div>
+  </div>
+</div>
+<hr class="div">
+
+<!-- ═══ PART 6: WHY POWERFUL ═══ -->
+<div class="section" id="s6">
+  <div class="stag">Part 06</div>
+  <h2>Why Attention Is So Powerful</h2>
+
+  <p>Attention was the key insight in the landmark paper "Attention Is All You Need" (2017). It gives models four crucial abilities:</p>
+
+  <div class="sgrid">
+    <div class="sitem"><code>Long-Range</code><div class="d">Every word directly attends to every other word. Word 1 can easily attend to word 100 — distance doesn't matter.</div></div>
+    <div class="sitem"><code>Parallel</code><div class="d">All attention computations happen simultaneously. GPUs love this — much faster than sequential RNNs.</div></div>
+    <div class="sitem"><code>Interpretable</code><div class="d">Attention weights show what the model "looks at." We can visualize which words relate to which.</div></div>
+    <div class="sitem"><code>Flexible</code><div class="d">Same mechanism works for any sequence length. Can be adapted for many different tasks.</div></div>
+  </div>
+
+  <div class="callout green">
+    <strong>💡 Key insight:</strong> This is why the paper was called "Attention Is All You Need" — the authors showed that attention alone (without recurrence or convolution) was sufficient to achieve state-of-the-art results. Every modern LLM — GPT, Claude, Gemini — is built on this foundation.
+  </div>
+
+  <!-- Quiz 4 -->
+  <div class="qcard" id="q4">
+    <div class="qq">🧩 What is the shape of the attention weights matrix for a single sequence?</div>
+    <div class="qopts">
+      <div class="qo" onclick="ck('q4',this,false)"><span class="ql">A</span> (seq_length, d_model)</div>
+      <div class="qo" onclick="ck('q4',this,true)"><span class="ql">B</span> (seq_length, seq_length)</div>
+      <div class="qo" onclick="ck('q4',this,false)"><span class="ql">C</span> (d_model, d_model)</div>
+      <div class="qo" onclick="ck('q4',this,false)"><span class="ql">D</span> (batch_size, seq_length)</div>
+    </div>
+    <div class="qfb" id="q4-fb"></div>
+  </div>
+</div>
+<hr class="div">
+
+<!-- ═══ SUMMARY ═══ -->
+<div class="section" id="s7">
+  <div class="stag">Summary</div>
+  <h2>Key Takeaways</h2>
+
+  <div class="sgrid">
+    <div class="sitem"><code>Attention</code><div class="d">Lets every position look at every other position — no distance limitation</div></div>
+    <div class="sitem"><code>Q, K, V</code><div class="d">Query = what to look for, Key = what to match, Value = what to return</div></div>
+    <div class="sitem"><code>Formula</code><div class="d">softmax(QKᵀ/√d) × V — similarity → probabilities → weighted sum</div></div>
+    <div class="sitem"><code>Weights</code><div class="d">Each row sums to 1 — a probability distribution over all positions</div></div>
+  </div>
+
+  <div class="callout">
+    <strong>Next up:</strong> In Lesson 2, we'll add <strong>learnable projections</strong> — matrices that transform embeddings into specialized Q, K, V representations. This is what makes self-attention so powerful.
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<script>
+// ═══ Progress bar ═══
+const secs=document.querySelectorAll('.section');
+function updateProgress(){
+  const st=window.scrollY,h=document.body.scrollHeight-innerHeight;
+  document.getElementById('pf').style.width=Math.min(100,st/h*100)+'%';
+  secs.forEach(s=>{if(s.getBoundingClientRect().top<innerHeight*.85)s.classList.add('vis')});
+}
+window.addEventListener('scroll',updateProgress);updateProgress();
+
+// ═══ RNN vs Attention distance demo ═══
+const distWords=["The","cat","sat","on","the","mat","because","it","was","tired"];
+const btnContainer=document.getElementById('wordBtns');
+distWords.forEach((w,i)=>{
+  const b=document.createElement('button');
+  b.className='cbtn'+(i===7?' on':'');
+  b.textContent=w;
+  b.onclick=()=>drawDist(i);
+  btnContainer.appendChild(b);
+});
+function drawDist(idx){
+  btnContainer.querySelectorAll('.cbtn').forEach(b=>b.classList.remove('on'));
+  btnContainer.children[idx].classList.add('on');
+  const c=document.getElementById('distCanvas'),dpr=devicePixelRatio||1,w=c.clientWidth;
+  c.width=w*dpr;c.height=180*dpr;const ctx=c.getContext('2d');ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,180);
+  const n=distWords.length,gap=w/(n+1);
+  // draw words
+  ctx.font='500 12px "JetBrains Mono"';ctx.textAlign='center';
+  for(let i=0;i<n;i++){
+    const x=(i+1)*gap;
+    ctx.fillStyle=i===idx?'#f0883e':'#c9d1d9';
+    ctx.fillText(distWords[i],x,160);
+    ctx.beginPath();ctx.arc(x,130,4,0,Math.PI*2);
+    ctx.fillStyle=i===idx?'#f0883e':'#30363d';ctx.fill();
+  }
+  // RNN arrows (sequential)
+  ctx.strokeStyle='rgba(247,120,186,.3)';ctx.lineWidth=1.5;
+  for(let i=0;i<n-1;i++){
+    const x1=(i+1)*gap+6,x2=(i+2)*gap-6;
+    ctx.beginPath();ctx.moveTo(x1,90);ctx.lineTo(x2,90);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(x2-4,87);ctx.lineTo(x2,90);ctx.lineTo(x2-4,93);ctx.stroke();
+  }
+  ctx.fillStyle='#f778ba';ctx.font='500 10px "JetBrains Mono"';ctx.fillText('RNN: sequential path',w/2,80);
+  // Attention arrows (direct)
+  const xIdx=(idx+1)*gap;
+  for(let i=0;i<n;i++){
+    if(i===idx)continue;
+    const xi=(i+1)*gap;
+    const dist=Math.abs(i-idx);
+    const strength=Math.max(.15,1-dist*0.08);
+    ctx.strokeStyle=`rgba(88,166,255,${strength})`;ctx.lineWidth=strength*2.5;
+    ctx.beginPath();
+    const cpY=40-dist*1.5;
+    ctx.moveTo(xIdx,125);ctx.quadraticCurveTo((xIdx+xi)/2,cpY,xi,125);ctx.stroke();
+  }
+  ctx.fillStyle='#58a6ff';ctx.font='500 10px "JetBrains Mono"';ctx.fillText('Attention: direct connections',w/2,20);
+  const note=idx===7?'Word "it" can directly attend to "cat" — no distance problem!':
+    idx===1?'Word "cat" attends to all words — might focus on "sat" (its verb) and "tired" (its state).':
+    `Word "${distWords[idx]}" can attend directly to all other words simultaneously.`;
+  document.getElementById('distNote').textContent=note;
+}
+drawDist(7);
+window.addEventListener('resize',()=>drawDist(
+  [...btnContainer.children].findIndex(b=>b.classList.contains('on'))
+));
+
+// ═══ QKV demo ═══
+function showQKV(type){
+  document.querySelectorAll('#qkvBtns .cbtn').forEach(b=>b.classList.remove('on'));
+  event.target.classList.add('on');
+  const words=["The","cat","sat","on","the","mat","because","it","was","tired"];
+  let scores,explanation;
+  if(type==='noun'){
+    scores=[0.05,0.45,0.02,0.01,0.05,0.35,0.01,0.02,0.01,0.03];
+    explanation='Query "What noun am I?" → Keys for "cat" and "mat" match strongly (they\'re nouns).\n"cat" scores highest — "it" refers to the cat!';
+  }else if(type==='verb'){
+    scores=[0.02,0.05,0.50,0.01,0.02,0.03,0.02,0.03,0.22,0.10];
+    explanation='Query "What verb relates?" → Keys for "sat" and "was" match strongly (they\'re verbs).\n"sat" gets the most attention — it\'s the main action.';
+  }else{
+    scores=[0.02,0.03,0.02,0.01,0.02,0.03,0.01,0.03,0.04,0.79];
+    explanation='Query "What describes me?" → Key for "tired" matches strongly (it\'s an adjective).\n"tired" dominates — it describes the subject\'s state.';
+  }
+  let out='';
+  for(let i=0;i<words.length;i++){
+    const bar='█'.repeat(Math.round(scores[i]*30))+'░'.repeat(30-Math.round(scores[i]*30));
+    out+=`  ${words[i].padEnd(9)} ${bar} ${(scores[i]*100).toFixed(0).padStart(3)}%\n`;
+  }
+  out+='\n'+explanation;
+  document.getElementById('qkvOut').textContent=out;
+}
+showQKV('noun');
+
+// ═══ Step-by-step computation ═══
+const rawScores=[[2.1,0.5,-0.3,1.2],[0.5,3.0,0.8,-0.1],[-0.3,0.8,1.9,0.4],[1.2,-0.1,0.4,2.5]];
+const d=8;const sqrtD=Math.sqrt(d);
+const scaledScores=rawScores.map(r=>r.map(v=>v/sqrtD));
+function softmaxRow(row){const maxV=Math.max(...row);const exps=row.map(v=>Math.exp(v-maxV));const sum=exps.reduce((a,b)=>a+b);return exps.map(e=>e/sum);}
+const smRows=scaledScores.map(r=>softmaxRow(r));
+const words4=["The","cat","is","sleeping"];
+
+function showStep(s){
+  document.querySelectorAll('.ctrls .cbtn').forEach(b=>b.classList.remove('on'));
+  document.getElementById('stepBtn'+s).classList.add('on');
+  let out='',note='';
+  const hdr='         '+words4.map(w=>w.padStart(9)).join('')+'\n';
+  if(s===0){
+    out='Q × Kᵀ  (raw dot products, d='+d+'):\n\n'+hdr;
+    for(let i=0;i<4;i++) out+=words4[i].padEnd(9)+rawScores[i].map(v=>v.toFixed(2).padStart(9)).join('')+'\n';
+    note='Each entry [i,j] measures how similar word i\'s query is to word j\'s key. Higher = more similar.';
+  }else if(s===1){
+    out='Scaled by √'+d+' = '+sqrtD.toFixed(2)+':\n\n'+hdr;
+    for(let i=0;i<4;i++) out+=words4[i].padEnd(9)+scaledScores[i].map(v=>v.toFixed(2).padStart(9)).join('')+'\n';
+    note='Values are smaller now. This prevents softmax from becoming too "peaky" — keeps gradients healthy.';
+  }else if(s===2){
+    out='After softmax (each row sums to 1.0):\n\n'+hdr;
+    for(let i=0;i<4;i++){
+      const sum=smRows[i].reduce((a,b)=>a+b);
+      out+=words4[i].padEnd(9)+smRows[i].map(v=>v.toFixed(3).padStart(9)).join('')+'   Σ='+sum.toFixed(3)+'\n';
+    }
+    note='Now we have probabilities! Each row tells us: how much should this word attend to each other word?';
+  }else{
+    out='Output = Weights × V\n\n';
+    out+='Each output vector is a weighted average of all value vectors.\n';
+    out+='For "cat":  '+smRows[1].map((v,j)=>v.toFixed(2)+'×V('+words4[j]+')').join(' + ')+'\n\n';
+    out+='Input shape:  (4, 8)\nOutput shape: (4, 8)  ← same shape!\n';
+    out+='\nThe output at each position is now "context-aware" —\nit has gathered information from all other positions.';
+    note='Same shape in, same shape out. This means attention layers can be stacked!';
+  }
+  document.getElementById('stepOut').textContent=out;
+  document.getElementById('stepNote').textContent=note;
+}
+showStep(0);
+
+// ═══ Attention heatmap ═══
+const sentences=[
+  {words:["The","cat","is","sleeping"],weights:[[.40,.20,.15,.25],[.15,.35,.10,.40],[.20,.15,.40,.25],[.10,.45,.15,.30]]},
+  {words:["She","gave","him","the","book"],weights:[[.30,.25,.20,.10,.15],[.20,.25,.15,.15,.25],[.25,.20,.30,.10,.15],[.10,.10,.10,.35,.35],[.15,.20,.15,.20,.30]]},
+  {words:["Dogs","and","cats","play"],weights:[[.35,.10,.35,.20],[.25,.20,.25,.30],[.35,.10,.30,.25],[.30,.10,.30,.30]]}
+];
+let curSent=0,hoverCell=null;
+
+function showSent(idx){
+  curSent=idx;hoverCell=null;
+  document.querySelectorAll('#sentBtns .cbtn').forEach(b=>b.classList.remove('on'));
+  document.querySelectorAll('#sentBtns .cbtn')[idx].classList.add('on');
+  drawHeat();
+}
+function drawHeat(){
+  const s=sentences[curSent],n=s.words.length;
+  const c=document.getElementById('heatCanvas'),dpr=devicePixelRatio||1,w=c.clientWidth;
+  const cellSize=Math.min(60,Math.floor((w-120)/n));
+  const totalH=cellSize*n+80;
+  c.height=totalH;c.width=w*dpr;c.style.height=totalH+'px';
+  const ctx=c.getContext('2d');ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,totalH);
+  const ox=80,oy=40;
+  // Column headers
+  ctx.font='500 11px "JetBrains Mono"';ctx.textAlign='center';ctx.fillStyle='var(--muted)';
+  for(let j=0;j<n;j++) ctx.fillText(s.words[j],ox+j*cellSize+cellSize/2,oy-8);
+  // Row labels
+  ctx.textAlign='right';
+  for(let i=0;i<n;i++) ctx.fillText(s.words[i],ox-8,oy+i*cellSize+cellSize/2+4);
+  // Cells
+  for(let i=0;i<n;i++){
+    for(let j=0;j<n;j++){
+      const v=s.weights[i][j];
+      const isHover=hoverCell&&hoverCell[0]===i&&hoverCell[1]===j;
+      ctx.fillStyle=`rgba(240,136,62,${v*.8+.05})`;
+      if(isHover) ctx.fillStyle=`rgba(88,166,255,${v*.8+.2})`;
+      ctx.beginPath();ctx.roundRect(ox+j*cellSize+1,oy+i*cellSize+1,cellSize-2,cellSize-2,3);ctx.fill();
+      ctx.fillStyle=v>.4?'#000':'#c9d1d9';
+      ctx.font='500 11px "JetBrains Mono"';ctx.textAlign='center';
+      ctx.fillText(v.toFixed(2),ox+j*cellSize+cellSize/2,oy+i*cellSize+cellSize/2+4);
+    }
+  }
+  // axis labels
+  ctx.fillStyle='var(--muted)';ctx.font='400 10px "JetBrains Mono"';ctx.textAlign='center';
+  ctx.fillText('← attending TO →',ox+n*cellSize/2,oy+n*cellSize+18);
+  ctx.save();ctx.translate(12,oy+n*cellSize/2);ctx.rotate(-Math.PI/2);ctx.fillText('← attending FROM →',0,0);ctx.restore();
+}
+document.getElementById('heatCanvas').addEventListener('mousemove',function(e){
+  const s=sentences[curSent],n=s.words.length;
+  const rect=this.getBoundingClientRect();
+  const cellSize=Math.min(60,Math.floor((this.clientWidth-120)/n));
+  const mx=e.clientX-rect.left-80,my=e.clientY-rect.top-40;
+  const j=Math.floor(mx/cellSize),i=Math.floor(my/cellSize);
+  if(i>=0&&i<n&&j>=0&&j<n){
+    hoverCell=[i,j];
+    document.getElementById('heatNote').textContent=
+      `"${s.words[i]}" attends to "${s.words[j]}" with weight ${s.weights[i][j].toFixed(3)}`;
+  }else{hoverCell=null;document.getElementById('heatNote').textContent='Hover over cells to see weights. Brighter = stronger attention.';}
+  drawHeat();
+});
+document.getElementById('heatCanvas').addEventListener('mouseleave',function(){hoverCell=null;drawHeat();document.getElementById('heatNote').textContent='Hover over cells to see weights. Brighter = stronger attention.';});
+drawHeat();
+window.addEventListener('resize',drawHeat);
+
+// ═══ Shape calculator ═══
+function showShapes(b,s,d){
+  document.querySelectorAll('.ctrls .cbtn').forEach(btn=>btn.classList.remove('on'));
+  event.target.classList.add('on');
+  let out=`Input:     Q, K, V = (${b}, ${s}, ${d})\n\n`;
+  out+=`Step 1: Q × Kᵀ\n`;
+  out+=`  Q:     (${b}, ${s}, ${d})\n`;
+  out+=`  Kᵀ:    (${b}, ${d}, ${s})  ← transpose last two dims\n`;
+  out+=`  Score:  (${b}, ${s}, ${s})  ← ${s}×${s} attention matrix per sequence\n\n`;
+  out+=`Step 2: Scale by √${d} = ${Math.sqrt(d).toFixed(1)}\n`;
+  out+=`  Shape unchanged: (${b}, ${s}, ${s})\n\n`;
+  out+=`Step 3: Softmax\n`;
+  out+=`  Shape unchanged: (${b}, ${s}, ${s})\n\n`;
+  out+=`Step 4: Weights × V\n`;
+  out+=`  Weights: (${b}, ${s}, ${s})\n`;
+  out+=`  V:       (${b}, ${s}, ${d})\n`;
+  out+=`  Output:  (${b}, ${s}, ${d})  ← same as input!\n\n`;
+  out+=`Memory for attention matrix: ${b}×${s}×${s} = ${(b*s*s).toLocaleString()} values`;
+  document.getElementById('shapeOut').textContent=out;
+}
+showShapes(2,4,8);
+
+// ═══ Quiz ═══
+function ck(id,el,ok){
+  const card=document.getElementById(id);if(card.dataset.a)return;card.dataset.a='1';
+  card.querySelectorAll('.qo').forEach(o=>o.classList.add('d'));
+  const fb=document.getElementById(id+'-fb');
+  if(ok){el.classList.add('c');fb.className='qfb p show';fb.textContent='✅ Correct!';}
+  else{el.classList.add('w');card.querySelectorAll('.qo').forEach(o=>{if(o.onclick&&o.onclick.toString().includes('true'))o.classList.add('c')});
+    fb.className='qfb f show';
+    const ex={
+      q1:'Attention weights are determined by the dot product (similarity) between one word\'s Query and another\'s Key. High similarity = high attention. Distance and position don\'t directly affect the score.',
+      q2:'Each row of the attention weight matrix is a probability distribution (sums to 1.0) showing how much that position attends to every other position. This is the result of applying softmax to the scaled scores.',
+      q3:'As dimension d grows, dot products tend to grow larger (more terms being summed). Large values cause softmax to produce near-one-hot distributions (almost all weight on one position), which leads to tiny gradients. Dividing by √d normalizes the variance back to ~1.',
+      q4:'The attention weight matrix has shape (seq_length, seq_length). Each entry [i,j] represents how much position i attends to position j. The output shape is (seq_length, d_model) — same as the input.'
+    };
+    fb.textContent='❌ '+ex[id];
+  }
+}
+</script>
+</body>
+</html>

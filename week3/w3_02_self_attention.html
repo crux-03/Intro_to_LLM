@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week 3 · Lesson 2: Self-Attention</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0f0a1a;--surface:#16102a;--surface2:#1e1636;--border:#2e2650;
+  --text:#c8c0e0;--muted:#7a70a0;--heading:#f0ecff;
+  --indigo:#7c5cfc;--in-dim:rgba(124,92,252,.12);--in-glow:rgba(124,92,252,.3);
+  --lime:#84e060;--li-dim:rgba(132,224,96,.12);
+  --rose:#f06088;--ro-dim:rgba(240,96,136,.12);
+  --gold:#ecc040;--go-dim:rgba(236,192,64,.12);
+  --mono:'IBM Plex Mono',monospace;--serif:'Fraunces',serif;--sans:'Outfit',sans-serif;
+  --r:10px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);line-height:1.76;font-size:15.5px}
+.container{max-width:760px;margin:0 auto;padding:48px 24px 100px}
+.pbar{position:fixed;top:0;left:0;right:0;height:3px;background:var(--surface);z-index:999}.pfill{height:100%;width:0%;background:var(--indigo);box-shadow:0 0 8px var(--in-glow);transition:width .3s}
+.hero{text-align:center;padding:32px 0 48px}.hero-tag{font-family:var(--mono);font-size:.76rem;color:var(--indigo);letter-spacing:.14em;text-transform:uppercase}.hero h1{font-family:var(--serif);font-size:2.5rem;font-weight:700;color:var(--heading);margin:8px 0}.hero h1 em{color:var(--indigo);font-style:italic}.hero p{color:var(--muted);font-size:1.05rem;max-width:560px;margin:0 auto}
+.section{margin-bottom:56px;opacity:0;transform:translateY(20px);transition:all .5s}.section.vis{opacity:1;transform:none}.stag{font-family:var(--mono);font-size:.72rem;color:var(--indigo);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}.section h2{font-family:var(--serif);font-size:1.55rem;color:var(--heading);margin-bottom:14px}.section h3{font-family:var(--serif);font-size:1.15rem;color:var(--heading);margin:20px 0 10px}.section p{margin-bottom:12px}.section p strong{color:var(--heading)}
+pre{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--indigo);border-radius:var(--r);padding:16px 18px;margin:14px 0;overflow-x:auto;font-family:var(--mono);font-size:.84rem;line-height:1.6;color:var(--text)}
+code.il{font-family:var(--mono);font-size:.86em;color:var(--indigo);background:var(--in-dim);padding:2px 6px;border-radius:4px}
+.kw{color:#e090c0}.fn{color:#80b8f0}.num{color:#ecc040}.str{color:#84e060}.cm{color:var(--muted);font-style:italic}
+.callout{background:var(--in-dim);border:1px solid rgba(124,92,252,.2);border-radius:var(--r);padding:16px 18px;margin:18px 0;font-size:.93rem}.callout.gold{background:var(--go-dim);border-color:rgba(236,192,64,.2)}.callout.warn{background:var(--ro-dim);border-color:rgba(240,96,136,.2)}.callout.green{background:var(--li-dim);border-color:rgba(132,224,96,.2)}
+.analogy{border-left:3px solid var(--gold);padding:10px 16px;margin:16px 0;background:var(--go-dim);border-radius:0 var(--r) var(--r) 0;font-size:.93rem}.analogy strong{color:var(--heading)}
+hr.div{border:none;border-top:1px solid var(--border);margin:52px 0}
+.cw{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin:18px 0}.cw-title{font-family:var(--mono);font-size:.76rem;color:var(--indigo);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px}
+.ctrls{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.cbtn{font-family:var(--mono);font-size:.8rem;padding:7px 14px;border:1px solid var(--border);border-radius:6px;background:var(--surface2);color:var(--text);cursor:pointer;transition:all .2s}.cbtn:hover{border-color:var(--indigo);color:var(--indigo)}.cbtn.on{background:var(--in-dim);border-color:var(--indigo);color:var(--indigo)}
+.out{background:#080410;border:1px solid var(--border);border-radius:6px;padding:14px 16px;font-family:var(--mono);font-size:.84rem;color:var(--lime);line-height:1.6;margin:10px 0;white-space:pre-wrap;min-height:36px}
+.step{display:flex;gap:12px;margin:10px 0;align-items:flex-start}.step-n{font-family:var(--mono);font-size:.75rem;color:#000;background:var(--indigo);width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;font-weight:600}.step-c{flex:1}
+.qcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:22px;margin:18px 0}.qq{font-family:var(--serif);font-size:1.05rem;color:var(--heading);margin-bottom:12px}.qopts{display:flex;flex-direction:column;gap:7px}.qo{display:flex;align-items:center;gap:10px;padding:11px 14px;border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:.9rem;transition:all .2s}.qo:hover{border-color:var(--indigo)}.qo.c{border-color:var(--lime);background:var(--li-dim);color:var(--lime)}.qo.w{border-color:var(--rose);background:var(--ro-dim);color:var(--rose)}.qo.d{pointer-events:none;opacity:.85}
+.ql{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.75rem;font-weight:600;background:var(--surface2);color:var(--muted);flex-shrink:0}.qo.c .ql{background:var(--lime);color:#000}.qo.w .ql{background:var(--rose);color:#fff}
+.qfb{margin-top:10px;padding:10px 12px;border-radius:6px;font-size:.88rem;display:none;line-height:1.6}.qfb.show{display:block}.qfb.p{background:var(--li-dim);color:var(--lime);border-left:3px solid var(--lime)}.qfb.f{background:var(--ro-dim);color:var(--rose);border-left:3px solid var(--rose)}
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}.sitem{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 14px}.sitem code{font-family:var(--mono);font-size:.84rem;color:var(--indigo)}.sitem .d{font-size:.86rem;color:var(--muted);margin-top:3px}
+canvas{display:block;width:100%;border-radius:6px}
+@media(max-width:600px){.hero h1{font-size:1.8rem}.sgrid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="pbar"><div class="pfill" id="pf"></div></div>
+<div class="container">
+
+<div class="hero">
+  <div class="hero-tag">Week 3 · Lesson 2</div>
+  <h1><em>Self-Attention</em></h1>
+  <p>Basic attention uses embeddings directly as Q, K, V. Self-attention adds learnable projections — giving the model the freedom to decide what to look for, what to expose, and what to return.</p>
+</div>
+<hr class="div">
+
+<!-- ═══ PART 1: WHY PROJECTIONS ═══ -->
+<div class="section" id="s1">
+  <div class="stag">Part 01</div>
+  <h2>Why Learnable Projections?</h2>
+
+  <p>In basic attention, Q = K = V = the embeddings themselves. This means each word's query <em>is</em> its embedding, and its key <em>is</em> its embedding. There's no flexibility — the model can't decide what aspects of a word to use for searching versus matching versus returning.</p>
+
+  <p>Self-attention introduces three <strong>learnable weight matrices</strong> that transform the embeddings:</p>
+
+  <pre><span class="cm"># Basic attention (Lesson 1)</span>
+Q = embeddings          <span class="cm"># query IS the embedding</span>
+K = embeddings          <span class="cm"># key IS the embedding</span>
+V = embeddings          <span class="cm"># value IS the embedding</span>
+
+<span class="cm"># Self-attention (this lesson)</span>
+Q = embeddings @ W_q    <span class="cm"># query is a LEARNED function of embedding</span>
+K = embeddings @ W_k    <span class="cm"># key is a LEARNED function of embedding</span>
+V = embeddings @ W_v    <span class="cm"># value is a LEARNED function of embedding</span></pre>
+
+  <p>Now the model can <strong>learn</strong> what features to extract for each role. W_q might learn to extract "what grammatical role am I?" while W_k might learn to extract "what can I offer to others?"</p>
+
+  <div class="analogy">
+    <strong>🎭 Analogy — Job Interview:</strong> Basic attention is like everyone wearing the same name tag. Self-attention is like having three different cards: your <em>question card</em> (what you're looking for in a colleague), your <em>badge</em> (what you advertise about yourself), and your <em>resume</em> (your actual skills). Each card serves a different purpose, and you learn to fill them in strategically.
+  </div>
+</div>
+<hr class="div">
+
+<!-- ═══ PART 2: PROJECTION DIAGRAM ═══ -->
+<div class="section" id="s2">
+  <div class="stag">Part 02</div>
+  <h2>Projections as Feature Extractors</h2>
+
+  <p>Each projection matrix acts as a <strong>specialized feature extractor</strong>. From the same input embedding, each extracts different aspects:</p>
+
+  <div class="cw">
+    <div class="cw-title">▸ Projection Flow Diagram</div>
+    <p style="font-size:.88rem;color:var(--muted);margin-bottom:8px;">Select a word to see how projections extract different features:</p>
+    <div class="ctrls" id="projBtns">
+      <button class="cbtn on" onclick="showProj('cat')">cat</button>
+      <button class="cbtn" onclick="showProj('sat')">sat</button>
+      <button class="cbtn" onclick="showProj('tired')">tired</button>
+    </div>
+    <canvas id="projCanvas" height="240"></canvas>
+  </div>
+
+  <p>The key insight: <strong>W_q, W_k, and W_v are all learned during training</strong>. The model discovers on its own what features are useful for each role. After training on enough text, these matrices specialize beautifully.</p>
+
+  <div class="callout">
+    <strong>🔢 Implementation detail:</strong> In PyTorch, each projection is just <code class="il">nn.Linear(d_model, d_model)</code> — a matrix multiply plus an optional bias. So W_q, W_k, W_v are each (d_model × d_model) matrices with d_model bias terms.
+  </div>
+</div>
+<hr class="div">
+
+<!-- ═══ PART 3: IMPLEMENTATION ═══ -->
+<div class="section" id="s3">
+  <div class="stag">Part 03</div>
+  <h2>The Self-Attention Module</h2>
+
+  <p>Here's the complete self-attention module — the core building block of every transformer:</p>
+
+  <pre><span class="kw">class</span> <span class="fn">SelfAttention</span>(nn.Module):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, d_model, dropout=<span class="num">0.1</span>):
+        <span class="fn">super</span>().__init__()
+
+        <span class="cm"># Learnable projections</span>
+        self.W_q = nn.Linear(d_model, d_model)
+        self.W_k = nn.Linear(d_model, d_model)
+        self.W_v = nn.Linear(d_model, d_model)
+
+        <span class="cm"># Output projection</span>
+        self.W_o = nn.Linear(d_model, d_model)
+
+        <span class="cm"># Dropout for regularization</span>
+        self.dropout = nn.Dropout(dropout)
+
+    <span class="kw">def</span> <span class="fn">forward</span>(self, x):
+        Q = self.W_q(x)          <span class="cm"># (batch, seq, d_model)</span>
+        K = self.W_k(x)
+        V = self.W_v(x)
+
+        scores = Q @ K.transpose(-<span class="num">2</span>, -<span class="num">1</span>) / math.sqrt(d_model)
+        weights = F.softmax(scores, dim=-<span class="num">1</span>)
+        weights = self.dropout(weights)
+
+        attended = weights @ V
+        output = self.W_o(attended)   <span class="cm"># output projection</span>
+        <span class="kw">return</span> output</pre>
+
+  <p>Notice the four projection matrices: W_q, W_k, W_v for input projections, and W_o for the output projection. The input and output shapes are identical — <code class="il">(batch, seq_len, d_model)</code> — which means self-attention layers can be stacked.</p>
+
+  <!-- Quiz 1 -->
+  <div class="qcard" id="q1">
+    <div class="qq">🧩 How many learnable projection matrices does self-attention have?</div>
+    <div class="qopts">
+      <div class="qo" onclick="ck('q1',this,false)"><span class="ql">A</span> 1 (just the QKV projection)</div>
+      <div class="qo" onclick="ck('q1',this,false)"><span class="ql">B</span> 3 (W_q, W_k, W_v)</div>
+      <div class="qo" onclick="ck('q1',this,true)"><span class="ql">C</span> 4 (W_q, W_k, W_v, W_o)</div>
+      <div class="qo" onclick="ck('q1',this,false)"><span class="ql">D</span> 2 (W_qk and W_v)</div>
+    </div>
+    <div class="qfb" id="q1-fb"></div>
+  </div>
+</div>
+<hr class="div">
+
+<!-- ═══ PART 4: OUTPUT PROJECTION ═══ -->
+<div class="section" id="s4">
+  <div class="stag">Part 04</div>
+  <h2>The Output Projection (W_o)</h2>
+
+  <p>After computing the weighted combination of values, we apply one more linear transformation: W_o. You might wonder: why do we need another projection at the end?</p>
+
+  <div class="sgrid">
+    <div class="sitem"><code>Mixing</code><div class="d">Combines information from the attended values in new ways</div></div>
+    <div class="sitem"><code>Capacity</code><div class="d">More parameters = more expressive model</div></div>
+    <div class="sitem"><code>Multi-Head</code><div class="d">In multi-head attention (next lesson), W_o combines info from all heads</div></div>
+    <div class="sitem"><code>Symmetry</code><div class="d">Input projections (W_q,W_k,W_v) → Attention → Output projection (W_o)</div></div>
+  </div>
+
+  <p>Think of it as a "final filter" — after gathering information from other positions, W_o decides how to combine and present that information.</p>
+</div>
+<hr class="div">
+
+<!-- ═══ PART 5: PARAMETER COUNT ═══ -->
+<div class="section" id="s5">
+  <div class="stag">Part 05</div>
+  <h2>Parameter Count</h2>
+
+  <p>How many parameters does self-attention have? Each projection is a (d_model × d_model) matrix plus a bias vector of size d_model. With 4 projections, that's:</p>
+
+  <pre><span class="cm"># Parameters per projection: d_model × d_model + d_model (bias)</span>
+<span class="cm"># Total: 4 × (d_model² + d_model)</span>
+<span class="cm"># ≈ 4 × d_model²  (bias is negligible)</span></pre>
+
+  <div class="cw">
+    <div class="cw-title">▸ Parameter Calculator</div>
+    <p style="font-size:.88rem;color:var(--muted);margin-bottom:8px;">See how parameters scale with model dimension:</p>
+    <div class="ctrls">
+      <button class="cbtn on" onclick="showParams(64)">d=64</button>
+      <button class="cbtn" onclick="showParams(256)">d=256</button>
+      <button class="cbtn" onclick="showParams(512)">d=512</button>
+      <button class="cbtn" onclick="showParams(768)">d=768 (GPT-2)</button>
+    </div>
+    <div class="out" id="paramOut"></div>
+  </div>
+
+  <div class="callout warn">
+    <strong>📊 Scaling:</strong> Parameters grow as O(d_model²). Doubling d_model quadruples the parameters. GPT-2 Small (d=768) has ~2.4M parameters just in one attention layer's projections. GPT-3 (d=12288) has ~600M per attention layer!
+  </div>
+
+  <!-- Quiz 2 -->
+  <div class="qcard" id="q2">
+    <div class="qq">🧩 What is the approximate parameter count of self-attention for d_model=512?</div>
+    <div class="qopts">
+      <div class="qo" onclick="ck('q2',this,false)"><span class="ql">A</span> 512 (just the dimension)</div>
+      <div class="qo" onclick="ck('q2',this,false)"><span class="ql">B</span> ~262,000 (about 512²)</div>
+      <div class="qo" onclick="ck('q2',this,true)"><span class="ql">C</span> ~1,050,000 (about 4 × 512²)</div>
+      <div class="qo" onclick="ck('q2',this,false)"><span class="ql">D</span> ~16,000,000 (about 512³)</div>
+    </div>
+    <div class="qfb" id="q2-fb"></div>
+  </div>
+</div>
+<hr class="div">
+
+<!-- ═══ PART 6: DROPOUT ═══ -->
+<div class="section" id="s6">
+  <div class="stag">Part 06</div>
+  <h2>Dropout in Attention</h2>
+
+  <p>We apply <strong>dropout</strong> to the attention weights during training. This randomly zeros out some attention connections, forcing the model to not rely too heavily on any single connection.</p>
+
+  <div class="cw">
+    <div class="cw-title">▸ Dropout Visualization</div>
+    <p style="font-size:.88rem;color:var(--muted);margin-bottom:8px;">Click to see how dropout randomly masks attention connections during training:</p>
+    <div class="ctrls">
+      <button class="cbtn on" onclick="showDropout('off')">No Dropout (eval)</button>
+      <button class="cbtn" onclick="showDropout('on')">Dropout=0.3 (training)</button>
+      <button class="cbtn" onclick="showDropout('on')">Re-roll Dropout</button>
+    </div>
+    <canvas id="dropCanvas" height="180"></canvas>
+    <div id="dropNote" style="font-size:.86rem;color:var(--muted);margin-top:6px;"></div>
+  </div>
+
+  <p>During <strong>evaluation</strong> (<code class="il">model.eval()</code>), dropout is disabled — all connections are active. This means the same input always produces the same output in eval mode, but produces different outputs in training mode (due to random dropout).</p>
+</div>
+<hr class="div">
+
+<!-- ═══ PART 7: COMPARISON ═══ -->
+<div class="section" id="s7">
+  <div class="stag">Part 07</div>
+  <h2>Basic vs Self-Attention</h2>
+
+  <div class="cw">
+    <div class="cw-title">▸ Side-by-Side Comparison</div>
+    <div class="ctrls">
+      <button class="cbtn on" onclick="showCompare('basic')">Basic Attention</button>
+      <button class="cbtn" onclick="showCompare('self')">Self-Attention</button>
+    </div>
+    <div class="out" id="compareOut"></div>
+  </div>
+
+  <!-- Quiz 3 -->
+  <div class="qcard" id="q3">
+    <div class="qq">🧩 What's the main advantage of self-attention over basic attention?</div>
+    <div class="qopts">
+      <div class="qo" onclick="ck('q3',this,false)"><span class="ql">A</span> Self-attention is faster to compute</div>
+      <div class="qo" onclick="ck('q3',this,false)"><span class="ql">B</span> Self-attention uses less memory</div>
+      <div class="qo" onclick="ck('q3',this,true)"><span class="ql">C</span> Q, K, V can specialize for their roles through learned projections</div>
+      <div class="qo" onclick="ck('q3',this,false)"><span class="ql">D</span> Self-attention works on longer sequences</div>
+    </div>
+    <div class="qfb" id="q3-fb"></div>
+  </div>
+</div>
+<hr class="div">
+
+<!-- ═══ SUMMARY ═══ -->
+<div class="section" id="s8">
+  <div class="stag">Summary</div>
+  <h2>Key Takeaways</h2>
+
+  <div class="sgrid">
+    <div class="sitem"><code>Projections</code><div class="d">W_q, W_k, W_v transform embeddings into specialized Q, K, V representations</div></div>
+    <div class="sitem"><code>Output (W_o)</code><div class="d">Final projection that combines attended information</div></div>
+    <div class="sitem"><code>Same Shape</code><div class="d">Input and output are both (batch, seq, d_model) — stackable!</div></div>
+    <div class="sitem"><code>Parameters</code><div class="d">~4 × d_model² parameters — grows quadratically</div></div>
+  </div>
+
+  <div class="callout green">
+    <strong>Next up:</strong> In Lesson 3, we'll add <strong>causal masking</strong> — the mechanism that prevents GPT from "cheating" by looking at future tokens during training.
+  </div>
+</div>
+
+</div>
+
+<script>
+const secs=document.querySelectorAll('.section');
+function updateProgress(){const st=window.scrollY,h=document.body.scrollHeight-innerHeight;document.getElementById('pf').style.width=Math.min(100,st/h*100)+'%';secs.forEach(s=>{if(s.getBoundingClientRect().top<innerHeight*.85)s.classList.add('vis')});}
+window.addEventListener('scroll',updateProgress);updateProgress();
+
+// ═══ Projection diagram ═══
+function showProj(word){
+  document.querySelectorAll('#projBtns .cbtn').forEach(b=>b.classList.remove('on'));
+  event.target.classList.add('on');
+  const c=document.getElementById('projCanvas'),dpr=devicePixelRatio||1,w=c.clientWidth;
+  c.width=w*dpr;c.height=240*dpr;const ctx=c.getContext('2d');ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,240);
+  const features={
+    cat:{q:'Looking for verbs, adjectives',k:'Noun, animal, subject',v:'Semantic: furry, small, pet'},
+    sat:{q:'Looking for subject, location',k:'Verb, action, past-tense',v:'Semantic: resting, position'},
+    tired:{q:'Looking for what/who is tired',k:'Adjective, state, cause',v:'Semantic: fatigue, sleepy'}
+  };
+  const f=features[word];
+  const cx=w/2,boxW=Math.min(200,w/3-20);
+  // Input box
+  ctx.fillStyle='var(--surface2)';ctx.strokeStyle='var(--border)';ctx.lineWidth=1;
+  ctx.beginPath();ctx.roundRect(cx-60,10,120,36,6);ctx.fill();ctx.stroke();
+  ctx.fillStyle='var(--heading)';ctx.font='600 13px "Outfit"';ctx.textAlign='center';
+  ctx.fillText(`"${word}" embedding`,cx,33);
+  // Arrows down
+  const positions=[{x:cx-boxW-20,label:'W_q',color:'#7c5cfc',title:'Query',desc:f.q},
+                   {x:cx,label:'W_k',color:'#ecc040',title:'Key',desc:f.k},
+                   {x:cx+boxW+20,label:'W_v',color:'#84e060',title:'Value',desc:f.v}];
+  positions.forEach(p=>{
+    // Arrow
+    ctx.strokeStyle=p.color;ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(cx,46);ctx.lineTo(p.x,80);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(p.x-4,74);ctx.lineTo(p.x,80);ctx.lineTo(p.x+4,74);ctx.stroke();
+    // Projection label
+    ctx.fillStyle=p.color;ctx.font='500 11px "IBM Plex Mono"';ctx.textAlign='center';
+    ctx.fillText(p.label,(cx+p.x)/2+(p.x<cx?-12:p.x>cx?12:0),68);
+    // Result box
+    ctx.fillStyle='var(--surface2)';ctx.strokeStyle=p.color;ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.roundRect(p.x-boxW/2,90,boxW,110,8);ctx.fill();ctx.stroke();
+    ctx.fillStyle=p.color;ctx.font='600 12px "Outfit"';ctx.fillText(p.title,p.x,112);
+    ctx.fillStyle='var(--text)';ctx.font='400 11px "Outfit"';
+    const words=p.desc.split(', ');
+    words.forEach((t,i)=>{ctx.fillText(t,p.x,132+i*16);});
+  });
+}
+showProj('cat');
+window.addEventListener('resize',()=>{const active=[...document.querySelectorAll('#projBtns .cbtn')].find(b=>b.classList.contains('on'));if(active)showProj(active.textContent);});
+
+// ═══ Parameter calculator ═══
+function showParams(d){
+  document.querySelectorAll('.ctrls .cbtn').forEach(b=>b.classList.remove('on'));
+  event.target.classList.add('on');
+  const wParams=d*d+d;
+  const total=4*wParams;
+  let out=`d_model = ${d}\n\n`;
+  out+=`Per projection matrix:\n`;
+  out+=`  Weight: ${d} × ${d} = ${(d*d).toLocaleString()} params\n`;
+  out+=`  Bias:   ${d} params\n`;
+  out+=`  Total:  ${wParams.toLocaleString()} params\n\n`;
+  out+=`4 projections (W_q, W_k, W_v, W_o):\n`;
+  out+=`  4 × ${wParams.toLocaleString()} = ${total.toLocaleString()} parameters\n\n`;
+  const bar='█'.repeat(Math.min(40,Math.round(total/30000)))+'░'.repeat(Math.max(0,40-Math.round(total/30000)));
+  out+=`Scale: ${bar}`;
+  document.getElementById('paramOut').textContent=out;
+}
+showParams(64);
+
+// ═══ Dropout visualization ═══
+function showDropout(mode){
+  document.querySelectorAll('.ctrls .cbtn').forEach(b=>b.classList.remove('on'));
+  event.target.classList.add('on');
+  const c=document.getElementById('dropCanvas'),dpr=devicePixelRatio||1,w=c.clientWidth;
+  c.width=w*dpr;c.height=180*dpr;const ctx=c.getContext('2d');ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,180);
+  const words=["The","cat","sat","on"];
+  const n=words.length,gap=w/(n+1);
+  const baseWeights=[[.4,.2,.15,.25],[.15,.35,.1,.4],[.2,.15,.4,.25],[.1,.45,.15,.3]];
+  // Draw grid
+  for(let i=0;i<n;i++){
+    for(let j=0;j<n;j++){
+      let v=baseWeights[i][j];
+      let dropped=false;
+      if(mode==='on'&&Math.random()<0.3){dropped=true;v=0;}
+      const x=120+j*55,y=20+i*38;
+      ctx.fillStyle=dropped?'rgba(240,96,136,.15)':`rgba(124,92,252,${v*.8+.1})`;
+      ctx.beginPath();ctx.roundRect(x,y,50,33,4);ctx.fill();
+      if(dropped){
+        ctx.strokeStyle='rgba(240,96,136,.4)';ctx.lineWidth=1;
+        ctx.beginPath();ctx.moveTo(x+5,y+5);ctx.lineTo(x+45,y+28);ctx.stroke();
+        ctx.beginPath();ctx.moveTo(x+45,y+5);ctx.lineTo(x+5,y+28);ctx.stroke();
+      }
+      ctx.fillStyle=dropped?'var(--rose)':'#e0e0ff';ctx.font='500 10px "IBM Plex Mono"';ctx.textAlign='center';
+      ctx.fillText(dropped?'drop':v.toFixed(2),x+25,y+20);
+    }
+    ctx.fillStyle='var(--text)';ctx.font='500 11px "IBM Plex Mono"';ctx.textAlign='right';
+    ctx.fillText(words[i],105,20+i*38+20);
+  }
+  ctx.textAlign='center';for(let j=0;j<n;j++){
+    ctx.fillStyle='var(--muted)';ctx.font='500 10px "IBM Plex Mono"';
+    ctx.fillText(words[j],145+j*55,172);
+  }
+  document.getElementById('dropNote').textContent=mode==='on'?
+    'Red X = dropped connection. The model must learn to not depend on any single connection.':
+    'All connections active during evaluation — consistent, deterministic output.';
+}
+showDropout('off');
+
+// ═══ Comparison ═══
+function showCompare(type){
+  document.querySelectorAll('.ctrls .cbtn').forEach(b=>b.classList.remove('on'));
+  event.target.classList.add('on');
+  let out;
+  if(type==='basic'){
+    out=`BASIC ATTENTION (Lesson 1)\n${'─'.repeat(40)}\n\n`;
+    out+=`Q = embeddings       (no transformation)\n`;
+    out+=`K = embeddings       (identical to Q)\n`;
+    out+=`V = embeddings       (identical to Q)\n\n`;
+    out+=`Learnable parameters: 0\n`;
+    out+=`Flexibility:          Low — Q, K, V are the same\n`;
+    out+=`Use case:             Educational / simple demos\n\n`;
+    out+=`Limitation: Every word uses the same representation\n`;
+    out+=`for querying, matching, AND returning information.\n`;
+    out+=`No room to specialize.`;
+  }else{
+    out=`SELF-ATTENTION (This Lesson)\n${'─'.repeat(40)}\n\n`;
+    out+=`Q = embeddings @ W_q  (learned query features)\n`;
+    out+=`K = embeddings @ W_k  (learned key features)\n`;
+    out+=`V = embeddings @ W_v  (learned value features)\n`;
+    out+=`out = attended @ W_o  (output projection)\n\n`;
+    out+=`Learnable parameters: ~4 × d_model²\n`;
+    out+=`Flexibility:          High — each role specializes\n`;
+    out+=`Use case:             All real transformers!\n\n`;
+    out+=`Advantage: Each projection can learn different\n`;
+    out+=`features — what to search for, what to expose,\n`;
+    out+=`and what to return are all independently learned.`;
+  }
+  document.getElementById('compareOut').textContent=out;
+}
+showCompare('basic');
+
+// ═══ Quiz ═══
+function ck(id,el,ok){
+  const card=document.getElementById(id);if(card.dataset.a)return;card.dataset.a='1';
+  card.querySelectorAll('.qo').forEach(o=>o.classList.add('d'));
+  const fb=document.getElementById(id+'-fb');
+  if(ok){el.classList.add('c');fb.className='qfb p show';fb.textContent='✅ Correct!';}
+  else{el.classList.add('w');card.querySelectorAll('.qo').forEach(o=>{if(o.onclick&&o.onclick.toString().includes('true'))o.classList.add('c')});
+    fb.className='qfb f show';
+    const ex={
+      q1:'Self-attention has 4 learnable matrices: W_q (query projection), W_k (key projection), W_v (value projection), and W_o (output projection). Each is (d_model × d_model).',
+      q2:'Each projection is d_model × d_model + d_model (bias). With 4 projections: 4 × (512² + 512) = 4 × 262,656 ≈ 1,050,624. The dominant term is 4 × d_model².',
+      q3:'The key advantage is that learned projections let Q, K, and V specialize. W_q learns what features to search for, W_k learns what features to expose for matching, and W_v learns what information to return. Basic attention forces all three roles to use the same representation.'
+    };
+    fb.textContent='❌ '+ex[id];
+  }
+}
+</script>
+</body>
+</html>

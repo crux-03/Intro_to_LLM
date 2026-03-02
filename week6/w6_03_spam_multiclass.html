@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week 6 &middot; Lesson 3: Spam Detection &amp; Multi-class Classification</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;1,400&family=Source+Code+Pro:wght@400;500;600&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#080c14;--surface:#101820;--surface2:#182030;--border:#283848;--text:#b8cce0;--muted:#607890;--heading:#eef4ff;--teal:#2dd4bf;--te-dim:rgba(45,212,191,.12);--te-glow:rgba(45,212,191,.3);--orange:#fb923c;--or-dim:rgba(251,146,60,.12);--rose:#fb7185;--ro-dim:rgba(251,113,133,.12);--sky:#38bdf8;--sk-dim:rgba(56,189,248,.12);--lime:#a3e635;--li-dim:rgba(163,230,53,.12);--violet:#a78bfa;--vi-dim:rgba(167,139,250,.12);--mono:'Source Code Pro',monospace;--serif:'Fraunces',serif;--sans:'Public Sans',sans-serif;--r:10px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);line-height:1.76;font-size:15.5px}
+.container{max-width:760px;margin:0 auto;padding:48px 24px 100px}
+.pbar{position:fixed;top:0;left:0;right:0;height:3px;background:var(--surface);z-index:999}.pfill{height:100%;width:0%;background:var(--teal);box-shadow:0 0 8px var(--te-glow);transition:width .3s}
+.hero{text-align:center;padding:32px 0 48px}.hero-tag{font-family:var(--mono);font-size:.72rem;color:var(--teal);letter-spacing:.14em;text-transform:uppercase}.hero h1{font-family:var(--serif);font-size:2.4rem;font-weight:700;color:var(--heading);margin:8px 0}.hero h1 em{color:var(--teal);font-style:italic}.hero p{color:var(--muted);font-size:1.05rem;max-width:560px;margin:0 auto}
+.section{margin-bottom:56px;opacity:0;transform:translateY(20px);transition:all .5s}.section.vis{opacity:1;transform:none}.stag{font-family:var(--mono);font-size:.72rem;color:var(--teal);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}.section h2{font-family:var(--serif);font-size:1.55rem;color:var(--heading);margin-bottom:14px}.section h3{font-family:var(--serif);font-size:1.2rem;color:var(--heading);margin:20px 0 10px}.section p{margin-bottom:12px}.section p strong{color:var(--heading)}
+pre{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--teal);border-radius:var(--r);padding:16px 18px;margin:14px 0;overflow-x:auto;font-family:var(--mono);font-size:.82rem;line-height:1.6;color:var(--text)}
+code.il{font-family:var(--mono);font-size:.86em;color:var(--teal);background:var(--te-dim);padding:2px 6px;border-radius:4px}
+.kw{color:#fca5a5}.fn{color:#93c5fd}.num{color:#fbbf24}.str{color:#86efac}.cm{color:var(--muted);font-style:italic}
+.callout{background:var(--te-dim);border:1px solid rgba(45,212,191,.2);border-radius:var(--r);padding:16px 18px;margin:18px 0;font-size:.93rem}.callout.warn{background:var(--or-dim);border-color:rgba(251,146,60,.2)}.callout.green{background:var(--li-dim);border-color:rgba(163,230,53,.2)}.callout.info{background:var(--sk-dim);border-color:rgba(56,189,248,.2)}
+hr.div{border:none;border-top:1px solid var(--border);margin:52px 0}
+.cw{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin:18px 0}.cw-title{font-family:var(--mono);font-size:.72rem;color:var(--teal);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px}
+.ctrls{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.cbtn{font-family:var(--mono);font-size:.78rem;padding:7px 14px;border:1px solid var(--border);border-radius:6px;background:var(--surface2);color:var(--text);cursor:pointer;transition:all .2s}.cbtn:hover{border-color:var(--teal);color:var(--teal)}.cbtn.on{background:var(--te-dim);border-color:var(--teal);color:var(--teal)}
+.out{background:#04080e;border:1px solid var(--border);border-radius:6px;padding:14px 16px;font-family:var(--mono);font-size:.82rem;color:var(--lime);line-height:1.6;margin:10px 0;white-space:pre-wrap;min-height:36px}
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}.sitem{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 14px}.sitem code{font-family:var(--mono);font-size:.82rem;color:var(--teal)}.sitem .d{font-size:.86rem;color:var(--muted);margin-top:3px}
+.qcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:22px;margin:18px 0}.qq{font-family:var(--serif);font-size:1.05rem;color:var(--heading);margin-bottom:12px}.qopts{display:flex;flex-direction:column;gap:7px}.qo{display:flex;align-items:center;gap:10px;padding:11px 14px;border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:.9rem;transition:all .2s}.qo:hover{border-color:var(--teal)}.qo.c{border-color:var(--lime);background:var(--li-dim);color:var(--lime)}.qo.w{border-color:var(--rose);background:var(--ro-dim);color:var(--rose)}.qo.d{pointer-events:none;opacity:.85}
+.ql{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.75rem;font-weight:600;background:var(--surface2);color:var(--muted);flex-shrink:0}.qo.c .ql{background:var(--lime);color:#000}.qo.w .ql{background:var(--rose);color:#fff}
+.qfb{margin-top:10px;padding:10px 12px;border-radius:6px;font-size:.88rem;display:none;line-height:1.6}.qfb.show{display:block}.qfb.p{background:var(--li-dim);color:var(--lime);border-left:3px solid var(--lime)}.qfb.f{background:var(--ro-dim);color:var(--rose);border-left:3px solid var(--rose)}
+.text-input{width:100%;padding:10px 14px;font-family:var(--sans);font-size:.95rem;border:1px solid var(--border);border-radius:6px;background:var(--surface2);color:var(--text);margin:8px 0;outline:none}.text-input:focus{border-color:var(--teal)}
+.msg-card{display:flex;align-items:center;gap:12px;margin:6px 0;padding:10px 14px;border-radius:8px;font-size:.88rem;border:1px solid var(--border)}.msg-icon{font-size:1.2rem;flex-shrink:0}.msg-text{flex:1}.msg-tag{font-family:var(--mono);font-size:.78rem;padding:3px 8px;border-radius:4px}
+.bar-row{display:flex;align-items:center;gap:10px;margin:4px 0}.bar-label{font-family:var(--mono);font-size:.78rem;color:var(--muted);width:100px;text-align:right;flex-shrink:0}.bar-track{flex:1;height:22px;background:var(--surface2);border-radius:4px;overflow:hidden;position:relative}.bar-fill{height:100%;border-radius:4px;transition:width .8s}.bar-val{position:absolute;right:8px;top:50%;transform:translateY(-50%);font-family:var(--mono);font-size:.72rem;color:var(--heading)}
+@media(max-width:600px){.hero h1{font-size:1.7rem}.sgrid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="pbar"><div class="pfill" id="pf"></div></div>
+<div class="container">
+
+<div class="hero">
+<div class="hero-tag">Week 6 &middot; Lesson 3</div>
+<h1>Spam &amp; <em>Multi-class</em> Classification</h1>
+<p>Apply fine-tuning to spam detection and 4-category topic classification &mdash; practical tasks used in real production systems.</p>
+</div>
+<hr class="div">
+
+<!-- PART A: SPAM -->
+<div class="section" id="s1">
+<div class="stag">Part A</div>
+<h2>Spam Detection</h2>
+<p>Spam detection is <strong>binary classification</strong> just like sentiment analysis, but with different features. Spam messages tend to have urgent language, money offers, and suspicious calls to action.</p>
+
+<div class="cw">
+<div class="cw-title">&#9656; Spam vs Ham Classifier</div>
+<p style="font-size:.88rem;color:var(--muted);margin-bottom:8px;">Type a message and see if it looks like spam:</p>
+<input class="text-input" id="spamInput" value="Congratulations! You've won $1000000! Click here to claim!" oninput="classifySpam()">
+<div id="spamResult"></div>
+</div>
+
+<div class="cw">
+<div class="cw-title">&#9656; Spam Signal Words</div>
+<p style="font-size:.88rem;color:var(--muted);margin-bottom:8px;">These patterns light up when detected in spam messages:</p>
+<div class="ctrls">
+<button class="cbtn on" onclick="showSpamType('money')">Money/Prize</button>
+<button class="cbtn" onclick="showSpamType('urgency')">Urgency</button>
+<button class="cbtn" onclick="showSpamType('action')">Call to Action</button>
+</div>
+<div class="out" id="spamSignals"></div>
+</div>
+
+<div class="callout warn"><strong>Precision vs Recall tradeoff in spam filtering:</strong> A false positive (legitimate email flagged as spam) is usually worse than a false negative (spam in inbox). Users may miss important emails! So spam filters often optimize for high precision, even at the cost of some recall.</div>
+
+<div class="qcard" id="q1"><div class="qq">For a spam filter, which is generally worse?</div><div class="qopts">
+<div class="qo" onclick="ck('q1',this,true)"><span class="ql">A</span> A false positive (legitimate email marked as spam)</div>
+<div class="qo" onclick="ck('q1',this,false)"><span class="ql">B</span> A false negative (spam reaching the inbox)</div>
+<div class="qo" onclick="ck('q1',this,false)"><span class="ql">C</span> Both are equally bad</div>
+<div class="qo" onclick="ck('q1',this,false)"><span class="ql">D</span> Neither matters if accuracy is high</div>
+</div><div class="qfb" id="q1-fb"></div></div>
+</div>
+<hr class="div">
+
+<!-- PART B: MULTI-CLASS -->
+<div class="section" id="s2">
+<div class="stag">Part B</div>
+<h2>Multi-class Classification</h2>
+<p>Binary classification has 2 classes. <strong>Multi-class classification</strong> has 3 or more. The architecture is nearly identical &mdash; just change <code class="il">num_classes</code>!</p>
+
+<pre><span class="cm"># Binary: 2 classes</span>
+classifier = nn.Linear(d_model, <span class="num">2</span>)   <span class="cm"># Spam/Ham</span>
+
+<span class="cm"># Multi-class: 4 classes</span>
+classifier = nn.Linear(d_model, <span class="num">4</span>)   <span class="cm"># Sports/Tech/Politics/Entertainment</span>
+
+<span class="cm"># The loss function handles both automatically:</span>
+loss = F.cross_entropy(logits, labels)  <span class="cm"># Works for any num_classes!</span></pre>
+
+<div class="cw">
+<div class="cw-title">&#9656; Topic Classification Demo</div>
+<p style="font-size:.88rem;color:var(--muted);margin-bottom:8px;">Type a headline and see which topic it's classified as:</p>
+<input class="text-input" id="topicInput" value="Lakers win championship in overtime thriller" oninput="classifyTopic()">
+<div id="topicResult"></div>
+<div id="topicBars"></div>
+</div>
+
+<h3>Multi-class Evaluation: Per-class Metrics</h3>
+<p>With multi-class, we compute precision, recall, and F1 <strong>for each class separately</strong>, then average them.</p>
+
+<div class="cw">
+<div class="cw-title">&#9656; Per-class Metrics Example</div>
+<div class="ctrls">
+<button class="cbtn on" onclick="showMetrics('balanced')">Balanced Model</button>
+<button class="cbtn" onclick="showMetrics('biased')">Biased Model</button>
+</div>
+<div class="out" id="metricsOut"></div>
+</div>
+
+<div class="callout info"><strong>Macro vs Micro averaging:</strong> <em>Macro</em> averages metrics across classes equally (treats each class as equally important). <em>Micro</em> averages across all samples (larger classes dominate). Use macro when class sizes are imbalanced and you care about minority class performance.</div>
+
+<div class="qcard" id="q2"><div class="qq">Going from binary to multi-class classification, what changes in the model?</div><div class="qopts">
+<div class="qo" onclick="ck('q2',this,false)"><span class="ql">A</span> The entire architecture needs to be redesigned</div>
+<div class="qo" onclick="ck('q2',this,false)"><span class="ql">B</span> A different loss function is required</div>
+<div class="qo" onclick="ck('q2',this,true)"><span class="ql">C</span> Only the output size of the classification head changes</div>
+<div class="qo" onclick="ck('q2',this,false)"><span class="ql">D</span> Multi-head attention needs more heads</div>
+</div><div class="qfb" id="q2-fb"></div></div>
+</div>
+<hr class="div">
+
+<!-- PART C: COMPARISON -->
+<div class="section" id="s3">
+<div class="stag">Part C</div>
+<h2>Binary vs Multi-class Comparison</h2>
+
+<div class="cw">
+<div class="cw-title">&#9656; Side-by-Side Comparison</div>
+<div class="ctrls">
+<button class="cbtn on" onclick="showComp('arch')">Architecture</button>
+<button class="cbtn" onclick="showComp('loss')">Loss Function</button>
+<button class="cbtn" onclick="showComp('eval')">Evaluation</button>
+<button class="cbtn" onclick="showComp('output')">Output</button>
+</div>
+<div class="out" id="compOut"></div>
+</div>
+
+<div class="sgrid">
+<div class="sitem"><code>Binary</code><div class="d">2 classes (positive/negative, spam/ham). Output: 2 logits, argmax for prediction.</div></div>
+<div class="sitem"><code>Multi-class</code><div class="d">3+ classes. Same architecture, just more output units. Per-class + macro metrics.</div></div>
+<div class="sitem"><code>Softmax</code><div class="d">Converts logits to probabilities that sum to 1. Works for any number of classes.</div></div>
+<div class="sitem"><code>Cross-Entropy</code><div class="d">The standard loss for both. Measures how far predicted distribution is from the true label.</div></div>
+</div>
+
+<div class="qcard" id="q3"><div class="qq">A model outputs logits [-0.5, 2.1, 0.3, -1.2] for 4 classes. Which class is predicted?</div><div class="qopts">
+<div class="qo" onclick="ck('q3',this,false)"><span class="ql">A</span> Class 0 (first logit)</div>
+<div class="qo" onclick="ck('q3',this,true)"><span class="ql">B</span> Class 1 (highest logit: 2.1)</div>
+<div class="qo" onclick="ck('q3',this,false)"><span class="ql">C</span> Class 2 (only positive logit besides class 1)</div>
+<div class="qo" onclick="ck('q3',this,false)"><span class="ql">D</span> Can't determine without softmax</div>
+</div><div class="qfb" id="q3-fb"></div></div>
+</div>
+<hr class="div">
+
+<!-- SUMMARY -->
+<div class="section" id="s4">
+<div class="stag">Summary</div>
+<h2>Key Takeaways</h2>
+<div class="sgrid">
+<div class="sitem"><code>Spam Detection</code><div class="d">Binary classification with urgency/money signals. Precision often prioritized over recall.</div></div>
+<div class="sitem"><code>Multi-class</code><div class="d">Same architecture as binary, just more output units. Cross-entropy handles it automatically.</div></div>
+<div class="sitem"><code>Per-class Metrics</code><div class="d">Compute P/R/F1 for each class, then macro-average. Reveals per-class strengths and weaknesses.</div></div>
+<div class="sitem"><code>Practical Value</code><div class="d">Spam filters, content moderation, news categorization, ticket routing &mdash; these are real production tasks.</div></div>
+</div>
+<div class="callout green"><strong>Next:</strong> Week 6 Project &mdash; You'll build a complete unified classification system combining sentiment, spam, and topic classifiers with a shared prediction interface.</div>
+</div>
+
+</div>
+
+<script>
+var secs=document.querySelectorAll('.section');
+function upd(){var st=window.scrollY,h=document.body.scrollHeight-innerHeight;document.getElementById('pf').style.width=Math.min(100,st/h*100)+'%';secs.forEach(function(s){if(s.getBoundingClientRect().top<innerHeight*.85)s.classList.add('vis')});}
+window.addEventListener('scroll',upd);upd();
+
+// Spam classifier
+var spamWords=['free','win','won','prize','claim','urgent','congratulations','click','million','dollar','offer','discount','lottery','bitcoin','guaranteed','inheritance','act now','limited time','verify','suspended'];
+var hamWords=['meeting','lunch','tomorrow','thanks','birthday','project','coffee','presentation','report','schedule','call','help','home','kids','practice','great','nice','weather','game','order'];
+function classifySpam(){
+  var text=document.getElementById('spamInput').value.toLowerCase();
+  var sp=0,hm=0;
+  spamWords.forEach(function(w){if(text.indexOf(w)>-1)sp++});
+  hamWords.forEach(function(w){if(text.indexOf(w)>-1)hm++});
+  var el=document.getElementById('spamResult');
+  if(sp+hm===0){el.innerHTML='<div class="msg-card"><span class="msg-text" style="color:var(--muted)">Type a message to classify...</span></div>';return;}
+  var isSpam=sp>hm;
+  var conf=Math.min(98,50+Math.abs(sp-hm)*12);
+  el.innerHTML='<div class="msg-card" style="background:'+(isSpam?'var(--ro-dim)':'var(--li-dim)')+';border-color:'+(isSpam?'rgba(251,113,133,.3)':'rgba(163,230,53,.3)')+'"><span class="msg-icon">'+(isSpam?'&#9888;&#65039;':'&#9989;')+'</span><span class="msg-text">'+(isSpam?'SPAM DETECTED':'Legitimate (Ham)')+'</span><span class="msg-tag" style="background:'+(isSpam?'var(--ro-dim)':'var(--li-dim)')+';color:'+(isSpam?'var(--rose)':'var(--lime)')+'">'+conf+'% confident</span></div>';
+}
+classifySpam();
+
+// Spam signals
+function showSpamType(type){
+  document.querySelectorAll('#s1 .cw:nth-child(3) .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+  var signals={
+    money:'MONEY/PRIZE SIGNALS\n\nKeywords that suggest financial spam:\n  "won"       "prize"       "million"\n  "dollar"    "cash"        "free"\n  "discount"  "offer"       "lottery"\n  "bitcoin"   "inheritance" "guaranteed"\n\nThese words rarely appear in legitimate messages\nbut are extremely common in spam.',
+    urgency:'URGENCY SIGNALS\n\nWords that create artificial time pressure:\n  "urgent"      "immediately"   "act now"\n  "limited time" "expires"       "hurry"\n  "24 hours"    "suspended"     "alert"\n\nSpammers create urgency to prevent you from\nthinking critically about the message.',
+    action:'CALL TO ACTION SIGNALS\n\nPrompts to take immediate action:\n  "click here"    "claim now"     "verify"\n  "confirm"       "update"        "sign up"\n  "call now"      "reply"         "subscribe"\n\nLegitimate services rarely demand immediate\naction through unsolicited messages.'
+  };
+  document.getElementById('spamSignals').textContent=signals[type];
+}
+showSpamType('money');
+
+// Topic classifier
+var topicWords={
+  sports:['championship','win','player','team','game','coach','score','league','finals','tournament','soccer','basketball','football','tennis','olympic','record','season','athlete','stadium','race'],
+  tech:['smartphone','ai','software','computer','app','robot','data','startup','digital','cyber','technology','code','algorithm','internet','virtual','quantum','cloud','hack','device','innovation'],
+  politics:['president','senator','election','congress','bill','vote','campaign','reform','government','policy','legislation','debate','democrat','republican','governor','supreme','court','law','diplomat','party'],
+  entertainment:['movie','star','film','music','album','concert','award','show','actor','singer','celebrity','tour','netflix','broadway','box office','director','release','series','game','festival']
+};
+var topicColors={sports:'var(--lime)',tech:'var(--sky)',politics:'var(--orange)',entertainment:'var(--violet)'};
+function classifyTopic(){
+  var text=document.getElementById('topicInput').value.toLowerCase();
+  var scores={sports:0,tech:0,politics:0,entertainment:0};
+  Object.keys(topicWords).forEach(function(t){topicWords[t].forEach(function(w){if(text.indexOf(w)>-1)scores[t]++})});
+  var total=Object.values(scores).reduce(function(a,b){return a+b},0);
+  if(total===0){document.getElementById('topicResult').innerHTML='<div class="msg-card"><span style="color:var(--muted)">Type a headline to classify...</span></div>';document.getElementById('topicBars').innerHTML='';return;}
+  var best=Object.keys(scores).reduce(function(a,b){return scores[a]>scores[b]?a:b});
+  document.getElementById('topicResult').innerHTML='<div class="msg-card" style="border-color:'+topicColors[best]+';"><span class="msg-icon">'+(best==='sports'?'&#9917;':best==='tech'?'&#128187;':best==='politics'?'&#127963;&#65039;':'&#127908;')+'</span><span class="msg-text" style="color:'+topicColors[best]+';text-transform:uppercase;">'+best+'</span></div>';
+  var html='';
+  ['sports','tech','politics','entertainment'].forEach(function(t){
+    var pct=total>0?scores[t]/total*100:25;
+    html+='<div class="bar-row"><div class="bar-label" style="color:'+topicColors[t]+'">'+t+'</div><div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;background:'+topicColors[t]+';"></div><div class="bar-val">'+pct.toFixed(0)+'%</div></div></div>';
+  });
+  document.getElementById('topicBars').innerHTML=html;
+}
+classifyTopic();
+
+// Metrics
+function showMetrics(mode){
+  document.querySelectorAll('#s2 .cw:nth-last-child(2) .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+  var o=document.getElementById('metricsOut');
+  if(mode==='balanced'){
+    o.textContent='BALANCED MODEL - Per-class metrics:\n\nClass           Precision  Recall    F1\n'+'-'.repeat(50)+'\nSports          92.0%      88.0%     89.9%\nTechnology      85.0%      90.0%     87.4%\nPolitics        88.0%      85.0%     86.5%\nEntertainment   90.0%      92.0%     91.0%\n'+'-'.repeat(50)+'\nMacro Average   88.8%      88.8%     88.7%\n\nOverall Accuracy: 88.8%\n\nAll classes perform similarly well.';
+  } else {
+    o.textContent='BIASED MODEL - Per-class metrics:\n\nClass           Precision  Recall    F1\n'+'-'.repeat(50)+'\nSports          95.0%      98.0%     96.5%\nTechnology      88.0%      85.0%     86.5%\nPolitics        72.0%      60.0%     65.5%\nEntertainment   65.0%      70.0%     67.4%\n'+'-'.repeat(50)+'\nMacro Average   80.0%      78.3%     79.0%\n\nOverall Accuracy: 82.5%\n\nAccuracy looks OK, but Politics and Entertainment\nperform much worse. Per-class metrics reveal this!';
+  }
+}
+showMetrics('balanced');
+
+// Comparison
+function showComp(mode){
+  document.querySelectorAll('#s3 .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+  var o=document.getElementById('compOut');
+  var info={
+    arch:'ARCHITECTURE COMPARISON\n\nBinary (Spam Detection):\n  Linear(d_model, 2)  ->  [spam_logit, ham_logit]\n\nMulti-class (Topic Classification):\n  Linear(d_model, 4)  ->  [sports, tech, politics, entertainment]\n\nEverything else is IDENTICAL:\n  - Same GPT backbone\n  - Same last-token extraction\n  - Same forward pass\n  - Only the final layer size changes!',
+    loss:'LOSS FUNCTION\n\nBoth use the SAME loss:\n  loss = F.cross_entropy(logits, labels)\n\nBinary:  logits shape (batch, 2),  labels in {0, 1}\nMulti:   logits shape (batch, 4),  labels in {0, 1, 2, 3}\n\nCross-entropy automatically handles any number of classes.\nNo code changes needed!',
+    eval:'EVALUATION\n\nBinary:\n  - Single precision, recall, F1\n  - One confusion matrix (2x2)\n\nMulti-class:\n  - Per-class precision, recall, F1\n  - Macro average (mean across classes)\n  - Confusion matrix (NxN)\n  - Per-class analysis reveals weaknesses\n\nAlways compute per-class metrics for multi-class!',
+    output:'OUTPUT INTERPRETATION\n\nBinary: logits = [-1.2, 3.5]\n  Softmax -> [0.01, 0.99]\n  Prediction: Class 1 (Spam) at 99%\n\nMulti-class: logits = [0.3, 2.8, -0.5, 1.1]\n  Softmax -> [0.07, 0.59, 0.03, 0.17]\n         (don\'t sum to 1.00 due to rounding)\n  Prediction: Class 1 (Tech) at 59%\n\nSoftmax converts logits to probabilities\nthat sum to 1, regardless of class count.'
+  };
+  o.textContent=info[mode];
+}
+showComp('arch');
+
+function ck(id,el,ok){var card=document.getElementById(id);if(card.dataset.a)return;card.dataset.a='1';card.querySelectorAll('.qo').forEach(function(o){o.classList.add('d')});var fb=document.getElementById(id+'-fb');if(ok){el.classList.add('c');fb.className='qfb p show';fb.textContent='\u2705 Correct!';}else{el.classList.add('w');card.querySelectorAll('.qo').forEach(function(o){if(o.onclick&&o.onclick.toString().indexOf('true')>-1)o.classList.add('c')});fb.className='qfb f show';var ex={q1:'A false positive means a legitimate email gets sent to spam. The user might miss an important email from their boss, doctor, or bank. A false negative (spam in inbox) is annoying but usually harmless \u2014 the user can just delete it.',q2:'Going from binary to multi-class, only the output dimension of the classification head changes (e.g., Linear(64, 2) \u2192 Linear(64, 4)). The GPT backbone, attention mechanism, loss function (cross-entropy), and training procedure all stay exactly the same.',q3:'The prediction is simply the argmax of the logits. The highest logit is 2.1 at index 1, so Class 1 is predicted. You don\'t need softmax for prediction \u2014 argmax of logits equals argmax of softmax probabilities.'};fb.textContent='\u274c '+ex[id];}}
+</script>
+</body>
+</html>

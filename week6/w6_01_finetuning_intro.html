@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week 6 &middot; Lesson 1: Introduction to Fine-Tuning</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;1,400&family=Source+Code+Pro:wght@400;500;600&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#080c14;--surface:#101820;--surface2:#182030;--border:#283848;--text:#b8cce0;--muted:#607890;--heading:#eef4ff;--teal:#2dd4bf;--te-dim:rgba(45,212,191,.12);--te-glow:rgba(45,212,191,.3);--orange:#fb923c;--or-dim:rgba(251,146,60,.12);--rose:#fb7185;--ro-dim:rgba(251,113,133,.12);--sky:#38bdf8;--sk-dim:rgba(56,189,248,.12);--lime:#a3e635;--li-dim:rgba(163,230,53,.12);--mono:'Source Code Pro',monospace;--serif:'Fraunces',serif;--sans:'Public Sans',sans-serif;--r:10px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);line-height:1.76;font-size:15.5px}
+.container{max-width:760px;margin:0 auto;padding:48px 24px 100px}
+.pbar{position:fixed;top:0;left:0;right:0;height:3px;background:var(--surface);z-index:999}.pfill{height:100%;width:0%;background:var(--teal);box-shadow:0 0 8px var(--te-glow);transition:width .3s}
+.hero{text-align:center;padding:32px 0 48px}.hero-tag{font-family:var(--mono);font-size:.72rem;color:var(--teal);letter-spacing:.14em;text-transform:uppercase}.hero h1{font-family:var(--serif);font-size:2.5rem;font-weight:700;color:var(--heading);margin:8px 0}.hero h1 em{color:var(--teal);font-style:italic}.hero p{color:var(--muted);font-size:1.05rem;max-width:560px;margin:0 auto}
+.section{margin-bottom:56px;opacity:0;transform:translateY(20px);transition:all .5s}.section.vis{opacity:1;transform:none}.stag{font-family:var(--mono);font-size:.72rem;color:var(--teal);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}.section h2{font-family:var(--serif);font-size:1.55rem;color:var(--heading);margin-bottom:14px}.section h3{font-family:var(--serif);font-size:1.2rem;color:var(--heading);margin:20px 0 10px}.section p{margin-bottom:12px}.section p strong{color:var(--heading)}
+pre{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--teal);border-radius:var(--r);padding:16px 18px;margin:14px 0;overflow-x:auto;font-family:var(--mono);font-size:.82rem;line-height:1.6;color:var(--text)}
+code.il{font-family:var(--mono);font-size:.86em;color:var(--teal);background:var(--te-dim);padding:2px 6px;border-radius:4px}
+.kw{color:#fca5a5}.fn{color:#93c5fd}.num{color:#fbbf24}.str{color:#86efac}.cm{color:var(--muted);font-style:italic}
+.callout{background:var(--te-dim);border:1px solid rgba(45,212,191,.2);border-radius:var(--r);padding:16px 18px;margin:18px 0;font-size:.93rem}.callout.info{background:var(--sk-dim);border-color:rgba(56,189,248,.2)}.callout.warn{background:var(--or-dim);border-color:rgba(251,146,60,.2)}.callout.green{background:var(--li-dim);border-color:rgba(163,230,53,.2)}
+.analogy{border-left:3px solid var(--orange);padding:10px 16px;margin:16px 0;background:var(--or-dim);border-radius:0 var(--r) var(--r) 0;font-size:.93rem}.analogy strong{color:var(--heading)}
+hr.div{border:none;border-top:1px solid var(--border);margin:52px 0}
+.cw{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin:18px 0}.cw-title{font-family:var(--mono);font-size:.72rem;color:var(--teal);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px}
+.ctrls{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.cbtn{font-family:var(--mono);font-size:.78rem;padding:7px 14px;border:1px solid var(--border);border-radius:6px;background:var(--surface2);color:var(--text);cursor:pointer;transition:all .2s}.cbtn:hover{border-color:var(--teal);color:var(--teal)}.cbtn.on{background:var(--te-dim);border-color:var(--teal);color:var(--teal)}
+.out{background:#04080e;border:1px solid var(--border);border-radius:6px;padding:14px 16px;font-family:var(--mono);font-size:.82rem;color:var(--lime);line-height:1.6;margin:10px 0;white-space:pre-wrap;min-height:36px}
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}.sitem{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 14px}.sitem code{font-family:var(--mono);font-size:.82rem;color:var(--teal)}.sitem .d{font-size:.86rem;color:var(--muted);margin-top:3px}
+.qcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:22px;margin:18px 0}.qq{font-family:var(--serif);font-size:1.05rem;color:var(--heading);margin-bottom:12px}.qopts{display:flex;flex-direction:column;gap:7px}.qo{display:flex;align-items:center;gap:10px;padding:11px 14px;border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:.9rem;transition:all .2s}.qo:hover{border-color:var(--teal)}.qo.c{border-color:var(--lime);background:var(--li-dim);color:var(--lime)}.qo.w{border-color:var(--rose);background:var(--ro-dim);color:var(--rose)}.qo.d{pointer-events:none;opacity:.85}
+.ql{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.75rem;font-weight:600;background:var(--surface2);color:var(--muted);flex-shrink:0}.qo.c .ql{background:var(--lime);color:#000}.qo.w .ql{background:var(--rose);color:#fff}
+.qfb{margin-top:10px;padding:10px 12px;border-radius:6px;font-size:.88rem;display:none;line-height:1.6}.qfb.show{display:block}.qfb.p{background:var(--li-dim);color:var(--lime);border-left:3px solid var(--lime)}.qfb.f{background:var(--ro-dim);color:var(--rose);border-left:3px solid var(--rose)}
+.step{display:flex;gap:12px;margin:10px 0;align-items:flex-start}.step-n{font-family:var(--mono);font-size:.75rem;color:#fff;background:var(--teal);width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}.step-c{flex:1}
+.bar-row{display:flex;align-items:center;gap:10px;margin:6px 0}.bar-label{font-family:var(--mono);font-size:.8rem;color:var(--muted);width:100px;text-align:right;flex-shrink:0}.bar-track{flex:1;height:28px;background:var(--surface2);border-radius:4px;overflow:hidden;position:relative}.bar-fill{height:100%;border-radius:4px;transition:width .8s ease}.bar-val{position:absolute;right:8px;top:50%;transform:translateY(-50%);font-family:var(--mono);font-size:.75rem;color:var(--heading)}
+.layer-vis{margin:14px 0}.layer{display:flex;align-items:center;gap:10px;margin:3px 0;padding:8px 12px;border-radius:6px;font-size:.88rem;font-family:var(--mono);transition:all .4s}.layer .tag{font-size:.72rem;margin-left:auto;opacity:.7}
+@media(max-width:600px){.hero h1{font-size:1.8rem}.sgrid{grid-template-columns:1fr}.bar-label{width:80px;font-size:.72rem}}
+</style>
+</head>
+<body>
+<div class="pbar"><div class="pfill" id="pf"></div></div>
+<div class="container">
+
+<div class="hero">
+<div class="hero-tag">Week 6 &middot; Lesson 1</div>
+<h1>Introduction to <em>Fine-Tuning</em></h1>
+<p>You've built GPT from scratch. Now learn how to adapt pretrained models for specific tasks &mdash; fast, with little data.</p>
+</div>
+<hr class="div">
+
+<!-- PART 1: PRETRAINING vs FINE-TUNING -->
+<div class="section" id="s1">
+<div class="stag">Part 01</div>
+<h2>Pretraining vs Fine-Tuning</h2>
+<p>Pretraining taught the model <strong>general language understanding</strong>: grammar, syntax, word meanings, world knowledge, and reasoning patterns. Fine-tuning teaches the model <strong>your specific task</strong>: "Is this review positive?", "Is this email spam?", "What topic is this article about?"</p>
+
+<p>The magic of fine-tuning is that it's <strong>fast</strong> and needs <strong>little data</strong>. Why? Because the model already understands language. It just needs to learn to apply that understanding to your task.</p>
+
+<div class="analogy"><strong>Analogy &mdash; Education:</strong> Pretraining is like K-12 education: years of learning reading, writing, math, and general knowledge. Fine-tuning is like specialized training: a med student already knows biology, they just need to learn clinical practice. You don't start from scratch &mdash; you build on existing knowledge.</div>
+
+<div class="cw">
+<div class="cw-title">&#9656; Pretraining vs Fine-Tuning Comparison</div>
+<div class="ctrls"><button class="cbtn on" onclick="showCompare('pretrain')">Pretraining</button><button class="cbtn" onclick="showCompare('finetune')">Fine-Tuning</button></div>
+<div class="out" id="compareOut"></div>
+</div>
+
+<div class="qcard" id="q1"><div class="qq">Why does fine-tuning need less data than pretraining?</div><div class="qopts">
+<div class="qo" onclick="ck('q1',this,false)"><span class="ql">A</span> Fine-tuning uses a smaller model</div>
+<div class="qo" onclick="ck('q1',this,true)"><span class="ql">B</span> The model already understands language; it just needs to learn the new task format</div>
+<div class="qo" onclick="ck('q1',this,false)"><span class="ql">C</span> Fine-tuning uses a higher learning rate</div>
+<div class="qo" onclick="ck('q1',this,false)"><span class="ql">D</span> The data is simpler during fine-tuning</div>
+</div><div class="qfb" id="q1-fb"></div></div>
+</div>
+<hr class="div">
+
+<!-- PART 2: TRANSFER LEARNING -->
+<div class="section" id="s2">
+<div class="stag">Part 02</div>
+<h2>Transfer Learning Illustrated</h2>
+<p>What happens inside the model during fine-tuning? The key insight is that <strong>lower layers learn general features</strong> (grammar, syntax patterns) while <strong>higher layers learn task-specific features</strong>. Fine-tuning mostly adjusts the higher layers.</p>
+
+<div class="cw">
+<div class="cw-title">&#9656; Layer Changes During Fine-Tuning</div>
+<p style="font-size:.88rem;color:var(--muted);margin-bottom:8px;">Click to see how each layer changes when fine-tuning for sentiment analysis:</p>
+<div class="ctrls"><button class="cbtn on" onclick="showLayers('pretrained')">Pretrained</button><button class="cbtn" onclick="showLayers('finetuned')">After Fine-Tuning</button></div>
+<div class="layer-vis" id="layerVis"></div>
+</div>
+
+<p>This is why <strong>transfer learning</strong> works so well. The lower layers that learned basic language patterns transfer directly to the new task. Only the higher layers need significant adjustment.</p>
+
+<div class="callout info"><strong>Real-world impact:</strong> GPT-2 was pretrained for months on millions of documents costing millions of dollars. Fine-tuning takes hours on thousands of examples and costs almost nothing. The pretrained knowledge transfers to the new task!</div>
+</div>
+<hr class="div">
+
+<!-- PART 3: CLASSIFICATION HEAD -->
+<div class="section" id="s3">
+<div class="stag">Part 03</div>
+<h2>Adding a Classification Head</h2>
+<p>For classification, we add a <strong>new linear layer</strong> on top of GPT. This is the "classification head" &mdash; it converts GPT's hidden states into class predictions.</p>
+
+<div class="step"><div class="step-n">1</div><div class="step-c"><strong>GPT processes input</strong> left-to-right, producing hidden states for each token: <code class="il">(batch, seq_length, d_model)</code></div></div>
+<div class="step"><div class="step-n">2</div><div class="step-c"><strong>Extract the last token</strong>'s hidden state. It has "seen" all previous tokens, so it contains a summary of the whole sequence: <code class="il">(batch, d_model)</code></div></div>
+<div class="step"><div class="step-n">3</div><div class="step-c"><strong>Classification head</strong> maps from d_model to num_classes: <code class="il">Linear(d_model, num_classes)</code> &rarr; <code class="il">(batch, num_classes)</code></div></div>
+
+<pre><span class="kw">class</span> <span class="fn">GPTClassifier</span>(nn.Module):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, gpt, num_classes):
+        self.gpt = gpt
+        d_model = gpt.token_embedding.weight.shape[<span class="num">1</span>]
+        self.classifier = nn.Linear(d_model, num_classes)
+
+    <span class="kw">def</span> <span class="fn">forward</span>(self, x):
+        hidden = self.get_hidden_states(x)  <span class="cm"># (batch, seq, d_model)</span>
+        last = hidden[:, <span class="num">-1</span>, :]              <span class="cm"># (batch, d_model)</span>
+        <span class="kw">return</span> self.classifier(last)          <span class="cm"># (batch, num_classes)</span></pre>
+
+<div class="cw">
+<div class="cw-title">&#9656; Parameter Count Comparison</div>
+<p style="font-size:.88rem;color:var(--muted);margin-bottom:8px;">The classification head is tiny compared to the GPT backbone:</p>
+<div class="bar-row"><div class="bar-label">GPT backbone</div><div class="bar-track"><div class="bar-fill" style="width:99%;background:var(--teal);"></div><div class="bar-val">~365,000 params</div></div></div>
+<div class="bar-row"><div class="bar-label">Classifier head</div><div class="bar-track"><div class="bar-fill" style="width:1.5%;background:var(--orange);"></div><div class="bar-val">130 params</div></div></div>
+<p style="font-size:.86rem;color:var(--muted);margin-top:8px;">The new head is less than 0.04% of the total model. Almost all intelligence comes from pretrained weights!</p>
+</div>
+
+<div class="qcard" id="q2"><div class="qq">Why do we use the <strong>last</strong> token's hidden state for classification?</div><div class="qopts">
+<div class="qo" onclick="ck('q2',this,false)"><span class="ql">A</span> It's the most recently generated token</div>
+<div class="qo" onclick="ck('q2',this,true)"><span class="ql">B</span> In causal (left-to-right) attention, the last token has attended to all previous tokens, making it a summary of the entire sequence</div>
+<div class="qo" onclick="ck('q2',this,false)"><span class="ql">C</span> The last token always contains the most important word</div>
+<div class="qo" onclick="ck('q2',this,false)"><span class="ql">D</span> It uses less memory than using all tokens</div>
+</div><div class="qfb" id="q2-fb"></div></div>
+</div>
+<hr class="div">
+
+<!-- PART 4: FREEZING STRATEGIES -->
+<div class="section" id="s4">
+<div class="stag">Part 04</div>
+<h2>Freezing Strategies</h2>
+<p>How much of the model should we train? There are three main strategies, each with different tradeoffs between speed, data requirements, and accuracy.</p>
+
+<div class="cw">
+<div class="cw-title">&#9656; Interactive Freezing Comparison</div>
+<p style="font-size:.88rem;color:var(--muted);margin-bottom:8px;">Click each strategy to see what's trainable vs frozen:</p>
+<div class="ctrls">
+<button class="cbtn on" onclick="showFreeze('head')">Head Only</button>
+<button class="cbtn" onclick="showFreeze('top')">Top Layers</button>
+<button class="cbtn" onclick="showFreeze('full')">Full Fine-Tuning</button>
+</div>
+<div class="layer-vis" id="freezeVis"></div>
+<div class="out" id="freezeOut"></div>
+</div>
+
+<div class="sgrid">
+<div class="sitem"><code>Head Only</code><div class="d">~0.04% trainable. Fastest training, least data needed. Good for quick prototyping.</div></div>
+<div class="sitem"><code>Top Layers</code><div class="d">~25% trainable. Balance of speed and accuracy. Good with moderate data.</div></div>
+<div class="sitem"><code>Full Fine-Tuning</code><div class="d">100% trainable. Best accuracy but slowest. Needs lots of data to avoid overfitting.</div></div>
+<div class="sitem"><code>Gradual Unfreezing</code><div class="d">Start with head only, then progressively unfreeze more layers. Prevents catastrophic forgetting.</div></div>
+</div>
+
+<pre><span class="cm"># Freeze all GPT parameters</span>
+<span class="kw">for</span> param <span class="kw">in</span> model.gpt.parameters():
+    param.requires_grad = <span class="num">False</span>
+
+<span class="cm"># Only the classifier head is trainable now!</span>
+trainable = <span class="fn">sum</span>(p.numel() <span class="kw">for</span> p <span class="kw">in</span> model.parameters() <span class="kw">if</span> p.requires_grad)
+total = <span class="fn">sum</span>(p.numel() <span class="kw">for</span> p <span class="kw">in</span> model.parameters())
+<span class="fn">print</span>(<span class="str">f"Trainable: {trainable}/{total}"</span>)  <span class="cm"># ~130 / ~365,000</span></pre>
+
+<div class="qcard" id="q3"><div class="qq">When should you use "head only" freezing?</div><div class="qopts">
+<div class="qo" onclick="ck('q3',this,true)"><span class="ql">A</span> When you have very little labeled data and want fast results</div>
+<div class="qo" onclick="ck('q3',this,false)"><span class="ql">B</span> When you need the absolute best accuracy</div>
+<div class="qo" onclick="ck('q3',this,false)"><span class="ql">C</span> When you have millions of training examples</div>
+<div class="qo" onclick="ck('q3',this,false)"><span class="ql">D</span> When the task is completely different from the pretraining data</div>
+</div><div class="qfb" id="q3-fb"></div></div>
+</div>
+<hr class="div">
+
+<!-- PART 5: FORWARD PASS -->
+<div class="section" id="s5">
+<div class="stag">Part 05</div>
+<h2>The Classification Forward Pass</h2>
+<p>Let's trace through exactly what happens when a text sample passes through the classifier.</p>
+
+<div class="cw">
+<div class="cw-title">&#9656; Step-by-Step Forward Pass</div>
+<p style="font-size:.88rem;color:var(--muted);margin-bottom:8px;">Click each step to see the data flow:</p>
+<div class="ctrls">
+<button class="cbtn on" onclick="showStep(1)">1. Tokenize</button>
+<button class="cbtn" onclick="showStep(2)">2. Embed</button>
+<button class="cbtn" onclick="showStep(3)">3. Transform</button>
+<button class="cbtn" onclick="showStep(4)">4. Last Token</button>
+<button class="cbtn" onclick="showStep(5)">5. Classify</button>
+</div>
+<div class="out" id="stepOut"></div>
+</div>
+
+<div class="callout warn"><strong>Important detail:</strong> During fine-tuning, we use <code class="il">CrossEntropyLoss</code> for classification (not the language modeling loss from pretraining). The loss measures how well the model's predicted class probabilities match the true label.</div>
+
+<div class="qcard" id="q4"><div class="qq">What loss function is used for classification fine-tuning?</div><div class="qopts">
+<div class="qo" onclick="ck('q4',this,false)"><span class="ql">A</span> Mean Squared Error (MSE)</div>
+<div class="qo" onclick="ck('q4',this,true)"><span class="ql">B</span> Cross-Entropy Loss</div>
+<div class="qo" onclick="ck('q4',this,false)"><span class="ql">C</span> Binary Cross-Entropy only</div>
+<div class="qo" onclick="ck('q4',this,false)"><span class="ql">D</span> Perplexity</div>
+</div><div class="qfb" id="q4-fb"></div></div>
+</div>
+<hr class="div">
+
+<!-- SUMMARY -->
+<div class="section" id="s6">
+<div class="stag">Summary</div>
+<h2>Key Takeaways</h2>
+<div class="sgrid">
+<div class="sitem"><code>Transfer Learning</code><div class="d">Pretrained model already understands language. Fine-tuning just teaches the new task.</div></div>
+<div class="sitem"><code>Classification Head</code><div class="d">A simple Linear layer on top of GPT. Uses the last token's hidden state.</div></div>
+<div class="sitem"><code>Freezing Strategies</code><div class="d">Head only (~0.04%), top layers (~25%), or full (100%). Trade speed vs accuracy.</div></div>
+<div class="sitem"><code>Why It Works</code><div class="d">Lower layers keep general features. Higher layers adapt. New head learns the task.</div></div>
+</div>
+<div class="callout green"><strong>Next:</strong> Lesson 2 &mdash; Sentiment Analysis! You'll build a complete classifier that predicts whether movie reviews are positive or negative.</div>
+</div>
+
+</div>
+
+<script>
+var secs=document.querySelectorAll('.section');
+function upd(){var st=window.scrollY,h=document.body.scrollHeight-innerHeight;document.getElementById('pf').style.width=Math.min(100,st/h*100)+'%';secs.forEach(function(s){if(s.getBoundingClientRect().top<innerHeight*.85)s.classList.add('vis')});}
+window.addEventListener('scroll',upd);upd();
+
+function showCompare(mode){
+  document.querySelectorAll('#s1 .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+  var o=document.getElementById('compareOut');
+  if(mode==='pretrain'){
+    o.textContent='PRETRAINING\n'+
+    '  Data:      Billions of tokens (internet, books)\n'+
+    '  Task:      Next token prediction\n'+
+    '  Duration:  Weeks to months\n'+
+    '  Cost:      $100K - $10M+\n'+
+    '  Result:    General language understanding\n\n'+
+    'The model learns grammar, facts, reasoning patterns,\n'+
+    'and word relationships from massive text data.';
+  } else {
+    o.textContent='FINE-TUNING\n'+
+    '  Data:      Thousands of labeled examples\n'+
+    '  Task:      Your specific task (classification, etc.)\n'+
+    '  Duration:  Minutes to hours\n'+
+    '  Cost:      $1 - $100\n'+
+    '  Result:    Task-specific model\n\n'+
+    'The model already understands language. It just needs\n'+
+    'to learn: "given this text, predict this label."';
+  }
+}
+showCompare('pretrain');
+
+function showLayers(mode){
+  document.querySelectorAll('#s2 .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+  var v=document.getElementById('layerVis');
+  var layers=[
+    {name:'Embeddings',pre:'Token representations',post:'Token representations',change:5},
+    {name:'Layer 1',pre:'Character/word patterns',post:'Character/word patterns',change:8},
+    {name:'Layer 2',pre:'Basic syntax patterns',post:'Basic syntax patterns',change:10},
+    {name:'Layer 3',pre:'Semantic understanding',post:'Sentiment-relevant features',change:45},
+    {name:'Layer 4',pre:'High-level features',post:'Opinion/emotion detection',change:70},
+    {name:'Classifier',pre:'(does not exist yet)',post:'Positive / Negative',change:100}
+  ];
+  var html='';
+  layers.forEach(function(l){
+    var pct=mode==='finetuned'?l.change:0;
+    var bg=pct>50?'rgba(45,212,191,.15)':pct>20?'rgba(45,212,191,.08)':'rgba(45,212,191,.03)';
+    var desc=mode==='pretrained'?l.pre:l.post;
+    var tag=mode==='finetuned'?(pct>50?'Adjusted':pct>10?'Slightly adjusted':'Mostly unchanged'):'';
+    if(mode==='pretrained'&&l.name==='Classifier'){bg='rgba(251,113,133,.08)';desc='(does not exist yet)';tag='';}
+    else if(mode==='finetuned'&&l.name==='Classifier'){bg='rgba(251,146,60,.2)';tag='NEW!';}
+    html+='<div class="layer" style="background:'+bg+'"><span style="color:var(--teal);width:80px;">'+l.name+'</span><span>'+desc+'</span><span class="tag">'+tag+'</span></div>';
+  });
+  v.innerHTML=html;
+}
+showLayers('pretrained');
+
+function showFreeze(mode){
+  document.querySelectorAll('#s4 .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+  var v=document.getElementById('freezeVis');
+  var o=document.getElementById('freezeOut');
+  var layers=['Embeddings','Layer 1','Layer 2','Layer 3','Layer 4','Classifier Head'];
+  var states={
+    head:  [0,0,0,0,0,1],
+    top:   [0,0,0,1,1,1],
+    full:  [1,1,1,1,1,1]
+  };
+  var s=states[mode];
+  var html='';
+  layers.forEach(function(l,i){
+    var trainable=s[i];
+    var bg=trainable?'rgba(163,230,53,.12)':'rgba(251,113,133,.06)';
+    var color=trainable?'var(--lime)':'var(--rose)';
+    var tag=trainable?'Trainable':'Frozen';
+    html+='<div class="layer" style="background:'+bg+';border-left:3px solid '+color+'"><span style="color:'+color+';width:110px;">'+l+'</span><span class="tag" style="color:'+color+'">'+tag+'</span></div>';
+  });
+  v.innerHTML=html;
+  var info={
+    head:'HEAD ONLY: ~0.04% trainable\nFastest training. Only the classifier head learns.\nGPT backbone stays completely frozen.\nBest when: Little data, quick prototyping.',
+    top:'TOP LAYERS: ~25% trainable\nTop transformer layers + classifier learn.\nLower layers (basic language) stay frozen.\nBest when: Moderate data, need good accuracy.',
+    full:'FULL FINE-TUNING: 100% trainable\nEverything updates, including embeddings.\nSlowest but potentially most accurate.\nBest when: Lots of data, maximum performance needed.'
+  };
+  o.textContent=info[mode];
+}
+showFreeze('head');
+
+function showStep(n){
+  document.querySelectorAll('#s5 .cbtn').forEach(function(b){b.classList.remove('on')});
+  document.querySelectorAll('#s5 .cbtn')[n-1].classList.add('on');
+  var o=document.getElementById('stepOut');
+  var steps={
+    1:'STEP 1: TOKENIZE\n\nInput: "This movie was amazing!"\n       |\n       v\nTokens: ["this", "movie", "was", "amazing"]\n       |\n       v\nToken IDs: [42, 156, 23, 891]\nShape: (1, 4)',
+    2:'STEP 2: EMBED\n\nToken IDs: [42, 156, 23, 891]\n       |\n       v\nToken Embeddings: (1, 4, 64)  <- each ID becomes a 64-dim vector\n  + Position Embeddings: (1, 4, 64)\n       |\n       v\nInput to Transformer: (1, 4, 64)',
+    3:'STEP 3: TRANSFORMER BLOCKS\n\nInput: (1, 4, 64)\n       |\n       v\n[Block 1: Attention + FFN]\n       |\n       v\n[Block 2: Attention + FFN]\n       |\n       v\n[Block 3: Attention + FFN]\n       |\n       v\n[Block 4: Attention + FFN]\n       |\n       v\nHidden States: (1, 4, 64)',
+    4:'STEP 4: EXTRACT LAST TOKEN\n\nHidden States: (1, 4, 64)\n                     ^\n                     |\n          [this] [movie] [was] [amazing]\n                              ^^^^\n                         Use this one!\n       |\n       v\nLast Token Hidden: (1, 64)\n\nWhy last? It has attended to ALL previous tokens\nthrough causal attention. It\'s a summary!',
+    5:'STEP 5: CLASSIFY\n\nLast Token Hidden: (1, 64)\n       |\n       v\nLinear(64, 2):  weight (2, 64) + bias (2,)\n       |\n       v\nLogits: (1, 2) = [[-1.2, 2.8]]\n       |\n       v\nSoftmax: [[0.02, 0.98]]\n       |\n       v\nPrediction: Class 1 (Positive) with 98% confidence!'
+  };
+  o.textContent=steps[n];
+}
+showStep(1);
+
+function ck(id,el,ok){var card=document.getElementById(id);if(card.dataset.a)return;card.dataset.a='1';card.querySelectorAll('.qo').forEach(function(o){o.classList.add('d')});var fb=document.getElementById(id+'-fb');if(ok){el.classList.add('c');fb.className='qfb p show';fb.textContent='\u2705 Correct!';}else{el.classList.add('w');card.querySelectorAll('.qo').forEach(function(o){if(o.onclick&&o.onclick.toString().indexOf('true')>-1)o.classList.add('c')});fb.className='qfb f show';var ex={q1:'The pretrained model already understands language structure, meaning, and patterns. Fine-tuning just teaches it a new mapping: text \u2192 class label. This requires far less data than learning language from scratch.',q2:'In GPT\'s causal (left-to-right) attention, each token can only attend to previous tokens. The last token has attended to ALL tokens in the sequence, making it the only position that has seen everything \u2014 it acts as a natural summary.',q3:'Head-only freezing is perfect when you have limited data. Since only the tiny classification head trains (~130 parameters), there\'s very little risk of overfitting. It\'s also the fastest approach.',q4:'Cross-entropy loss is the standard for classification. It measures how well the predicted probability distribution matches the true label (one-hot encoded). It works for both binary and multi-class classification.'};fb.textContent='\u274c '+ex[id];}}
+</script>
+</body>
+</html>

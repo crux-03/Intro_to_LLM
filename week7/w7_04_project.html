@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week 7 &middot; Project: Complete Chatbot From Scratch</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;1,400&family=Source+Code+Pro:wght@400;500;600&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0e0812;--surface:#18121e;--surface2:#221830;--border:#3a2850;--text:#d0c0e8;--muted:#8870a8;--heading:#f8f0ff;--accent:#e879f9;--ac-dim:rgba(232,121,249,.12);--ac-glow:rgba(232,121,249,.3);--amber:#fbbf24;--am-dim:rgba(251,191,36,.12);--rose:#fb7185;--ro-dim:rgba(251,113,133,.12);--sky:#38bdf8;--sk-dim:rgba(56,189,248,.12);--lime:#a3e635;--li-dim:rgba(163,230,53,.12);--gold:#fbbf24;--go-dim:rgba(251,191,36,.12);--mono:'Source Code Pro',monospace;--serif:'Fraunces',serif;--sans:'Public Sans',sans-serif;--r:10px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);line-height:1.76;font-size:15.5px}
+.container{max-width:760px;margin:0 auto;padding:48px 24px 100px}
+.pbar{position:fixed;top:0;left:0;right:0;height:3px;background:var(--surface);z-index:999}.pfill{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--amber));box-shadow:0 0 8px var(--ac-glow);transition:width .3s}
+.hero{text-align:center;padding:32px 0 48px}.hero-tag{font-family:var(--mono);font-size:.72rem;color:var(--accent);letter-spacing:.14em;text-transform:uppercase}.hero h1{font-family:var(--serif);font-size:2.5rem;font-weight:700;color:var(--heading);margin:8px 0}.hero h1 em{color:var(--accent);font-style:italic}.hero p{color:var(--muted);font-size:1.05rem;max-width:560px;margin:0 auto}.hero-badge{display:inline-block;margin-top:14px;font-family:var(--mono);font-size:.78rem;padding:6px 16px;background:var(--go-dim);border:1px solid rgba(251,191,36,.25);border-radius:20px;color:var(--amber)}
+.section{margin-bottom:56px;opacity:0;transform:translateY(20px);transition:all .5s}.section.vis{opacity:1;transform:none}.stag{font-family:var(--mono);font-size:.72rem;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}.section h2{font-family:var(--serif);font-size:1.55rem;color:var(--heading);margin-bottom:14px}.section h3{font-family:var(--serif);font-size:1.2rem;color:var(--heading);margin:20px 0 10px}.section p{margin-bottom:12px}.section p strong{color:var(--heading)}
+pre{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:var(--r);padding:16px 18px;margin:14px 0;overflow-x:auto;font-family:var(--mono);font-size:.82rem;line-height:1.6;color:var(--text)}
+code.il{font-family:var(--mono);font-size:.86em;color:var(--accent);background:var(--ac-dim);padding:2px 6px;border-radius:4px}
+.kw{color:#fca5a5}.fn{color:#93c5fd}.num{color:#fbbf24}.str{color:#86efac}.cm{color:var(--muted);font-style:italic}
+.callout{background:var(--ac-dim);border:1px solid rgba(232,121,249,.2);border-radius:var(--r);padding:16px 18px;margin:18px 0;font-size:.93rem}.callout.warn{background:var(--am-dim);border-color:rgba(251,191,36,.2)}.callout.green{background:var(--li-dim);border-color:rgba(163,230,53,.2)}.callout.info{background:var(--sk-dim);border-color:rgba(56,189,248,.2)}.callout.gold{background:var(--go-dim);border-color:rgba(251,191,36,.25);color:var(--amber)}
+hr.div{border:none;border-top:1px solid var(--border);margin:52px 0}
+.cw{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin:18px 0}.cw-title{font-family:var(--mono);font-size:.72rem;color:var(--accent);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px}
+.ctrls{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.cbtn{font-family:var(--mono);font-size:.78rem;padding:7px 14px;border:1px solid var(--border);border-radius:6px;background:var(--surface2);color:var(--text);cursor:pointer;transition:all .2s}.cbtn:hover{border-color:var(--accent);color:var(--accent)}.cbtn.on{background:var(--ac-dim);border-color:var(--accent);color:var(--accent)}
+.out{background:#08040c;border:1px solid var(--border);border-radius:6px;padding:14px 16px;font-family:var(--mono);font-size:.82rem;color:var(--lime);line-height:1.6;margin:10px 0;white-space:pre-wrap;min-height:36px}
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}.sitem{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 14px}.sitem code{font-family:var(--mono);font-size:.82rem;color:var(--accent)}.sitem .d{font-size:.86rem;color:var(--muted);margin-top:3px}
+.qcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:22px;margin:18px 0}.qq{font-family:var(--serif);font-size:1.05rem;color:var(--heading);margin-bottom:12px}.qopts{display:flex;flex-direction:column;gap:7px}.qo{display:flex;align-items:center;gap:10px;padding:11px 14px;border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:.9rem;transition:all .2s}.qo:hover{border-color:var(--accent)}.qo.c{border-color:var(--lime);background:var(--li-dim);color:var(--lime)}.qo.w{border-color:var(--rose);background:var(--ro-dim);color:var(--rose)}.qo.d{pointer-events:none;opacity:.85}
+.ql{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.75rem;font-weight:600;background:var(--surface2);color:var(--muted);flex-shrink:0}.qo.c .ql{background:var(--lime);color:#000}.qo.w .ql{background:var(--rose);color:#fff}
+.qfb{margin-top:10px;padding:10px 12px;border-radius:6px;font-size:.88rem;display:none;line-height:1.6}.qfb.show{display:block}.qfb.p{background:var(--li-dim);color:var(--lime);border-left:3px solid var(--lime)}.qfb.f{background:var(--ro-dim);color:var(--rose);border-left:3px solid var(--rose)}
+.text-input{width:100%;padding:10px 14px;font-family:var(--sans);font-size:.95rem;border:1px solid var(--border);border-radius:6px;background:var(--surface2);color:var(--text);margin:8px 0;outline:none}.text-input:focus{border-color:var(--accent)}
+.chat-window{background:#08040c;border:1px solid var(--border);border-radius:var(--r);padding:16px;margin:10px 0;max-height:380px;overflow-y:auto}
+.chat-msg{margin:8px 0;display:flex;gap:8px;align-items:flex-start}.chat-avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0}.chat-bubble-inner{padding:8px 12px;border-radius:10px;font-size:.9rem;max-width:80%;line-height:1.5}
+.chat-user-av{background:var(--ac-dim);border:1px solid rgba(232,121,249,.2)}.chat-asst-av{background:var(--li-dim);border:1px solid rgba(163,230,53,.2)}
+.chat-user-bub{background:var(--ac-dim);border:1px solid rgba(232,121,249,.15);margin-left:auto;border-bottom-right-radius:4px}
+.chat-asst-bub{background:var(--surface2);border:1px solid var(--border);border-bottom-left-radius:4px}
+.cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin:14px 0}
+.cat-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px;text-align:center;cursor:pointer;transition:all .2s}.cat-card:hover{border-color:var(--accent);transform:translateY(-2px)}.cat-card.on{border-color:var(--accent);background:var(--ac-dim)}.cat-card .cat-count{font-family:var(--mono);font-size:1.3rem;color:var(--accent);font-weight:700}.cat-card .cat-label{font-size:.78rem;color:var(--muted);margin-top:2px}
+.stat-row{display:flex;gap:16px;margin:14px 0;flex-wrap:wrap}.stat-box{flex:1;min-width:100px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center}.stat-num{font-family:var(--mono);font-size:1.6rem;font-weight:700;color:var(--accent)}.stat-label{font-size:.78rem;color:var(--muted);margin-top:2px}
+canvas{display:block;margin:10px auto;border-radius:8px}
+.journey-step{display:flex;gap:14px;margin:12px 0;align-items:flex-start}.journey-dot{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.8rem;font-weight:700;flex-shrink:0}.journey-content{flex:1}.journey-content strong{color:var(--heading)}.journey-content .jd{font-size:.88rem;color:var(--muted);margin-top:2px}
+.finish-banner{text-align:center;padding:36px 20px;background:linear-gradient(135deg,rgba(232,121,249,.08),rgba(251,191,36,.08));border:1px solid rgba(232,121,249,.2);border-radius:14px;margin:24px 0}.finish-banner h2{font-family:var(--serif);font-size:2rem;color:var(--heading);margin-bottom:8px}.finish-banner p{color:var(--muted);font-size:1.05rem}
+@media(max-width:600px){.hero h1{font-size:1.8rem}.sgrid{grid-template-columns:1fr}.stat-row{flex-direction:column}.cat-grid{grid-template-columns:repeat(3,1fr)}}
+</style>
+</head>
+<body>
+<div class="pbar"><div class="pfill" id="pf"></div></div>
+<div class="container">
+
+<div class="hero">
+<div class="hero-tag">Week 7 &middot; Capstone Project</div>
+<h1>Your Complete <em>Chatbot</em></h1>
+<p>The final project! Build a complete chatbot from scratch with a comprehensive training dataset, full GPT architecture, personalities, and interactive mode.</p>
+<div class="hero-badge">CAPSTONE PROJECT</div>
+</div>
+<hr class="div">
+
+<!-- PART 1: DATASET -->
+<div class="section" id="s1">
+<div class="stag">Part 01</div>
+<h2>Comprehensive Instruction Dataset</h2>
+<p>A chatbot is only as good as its training data. Our capstone project uses <strong>90+ instruction-response pairs</strong> across 10 categories &mdash; the largest dataset in the course.</p>
+
+<div class="cw">
+<div class="cw-title">&#9656; Dataset Explorer</div>
+<p style="font-size:.88rem;color:var(--muted);margin-bottom:10px;">Click a category to see example pairs:</p>
+<div class="cat-grid" id="catGrid">
+<div class="cat-card on" onclick="showCat('greet')"><div class="cat-count">8</div><div class="cat-label">Greetings</div></div>
+<div class="cat-card" onclick="showCat('farewell')"><div class="cat-count">5</div><div class="cat-label">Farewells</div></div>
+<div class="cat-card" onclick="showCat('gratitude')"><div class="cat-count">4</div><div class="cat-label">Gratitude</div></div>
+<div class="cat-card" onclick="showCat('about')"><div class="cat-count">7</div><div class="cat-label">About Me</div></div>
+<div class="cat-card" onclick="showCat('knowledge')"><div class="cat-count">20</div><div class="cat-label">Knowledge</div></div>
+<div class="cat-card" onclick="showCat('math')"><div class="cat-count">14</div><div class="cat-label">Math</div></div>
+<div class="cat-card" onclick="showCat('translate')"><div class="cat-count">8</div><div class="cat-label">Translation</div></div>
+<div class="cat-card" onclick="showCat('tasks')"><div class="cat-count">7</div><div class="cat-label">Tasks</div></div>
+<div class="cat-card" onclick="showCat('explain')"><div class="cat-count">6</div><div class="cat-label">Explanations</div></div>
+<div class="cat-card" onclick="showCat('help')"><div class="cat-count">9+</div><div class="cat-label">Help &amp; Other</div></div>
+</div>
+<div class="out" id="catOut"></div>
+</div>
+
+<div class="stat-row">
+<div class="stat-box"><div class="stat-num">90+</div><div class="stat-label">Instruction Pairs</div></div>
+<div class="stat-box"><div class="stat-num">10</div><div class="stat-label">Categories</div></div>
+<div class="stat-box"><div class="stat-num">~500</div><div class="stat-label">Vocabulary Tokens</div></div>
+</div>
+
+<div class="callout info"><strong>Why so many?</strong> Diversity in training data helps the model generalize. With only 5 greetings, it might only learn "Hello" &rarr; response. With 8 variations (Hello, Hi, Hey, Howdy, Good morning...), it learns the <em>pattern</em> of greetings.</div>
+</div>
+<hr class="div">
+
+<!-- PART 2: MODEL ARCHITECTURE -->
+<div class="section" id="s2">
+<div class="stag">Part 02</div>
+<h2>The MiniGPT Architecture</h2>
+<p>Our capstone model is a <strong>complete GPT</strong> with weight tying, gradient clipping, and all the best practices from the course.</p>
+
+<pre><span class="kw">class</span> <span class="fn">MiniGPT</span>(nn.Module):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, vocab, d_model=<span class="num">64</span>, heads=<span class="num">4</span>, layers=<span class="num">3</span>):
+        self.tok_emb  = Embedding(vocab, <span class="num">64</span>)
+        self.pos_emb  = Embedding(<span class="num">48</span>, <span class="num">64</span>)
+        self.blocks   = <span class="num">3</span> &times; TransformerBlock:
+            <span class="cm"># LayerNorm + Multi-Head Causal Attention</span>
+            <span class="cm"># LayerNorm + FFN (64 &rarr; 256 &rarr; 64, GELU)</span>
+            <span class="cm"># Residual connections on both</span>
+        self.ln_f     = LayerNorm(<span class="num">64</span>)
+        self.lm_head  = Linear(<span class="num">64</span>, vocab)   <span class="cm"># weight-tied!</span>
+        self.lm_head.weight = self.tok_emb.weight</pre>
+
+<div class="cw">
+<div class="cw-title">&#9656; Architecture Inspector</div>
+<div class="ctrls">
+<button class="cbtn on" onclick="showLayer('overview')">Overview</button>
+<button class="cbtn" onclick="showLayer('attention')">Attention</button>
+<button class="cbtn" onclick="showLayer('ffn')">Feed-Forward</button>
+<button class="cbtn" onclick="showLayer('generate')">Generation</button>
+</div>
+<div class="out" id="layerOut"></div>
+</div>
+
+<div class="callout"><strong>Weight tying:</strong> <code class="il">lm_head.weight = tok_emb.weight</code> &mdash; the same matrix maps words&rarr;vectors and vectors&rarr;words. This reduces parameters by ~30% and often improves performance.</div>
+
+<div class="qcard" id="q1"><div class="qq">Why does our model use weight tying between the token embedding and the language model head?</div><div class="qopts">
+<div class="qo" onclick="ck('q1',this,false)"><span class="ql">A</span> To speed up training by 10x</div>
+<div class="qo" onclick="ck('q1',this,true)"><span class="ql">B</span> To reduce parameters and improve generalization by sharing the word-vector mapping</div>
+<div class="qo" onclick="ck('q1',this,false)"><span class="ql">C</span> To avoid using dropout</div>
+<div class="qo" onclick="ck('q1',this,false)"><span class="ql">D</span> To make the model bigger</div>
+</div><div class="qfb" id="q1-fb"></div></div>
+</div>
+<hr class="div">
+
+<!-- PART 3: TRAINING PIPELINE -->
+<div class="section" id="s3">
+<div class="stag">Part 03</div>
+<h2>Training Pipeline</h2>
+<p>Training combines <strong>loss masking</strong> (only learn from responses) with <strong>gradient clipping</strong> and the AdamW optimizer.</p>
+
+<pre><span class="kw">def</span> <span class="fn">train_chatbot</span>(model, dataset, epochs=<span class="num">35</span>):
+    loader = DataLoader(dataset, batch_size=<span class="num">8</span>, shuffle=<span class="num">True</span>)
+    opt = AdamW(model.parameters(), lr=<span class="num">1e-3</span>)
+
+    <span class="kw">for</span> epoch <span class="kw">in</span> range(epochs):
+        <span class="kw">for</span> batch <span class="kw">in</span> loader:
+            _, loss = model(batch[<span class="str">'input_ids'</span>], batch[<span class="str">'labels'</span>])
+            opt.zero_grad()
+            loss.backward()
+            clip_grad_norm_(model.parameters(), <span class="num">1.0</span>)  <span class="cm"># stability!</span>
+            opt.step()</pre>
+
+<div class="cw">
+<div class="cw-title">&#9656; Training Simulation</div>
+<canvas id="lossCanvas" width="680" height="240"></canvas>
+<div class="ctrls">
+<button class="cbtn" onclick="runTraining()" id="trainBtn">Start Training</button>
+<button class="cbtn" onclick="resetTraining()">Reset</button>
+</div>
+<div class="out" id="trainOut">Click "Start Training" to simulate 35 epochs of training.</div>
+</div>
+
+<div class="sgrid">
+<div class="sitem"><code>Loss Masking</code><div class="d">Labels use -100 for prompt tokens so loss is only computed on the assistant's response.</div></div>
+<div class="sitem"><code>Gradient Clipping</code><div class="d">Clips gradients to max_norm=1.0 to prevent exploding gradients during training.</div></div>
+<div class="sitem"><code>AdamW</code><div class="d">Optimizer with weight decay regularization. Learning rate: 0.001.</div></div>
+<div class="sitem"><code>35 Epochs</code><div class="d">Enough for the model to memorize patterns and start generalizing to variations.</div></div>
+</div>
+</div>
+<hr class="div">
+
+<!-- PART 4: CHATBOT CLASS -->
+<div class="section" id="s4">
+<div class="stag">Part 04</div>
+<h2>The Chatbot Class</h2>
+<p>The <code class="il">Chatbot</code> class wraps everything into a clean interface with <strong>personality support</strong>, <strong>conversation history</strong>, and <strong>temperature control</strong>.</p>
+
+<pre><span class="kw">class</span> <span class="fn">Chatbot</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, model, tokenizer):
+        self.model = model
+        self.tokenizer = tokenizer
+        self.system_prompt = <span class="num">None</span>
+        self.history = []
+
+    <span class="kw">def</span> <span class="fn">set_personality</span>(self, prompt):
+        self.system_prompt = prompt
+        self.history = []          <span class="cm"># reset on personality change</span>
+
+    <span class="kw">def</span> <span class="fn">chat</span>(self, message, temperature=<span class="num">0.7</span>):
+        prompt_ids = self.tokenizer.encode_prompt(
+            message, self.system_prompt
+        )
+        output = self.model.generate(
+            prompt_ids, temp=temperature, end_id=END
+        )
+        response = self.tokenizer.decode(output)
+        self.history.append({<span class="str">'user'</span>: message, <span class="str">'assistant'</span>: response})
+        <span class="kw">return</span> response</pre>
+
+<div class="cw">
+<div class="cw-title">&#9656; Capstone Chat &mdash; Your Mini ChatGPT</div>
+<div class="ctrls">
+<button class="cbtn on" onclick="setPersonality('default')">Default</button>
+<button class="cbtn" onclick="setPersonality('friendly')">Friendly</button>
+<button class="cbtn" onclick="setPersonality('pirate')">Pirate</button>
+<button class="cbtn" onclick="setPersonality('scientist')">Scientist</button>
+<button class="cbtn" onclick="setPersonality('poet')">Poet</button>
+</div>
+<div id="sysLabel" style="font-family:var(--mono);font-size:.75rem;color:var(--muted);margin:6px 0;">System prompt: none</div>
+<div class="chat-window" id="chatWin"></div>
+<div style="display:flex;gap:8px;margin-top:8px;">
+<input class="text-input" id="chatIn" placeholder="Try: Hello! / What is the capital of France? / What is 5 times 3?" style="flex:1;margin:0;" onkeydown="if(event.key==='Enter')sendChat()">
+<button class="cbtn" onclick="sendChat()" style="padding:10px 18px;">Send</button>
+</div>
+<div class="ctrls">
+<button class="cbtn" onclick="clearConvo()">Clear</button>
+<button class="cbtn" onclick="showHistory()">Show History</button>
+</div>
+</div>
+
+<div class="qcard" id="q2"><div class="qq">Why does <code class="il">set_personality()</code> also clear the conversation history?</div><div class="qopts">
+<div class="qo" onclick="ck('q2',this,false)"><span class="ql">A</span> To save memory</div>
+<div class="qo" onclick="ck('q2',this,true)"><span class="ql">B</span> Because previous responses were generated with a different personality and would be inconsistent</div>
+<div class="qo" onclick="ck('q2',this,false)"><span class="ql">C</span> Because the tokenizer changes</div>
+<div class="qo" onclick="ck('q2',this,false)"><span class="ql">D</span> It doesn't &mdash; history is preserved</div>
+</div><div class="qfb" id="q2-fb"></div></div>
+</div>
+<hr class="div">
+
+<!-- PART 5: TESTING -->
+<div class="section" id="s5">
+<div class="stag">Part 05</div>
+<h2>Testing &amp; Evaluation</h2>
+<p>The project tests the chatbot on three levels: <strong>known queries</strong> (from training data), <strong>novel variations</strong> (unseen phrasing), and <strong>personality consistency</strong>.</p>
+
+<div class="cw">
+<div class="cw-title">&#9656; Test Suite</div>
+<div class="ctrls">
+<button class="cbtn on" onclick="showTest('known')">Known Queries</button>
+<button class="cbtn" onclick="showTest('novel')">Novel Queries</button>
+<button class="cbtn" onclick="showTest('personality')">Personality</button>
+<button class="cbtn" onclick="showTest('limits')">Limitations</button>
+</div>
+<div class="out" id="testOut"></div>
+</div>
+
+<div class="callout warn"><strong>Honest about limits:</strong> Our mini model has ~85K parameters and 90 training pairs. GPT-3.5 has 175 <em>billion</em> parameters and millions of training examples. Our chatbot can handle trained patterns and close variations, but will struggle with truly novel queries. That's expected and educational!</div>
+</div>
+<hr class="div">
+
+<!-- PART 6: JOURNEY -->
+<div class="section" id="s6">
+<div class="stag">Part 06</div>
+<h2>Your 7-Week Journey</h2>
+<p>This capstone project uses concepts from <strong>every single week</strong>. Here's what you built, week by week:</p>
+
+<div class="journey-step"><div class="journey-dot" style="background:var(--ro-dim);border:1px solid rgba(251,113,133,.3);color:var(--rose);">1</div><div class="journey-content"><strong>Week 1: PyTorch Fundamentals</strong><div class="jd">Tensors, autograd, nn.Module, training loops &mdash; the foundation everything else builds on.</div></div></div>
+<div class="journey-step"><div class="journey-dot" style="background:var(--am-dim);border:1px solid rgba(251,191,36,.3);color:var(--amber);">2</div><div class="journey-content"><strong>Week 2: Tokenization &amp; Embeddings</strong><div class="jd">Word &rarr; number &rarr; vector. Special tokens (&lt;PAD&gt;, &lt;UNK&gt;). The ChatTokenizer builds on this.</div></div></div>
+<div class="journey-step"><div class="journey-dot" style="background:var(--li-dim);border:1px solid rgba(163,230,53,.3);color:var(--lime);">3</div><div class="journey-content"><strong>Week 3: Attention Mechanisms</strong><div class="jd">Scaled dot-product attention, multi-head attention, causal masking. The core of every transformer block.</div></div></div>
+<div class="journey-step"><div class="journey-dot" style="background:var(--sk-dim);border:1px solid rgba(56,189,248,.3);color:var(--sky);">4</div><div class="journey-content"><strong>Week 4: GPT Architecture</strong><div class="jd">Transformer blocks, residual connections, layer norm, positional embeddings. MiniGPT is built from these.</div></div></div>
+<div class="journey-step"><div class="journey-dot" style="background:rgba(168,85,247,.12);border:1px solid rgba(168,85,247,.3);color:#a855f7;">5</div><div class="journey-content"><strong>Week 5: Evaluation &amp; Generation</strong><div class="jd">Perplexity, cross-entropy loss, temperature sampling, top-k. The generate() method uses these directly.</div></div></div>
+<div class="journey-step"><div class="journey-dot" style="background:rgba(45,212,191,.12);border:1px solid rgba(45,212,191,.3);color:#2dd4bf;">6</div><div class="journey-content"><strong>Week 6: Fine-Tuning</strong><div class="jd">Transfer learning, classification heads, freezing strategies. Understanding how to adapt pretrained models.</div></div></div>
+<div class="journey-step"><div class="journey-dot" style="background:var(--ac-dim);border:1px solid rgba(232,121,249,.3);color:var(--accent);">7</div><div class="journey-content"><strong>Week 7: Instruction Tuning</strong><div class="jd">Instruction-response pairs, loss masking, system prompts, the Chatbot class. The final layer!</div></div></div>
+</div>
+<hr class="div">
+
+<!-- PART 7: SUMMARY & GRADUATION -->
+<div class="section" id="s7">
+<div class="stag">Summary</div>
+<h2>What You Built</h2>
+
+<div class="sgrid">
+<div class="sitem"><code>ChatTokenizer</code><div class="d">Tokenizer with 6 special tokens: PAD, UNK, SYS, USER, ASST, END</div></div>
+<div class="sitem"><code>ChatDataset</code><div class="d">Dataset with loss masking &mdash; only compute loss on assistant responses</div></div>
+<div class="sitem"><code>MiniGPT</code><div class="d">3-layer transformer with 4-head attention, GELU FFN, weight tying (~85K params)</div></div>
+<div class="sitem"><code>Training</code><div class="d">AdamW optimizer, gradient clipping, 35 epochs on 90+ instruction pairs</div></div>
+<div class="sitem"><code>Generation</code><div class="d">Autoregressive decoding with temperature sampling and &lt;END&gt; stop token</div></div>
+<div class="sitem"><code>Chatbot</code><div class="d">Full chat interface with system prompts, history tracking, and personality support</div></div>
+</div>
+
+<div class="finish-banner">
+<h2>Course Complete!</h2>
+<p>You now understand how ChatGPT works &mdash; from raw text to intelligent conversation.</p>
+</div>
+
+<h3>Next Steps</h3>
+<div class="sgrid">
+<div class="sitem"><code>More Data</code><div class="d">Add hundreds more instruction pairs. More data = better generalization.</div></div>
+<div class="sitem"><code>Bigger Models</code><div class="d">Scale to 256/512 dimensions, 6-8 layers. See how capacity affects quality.</div></div>
+<div class="sitem"><code>Hugging Face</code><div class="d">Explore the transformers library to use real pretrained models like GPT-2 or LLaMA.</div></div>
+<div class="sitem"><code>RLHF</code><div class="d">Learn Reinforcement Learning from Human Feedback &mdash; the next step after SFT.</div></div>
+</div>
+
+<div class="callout gold"><strong>Congratulations!</strong> You've gone from zero to building a chatbot from scratch in 7 weeks. You understand tokenization, embeddings, attention, transformers, evaluation, generation, fine-tuning, instruction tuning, and conversational AI. That's an incredible achievement!</div>
+
+<div class="qcard" id="q3"><div class="qq">What is the correct order of the ChatGPT training pipeline?</div><div class="qopts">
+<div class="qo" onclick="ck('q3',this,false)"><span class="ql">A</span> RLHF &rarr; SFT &rarr; Pretraining</div>
+<div class="qo" onclick="ck('q3',this,true)"><span class="ql">B</span> Pretraining &rarr; SFT (Instruction Tuning) &rarr; RLHF</div>
+<div class="qo" onclick="ck('q3',this,false)"><span class="ql">C</span> SFT &rarr; Pretraining &rarr; RLHF</div>
+<div class="qo" onclick="ck('q3',this,false)"><span class="ql">D</span> Pretraining &rarr; RLHF &rarr; SFT</div>
+</div><div class="qfb" id="q3-fb"></div></div>
+</div>
+
+</div>
+
+<script>
+var secs=document.querySelectorAll('.section');
+function upd(){var st=window.scrollY,h=document.body.scrollHeight-innerHeight;document.getElementById('pf').style.width=Math.min(100,st/h*100)+'%';secs.forEach(function(s){if(s.getBoundingClientRect().top<innerHeight*.85)s.classList.add('vis')});}
+window.addEventListener('scroll',upd);upd();
+
+// Dataset Explorer
+var catData={
+greet:'GREETINGS (8 pairs)\n\n  User: "Hello!"      → Bot: "Hello! How can I help you today?"\n  User: "Hi!"         → Bot: "Hi there! What can I do for you?"\n  User: "Good morning!"→ Bot: "Good morning! How may I assist you?"\n  User: "Hey!"         → Bot: "Hey! What\'s on your mind?"\n  User: "Howdy!"       → Bot: "Howdy! How can I help you today?"\n  ... and 3 more variations\n\nPurpose: Teach the model multiple ways people say hello.',
+farewell:'FAREWELLS (5 pairs)\n\n  User: "Goodbye!"      → Bot: "Goodbye! Have a wonderful day!"\n  User: "Bye!"           → Bot: "Bye! Take care!"\n  User: "See you later!" → Bot: "See you later! Have a great day!"\n  User: "Take care!"     → Bot: "You too! Goodbye!"\n  User: "Thanks, bye!"   → Bot: "You\'re welcome! Goodbye!"\n\nPurpose: Clean conversation endings.',
+gratitude:'GRATITUDE (4 pairs)\n\n  User: "Thank you!"       → Bot: "You\'re welcome! Happy to help!"\n  User: "Thanks!"           → Bot: "No problem! Anything else?"\n  User: "Thanks a lot!"     → Bot: "My pleasure! Let me know if you need more help."\n  User: "I appreciate it!"  → Bot: "Glad I could help!"\n\nPurpose: Polite acknowledgment patterns.',
+about:'ABOUT THE ASSISTANT (7 pairs)\n\n  User: "What\'s your name?"  → Bot: "I\'m Assistant, an AI chatbot..."\n  User: "Who are you?"       → Bot: "I\'m an AI assistant designed to be helpful..."\n  User: "Are you a robot?"   → Bot: "I\'m an AI assistant, not a physical robot."\n  User: "Are you human?"     → Bot: "No, I\'m an AI assistant, but I\'m here to help!"\n  User: "What can you do?"   → Bot: "I can answer questions, chat, do math..."\n  ... and 2 more\n\nPurpose: Self-awareness and capability description.',
+knowledge:'KNOWLEDGE (20 pairs)\n\n  Capitals:\n    "Capital of France?" → "Paris"    "Capital of Japan?" → "Tokyo"\n    "Capital of Italy?"  → "Rome"     "Capital of Spain?" → "Madrid"\n    ... and 6 more countries\n\n  General:\n    "Who wrote Hamlet?"       → "William Shakespeare"\n    "Largest planet?"         → "Jupiter"\n    "What color is the sky?"  → "Blue during the day"\n    "What is water made of?"  → "H2O (hydrogen and oxygen)"\n    ... and 6 more\n\nPurpose: Factual Q&A across diverse topics.',
+math:'MATH (14 pairs)\n\n  Addition:        2+2=4  |  3+5=8  |  7+8=15  |  10+20=30  |  15+27=42\n  Subtraction:     10-4=6  |  20-8=12  |  100-37=63\n  Multiplication:  5×3=15  |  7×8=56  |  9×9=81  |  6×7=42\n  Division:        20÷4=5  |  100÷10=10  |  half of 50=25  |  half of 100=50\n\nPurpose: Basic arithmetic across all four operations.',
+translate:'TRANSLATION (8 pairs)\n\n  Hello in Spanish:  "¡Hola!"       Hello in French:    "Bonjour!"\n  Hello in German:   "Hallo!"       Hello in Italian:   "Ciao!"\n  Thanks in French:  "Merci!"       Thanks in Spanish:  "¡Gracias!"\n  Goodbye in German: "Auf Wiedersehen!"  Goodbye in French: "Au revoir!"\n\nPurpose: Simple cross-language translations.',
+tasks:'TASKS (7 pairs)\n\n  "Count to five."    → "1, 2, 3, 4, 5."\n  "Count to three."   → "1, 2, 3."\n  "List three colors." → "Red, blue, and green."\n  "List two fruits."   → "Apple and banana."\n  "Name a color."      → "Blue."\n  "Name a fruit."      → "Apple."\n  "Name an animal."    → "Dog."\n\nPurpose: Instruction-following for simple tasks.',
+explain:'EXPLANATIONS (6 pairs)\n\n  "What is the sun?"    → "A star at the center of our solar system..."\n  "What is the moon?"   → "Earth\'s natural satellite..."\n  "What is gravity?"    → "A force that attracts objects with mass..."\n  "Why is the sky blue?" → "Sunlight scatters in Earth\'s atmosphere."\n  "What causes rain?"   → "Water vapor condenses into droplets..."\n  "What is water?"      → "A liquid compound essential for all life..."\n\nPurpose: Longer, explanatory responses.',
+help:'HELP & OTHER (9+ pairs)\n\n  Help requests:\n    "I need help."        → "I\'m here to help! What do you need?"\n    "Can you help me?"    → "Of course! What would you like help with?"\n    "I have a question."  → "Sure! What would you like to know?"\n\n  Clarification:\n    "Tell me more."       → "What would you like to know?"\n    "I don\'t understand." → "Let me try to explain it differently."\n\n  Reactions:\n    "That\'s interesting!" → "Glad you find it interesting!"\n    "Cool!" / "Awesome!"  → "Thanks! Anything else?"\n\nPurpose: Conversational flow and meta-dialogue.'
+};
+function showCat(cat){
+  document.querySelectorAll('.cat-card').forEach(function(c){c.classList.remove('on')});
+  event.target.closest('.cat-card').classList.add('on');
+  document.getElementById('catOut').textContent=catData[cat];
+}
+showCat('greet');document.querySelector('.cat-card').classList.add('on');
+
+// Architecture Inspector
+var layerInfo={
+overview:'MiniGPT Architecture Overview\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nInput → tok_emb + pos_emb → Dropout\n  ↓\nBlock 1: LayerNorm → Attn → + residual → LayerNorm → FFN → + residual\nBlock 2: LayerNorm → Attn → + residual → LayerNorm → FFN → + residual\nBlock 3: LayerNorm → Attn → + residual → LayerNorm → FFN → + residual\n  ↓\nLayerNorm → lm_head (weight-tied) → logits\n\nConfig: d_model=64, heads=4, layers=3, max_len=48\nParameters: ~85,000',
+attention:'Multi-Head Causal Attention\n━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n1. Project input to Q, K, V via single linear (3×d_model)\n2. Reshape to 4 heads × 16 dim each\n3. Compute attention scores: (Q @ K^T) / √16\n4. Apply causal mask (prevent seeing future tokens)\n5. Softmax → attention weights\n6. Weighted sum of V → output\n7. Project back through output linear\n\nKey insight: Each head learns different patterns\n  - Head 1 might track grammar\n  - Head 2 might track topic\n  - Head 3 might track position\n  - Head 4 might track special tokens',
+ffn:'Feed-Forward Network\n━━━━━━━━━━━━━━━━━━━━\n\nLinear(64 → 256)    # expand 4×\nGELU activation     # smooth nonlinearity\nDropout(0.1)\nLinear(256 → 64)    # project back\nDropout(0.1)\n\nWhy 4× expansion?\n  The FFN acts as a "memory" layer where the model\n  stores factual knowledge. The larger intermediate\n  dimension gives it more capacity to memorize\n  patterns like "capital of France = Paris".\n\nGELU vs ReLU:\n  GELU is smoother and generally performs better\n  in transformer models. It\'s what GPT-2/3 use.',
+generate:'Autoregressive Generation\n━━━━━━━━━━━━━━━━━━━━━━━━━\n\nmodel.generate(prompt_ids, max_new=30, temp=0.7)\n\nStep by step:\n  1. Start with: <USER> hello <ASST>\n  2. Forward pass → logits for position after <ASST>\n  3. Divide logits by temperature (0.7)\n  4. Softmax → probability distribution\n  5. Sample from distribution (torch.multinomial)\n  6. Append sampled token to sequence\n  7. Repeat from step 2\n  8. Stop at <END> token or max_new tokens\n\nTemperature effects:\n  0.1 = very deterministic (always picks top word)\n  0.7 = balanced (default)\n  1.5 = very creative (more randomness)'
+};
+function showLayer(mode){
+  document.querySelectorAll('#s2 .cw .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+  document.getElementById('layerOut').textContent=layerInfo[mode];
+}
+showLayer('overview');
+
+// Training Simulation
+var trainRunning=false,trainFrame=null;
+function runTraining(){
+  if(trainRunning)return;
+  trainRunning=true;
+  document.getElementById('trainBtn').textContent='Training...';
+  var canvas=document.getElementById('lossCanvas');
+  var ctx=canvas.getContext('2d');
+  var W=canvas.width,H=canvas.height;
+  var losses=[];
+  var epoch=0,maxEpoch=35;
+  function step(){
+    epoch++;
+    var base=3.2*Math.exp(-0.12*epoch)+0.15;
+    var noise=(Math.random()-0.5)*0.15*Math.exp(-0.05*epoch);
+    losses.push(Math.max(0.08,base+noise));
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle='#08040c';ctx.fillRect(0,0,W,H);
+    ctx.strokeStyle='#3a2850';ctx.lineWidth=1;
+    for(var g=0;g<=3;g+=0.5){var gy=H-40-(g/3.5)*(H-60);ctx.beginPath();ctx.moveTo(50,gy);ctx.lineTo(W-20,gy);ctx.stroke();ctx.fillStyle='#8870a8';ctx.font='11px Source Code Pro';ctx.textAlign='right';ctx.fillText(g.toFixed(1),44,gy+4);}
+    for(var gx=0;gx<=35;gx+=5){var xx=50+gx/35*(W-70);ctx.beginPath();ctx.moveTo(xx,H-40);ctx.lineTo(xx,20);ctx.stroke();if(gx>0){ctx.fillStyle='#8870a8';ctx.textAlign='center';ctx.fillText(gx,xx,H-24);}}
+    ctx.fillStyle='#8870a8';ctx.font='11px Source Code Pro';ctx.textAlign='center';ctx.fillText('Epoch',W/2,H-6);ctx.save();ctx.translate(14,H/2);ctx.rotate(-Math.PI/2);ctx.fillText('Loss',0,0);ctx.restore();
+    if(losses.length>1){ctx.beginPath();ctx.strokeStyle='#e879f9';ctx.lineWidth=2.5;ctx.shadowColor='rgba(232,121,249,0.4)';ctx.shadowBlur=6;for(var i=0;i<losses.length;i++){var x=50+i/(maxEpoch-1)*(W-70);var y=H-40-(losses[i]/3.5)*(H-60);if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);}ctx.stroke();ctx.shadowBlur=0;var last=losses[losses.length-1];var lx=50+(losses.length-1)/(maxEpoch-1)*(W-70);var ly=H-40-(last/3.5)*(H-60);ctx.beginPath();ctx.arc(lx,ly,4,0,Math.PI*2);ctx.fillStyle='#e879f9';ctx.fill();}
+    document.getElementById('trainOut').textContent='Epoch '+epoch+'/'+maxEpoch+' | Loss: '+losses[losses.length-1].toFixed(4)+(epoch>=maxEpoch?'\n\nTraining complete! Final loss: '+losses[losses.length-1].toFixed(4):'');
+    if(epoch<maxEpoch){trainFrame=setTimeout(step,120);}else{trainRunning=false;document.getElementById('trainBtn').textContent='Start Training';}
+  }
+  step();
+}
+function resetTraining(){
+  if(trainFrame)clearTimeout(trainFrame);
+  trainRunning=false;
+  document.getElementById('trainBtn').textContent='Start Training';
+  document.getElementById('trainOut').textContent='Click "Start Training" to simulate 35 epochs of training.';
+  var canvas=document.getElementById('lossCanvas');var ctx=canvas.getContext('2d');ctx.clearRect(0,0,canvas.width,canvas.height);ctx.fillStyle='#08040c';ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle='#3a2850';ctx.font='13px Source Code Pro';ctx.textAlign='center';ctx.fillText('Training loss will appear here',canvas.width/2,canvas.height/2);
+}
+resetTraining();
+
+// Chat Demo
+var chatResponses={'hello':'Hello! How can I help you today?','hi':'Hi there! What can I do for you?','hi there':'Hello! What would you like to know?','good morning':'Good morning! How may I assist you?','good evening':'Good evening! What can I do for you?','hey':'Hey! What\'s on your mind?','howdy':'Howdy! How can I help you today?','goodbye':'Goodbye! Have a wonderful day!','bye':'Bye! Take care!','thank you':'You\'re welcome! Happy to help!','thanks':'No problem! Anything else?','what is the capital of france':'The capital of France is Paris.','what is the capital of japan':'The capital of Japan is Tokyo.','what is the capital of italy':'The capital of Italy is Rome.','what is the capital of spain':'The capital of Spain is Madrid.','what is the capital of germany':'The capital of Germany is Berlin.','what is the capital of china':'The capital of China is Beijing.','what is the capital of india':'The capital of India is New Delhi.','what is the capital of brazil':'The capital of Brazil is Brasilia.','what is the capital of australia':'The capital of Australia is Canberra.','what is the capital of canada':'The capital of Canada is Ottawa.','who wrote hamlet':'William Shakespeare wrote Hamlet.','what is the largest planet':'Jupiter is the largest planet in our solar system.','what color is the sky':'The sky appears blue during the day.','what is water made of':'Water is made of hydrogen and oxygen, with the formula H2O.','what is 2 plus 2':'2 plus 2 equals 4.','what is 3 plus 5':'3 plus 5 equals 8.','what is 5 times 3':'5 times 3 equals 15.','what is 7 times 8':'7 times 8 equals 56.','what is 9 times 9':'9 times 9 equals 81.','what is 10 minus 4':'10 minus 4 equals 6.','what is 20 divided by 4':'20 divided by 4 equals 5.','say hello in spanish':'Hola!','say hello in french':'Bonjour!','say hello in german':'Hallo!','say thank you in french':'Merci!','say thank you in spanish':'Gracias!','say goodbye in french':'Au revoir!','what is the sun':'The sun is a star at the center of our solar system that provides light and heat.','what is gravity':'Gravity is a force that attracts objects with mass toward each other.','why is the sky blue':'The sky is blue because sunlight scatters in Earth\'s atmosphere.','what causes rain':'Rain forms when water vapor in clouds condenses into droplets that fall.','who are you':'I\'m an AI assistant designed to be helpful and informative.','what can you do':'I can answer questions, chat, do math, and help with various tasks.','are you human':'No, I\'m an AI assistant, but I\'m here to help!','how are you':'I\'m doing well, thank you! How can I help you?','count to five':'1, 2, 3, 4, 5.','list three colors':'Red, blue, and green.','name a fruit':'Apple.','i need help':'I\'m here to help! What do you need?','can you help me':'Of course! What would you like help with?'};
+
+var personalities={
+  default:{label:'System prompt: none',prefix:''},
+  friendly:{label:'System: "You are a friendly, encouraging teacher who loves to help!"',prefix:'friendly'},
+  pirate:{label:'System: "You are a pirate captain. Speak like a pirate!"',prefix:'pirate'},
+  scientist:{label:'System: "You are a precise scientist. Be exact and technical."',prefix:'scientist'},
+  poet:{label:'System: "You are a poet. Respond with rhythm and beauty."',prefix:'poet'}
+};
+var curPersonality='default';
+var chatHistory=[];
+
+var personalityTransforms={
+  friendly:function(r){return r.replace(/\./g,'!').replace('!!','!').replace(/^/,'Oh, great question! ').replace('How can I help you today!','I\'m SO happy to chat with you! What shall we learn today?');},
+  pirate:function(r){return 'Arr, '+r.toLowerCase().replace('the capital','the port').replace('equals','be').replace('hello','ahoy').replace(/!$/,' matey!').replace(/\.$/,', yarr!');},
+  scientist:function(r){return r.replace('!','.').replace('How can I help you today','How may I assist with your scientific inquiry').replace(/^The /,'Precisely. The ').replace(/^It/,'To be exact, it');},
+  poet:function(r){return r.replace(/\.$/,',\nlike a verse upon the breeze.').replace('!',',\nwhat a lovely thought indeed!');}
+};
+
+function getReply(msg){
+  var key=msg.toLowerCase().replace(/[!?.,'"]/g,'').trim();
+  var base=null;
+  if(chatResponses[key])base=chatResponses[key];
+  else{for(var k in chatResponses){if(key.indexOf(k)>-1||k.indexOf(key)>-1){base=chatResponses[k];break;}}}
+  if(!base){
+    if(key.indexOf('capital')>-1)base='I know many capitals! Try asking about France, Japan, or Spain.';
+    else if(key.indexOf('plus')>-1||key.indexOf('times')>-1||key.indexOf('minus')>-1||key.indexOf('divided')>-1)base='I can do basic math! Try "What is 5 times 3?"';
+    else if(key.indexOf('hello')>-1||key.indexOf('hi')>-1)base='Hello! How can I help you today?';
+    else base=['That\'s an interesting question! I\'d need more training data for that.','I\'m not sure, but I\'m learning! Try asking about capitals or math.','Could you rephrase that? I work best with questions I\'ve been trained on.','Hmm, that\'s beyond my training. I know capitals, math, and translations!'][Math.floor(Math.random()*4)];
+  }
+  if(curPersonality!=='default'&&personalityTransforms[curPersonality])base=personalityTransforms[curPersonality](base);
+  return base;
+}
+function addChatMsg(who,text){
+  var w=document.getElementById('chatWin');
+  var isU=who==='user';
+  w.innerHTML+='<div class="chat-msg" style="flex-direction:'+(isU?'row-reverse':'row')+'"><div class="chat-avatar '+(isU?'chat-user-av':'chat-asst-av')+'">'+(isU?'U':'A')+'</div><div class="chat-bubble-inner '+(isU?'chat-user-bub':'chat-asst-bub')+'">'+text.replace(/\n/g,'<br>')+'</div></div>';
+  w.scrollTop=w.scrollHeight;
+}
+function sendChat(){
+  var inp=document.getElementById('chatIn');
+  var msg=inp.value.trim();if(!msg)return;
+  addChatMsg('user',msg);inp.value='';
+  var reply=getReply(msg);
+  chatHistory.push({user:msg,assistant:reply});
+  setTimeout(function(){addChatMsg('assistant',reply);},200+Math.random()*300);
+}
+function clearConvo(){
+  document.getElementById('chatWin').innerHTML='';
+  chatHistory=[];
+  addChatMsg('assistant','Hello! I\'m your Mini ChatGPT. Ask me anything!');
+}
+function showHistory(){
+  if(chatHistory.length===0){addChatMsg('assistant','No history yet. Start chatting!');return;}
+  var txt='Conversation History ('+chatHistory.length+' turns):\n';
+  chatHistory.forEach(function(t,i){txt+='\n['+(i+1)+'] You: '+t.user+'\n    Bot: '+t.assistant;});
+  document.getElementById('chatWin').innerHTML='';
+  addChatMsg('assistant',txt);
+}
+function setPersonality(p){
+  curPersonality=p;
+  document.querySelectorAll('#s4 .cw .ctrls:first-of-type .cbtn').forEach(function(b){b.classList.remove('on')});
+  event.target.classList.add('on');
+  document.getElementById('sysLabel').textContent=personalities[p].label;
+  clearConvo();
+  if(p!=='default')addChatMsg('assistant','Personality set to '+p+'! Try asking me something.');
+}
+clearConvo();
+
+// Test Suite
+var testInfo={
+known:'KNOWN QUERIES (from training data)\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nYou: "Hello!"                         → "Hello! How can I help you today?"\nYou: "What is the capital of France?"  → "The capital of France is Paris."\nYou: "What is 5 times 3?"             → "5 times 3 equals 15."\nYou: "Say hello in Spanish."           → "Hola!"\nYou: "What can you do?"                → "I can answer questions, chat..."\nYou: "Thank you!"                      → "You\'re welcome! Happy to help!"\nYou: "Goodbye!"                        → "Goodbye! Have a wonderful day!"\n\nResult: The model reproduces learned responses accurately.\nThese queries match training data exactly.',
+novel:'NOVEL QUERIES (variations not in training)\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nYou: "What is 4 plus 6?"        → Should generalize from similar math\nYou: "Capital of Brazil?"       → Trained on this, but shorter phrasing\nYou: "Say thank you in German." → Not in training! Can it transfer?\nYou: "Are you smart?"           → Novel question about capabilities\n\nResult: Mixed! The model handles close variations well\nbut struggles with truly unseen patterns. This is expected\nfor a model with only ~85K parameters and 90 training pairs.\n\nKey insight: Generalization improves with more data\nand larger models.',
+personality:'PERSONALITY TEST\n━━━━━━━━━━━━━━━━━\n\nWith system prompt: "You are a friendly assistant who loves to help."\n\n  You: "Hello!"         → Friendly, enthusiastic greeting\n  You: "What is the sun?" → Encouraging, warm explanation\n\nWith system prompt: "You are a pirate captain."\n\n  You: "Hello!"         → "Ahoy, matey!"-style greeting\n  You: "What is the sun?" → Pirate-flavored explanation\n\nResult: System prompts successfully alter the response\nstyle without retraining. Same model, different behavior!\n\nNote: Our small model may not perfectly capture every\npersonality nuance, but it demonstrates the concept.',
+limits:'LIMITATIONS (honest assessment)\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n1. SMALL VOCABULARY (~500 tokens)\n   → Can\'t handle words not in training data\n   → Unknown words become <UNK>\n\n2. LIMITED KNOWLEDGE (90 pairs)\n   → Can\'t answer questions outside its training\n   → No real "understanding" - pattern matching\n\n3. NO REAL CONTEXT (simplified)\n   → Doesn\'t truly use conversation history for context\n   → Each response is mainly based on current input\n\n4. TINY MODEL (~85K params)\n   → GPT-3: 175 billion parameters (2 million× larger)\n   → Our model memorizes; GPT-3 generalizes\n\n5. NO RLHF\n   → No human preference alignment\n   → May not always give "helpful" responses\n\nBUT: You understand exactly HOW it works!\nThat\'s the real achievement of this course.'
+};
+function showTest(t){
+  document.querySelectorAll('#s5 .cw .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+  document.getElementById('testOut').textContent=testInfo[t];
+}
+showTest('known');
+
+// Quiz
+function ck(id,el,ok){var card=document.getElementById(id);if(card.dataset.a)return;card.dataset.a='1';card.querySelectorAll('.qo').forEach(function(o){o.classList.add('d')});var fb=document.getElementById(id+'-fb');if(ok){el.classList.add('c');fb.className='qfb p show';fb.textContent='\u2705 Correct!';}else{el.classList.add('w');card.querySelectorAll('.qo').forEach(function(o){if(o.onclick&&o.onclick.toString().indexOf('true')>-1)o.classList.add('c')});fb.className='qfb f show';var ex={q1:'Weight tying shares the embedding matrix between tok_emb and lm_head. This means the same matrix that maps words→vectors also maps vectors→words. It reduces parameters significantly and creates a consistent semantic space, which typically improves generalization.',q2:'When you change the system prompt, the chatbot\'s personality changes. Any responses in history were generated with the old personality, so keeping them would create an inconsistent conversation (imagine a pirate suddenly becoming a scientist mid-conversation).',q3:'The ChatGPT pipeline is: (1) Pretrain on massive text data (learn language), (2) SFT / Instruction Tuning (learn to follow instructions), (3) RLHF (align with human preferences). Our course covers steps 1-2; RLHF is a next step to explore!'};fb.textContent='\u274c '+ex[id];}}
+</script>
+</body>
+</html>

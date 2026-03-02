@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week 4 &middot; Project: Build &amp; Train GPT</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,700;1,400&family=Space+Mono:wght@400;700&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#08100c;--surface:#0e1a14;--surface2:#142820;--border:#1e4030;--text:#b0d8c0;--muted:#5a9070;--heading:#e0fff0;--gold:#d4a020;--go-dim:rgba(212,160,32,.12);--go-glow:rgba(212,160,32,.3);--cyan:#22d3ee;--cy-dim:rgba(34,211,238,.12);--rose:#f472b6;--ro-dim:rgba(244,114,182,.12);--lime:#84cc16;--li-dim:rgba(132,204,22,.12);--mono:'Space Mono',monospace;--serif:'Cormorant Garamond',serif;--sans:'Sora',sans-serif;--r:10px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);line-height:1.76;font-size:15.5px}
+.container{max-width:760px;margin:0 auto;padding:48px 24px 100px}
+.pbar{position:fixed;top:0;left:0;right:0;height:3px;background:var(--surface);z-index:999}.pfill{height:100%;width:0%;background:var(--gold);box-shadow:0 0 8px var(--go-glow);transition:width .3s}
+.hero{text-align:center;padding:32px 0 48px}.hero-tag{font-family:var(--mono);font-size:.72rem;color:var(--gold);letter-spacing:.14em;text-transform:uppercase}.hero h1{font-family:var(--serif);font-size:2.6rem;font-weight:700;color:var(--heading);margin:8px 0}.hero h1 em{color:var(--gold);font-style:italic}.hero p{color:var(--muted);font-size:1.05rem;max-width:560px;margin:0 auto}
+.section{margin-bottom:56px;opacity:0;transform:translateY(20px);transition:all .5s}.section.vis{opacity:1;transform:none}.stag{font-family:var(--mono);font-size:.72rem;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}.section h2{font-family:var(--serif);font-size:1.55rem;color:var(--heading);margin-bottom:14px}.section p{margin-bottom:12px}.section p strong{color:var(--heading)}
+pre{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:var(--r);padding:16px 18px;margin:14px 0;overflow-x:auto;font-family:var(--mono);font-size:.82rem;line-height:1.6;color:var(--text)}
+code.il{font-family:var(--mono);font-size:.86em;color:var(--gold);background:var(--go-dim);padding:2px 6px;border-radius:4px}
+.kw{color:#f0a0c0}.fn{color:#80c0ff}.num{color:#d4a020}.str{color:#80f0c0}.cm{color:var(--muted);font-style:italic}
+.callout{background:var(--go-dim);border:1px solid rgba(212,160,32,.2);border-radius:var(--r);padding:16px 18px;margin:18px 0;font-size:.93rem}.callout.pass{background:var(--li-dim);border-color:rgba(132,204,22,.2)}
+hr.div{border:none;border-top:1px solid var(--border);margin:52px 0}
+.cw{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin:18px 0}.cw-title{font-family:var(--mono);font-size:.72rem;color:var(--gold);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px}
+.ctrls{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.cbtn{font-family:var(--mono);font-size:.78rem;padding:7px 14px;border:1px solid var(--border);border-radius:6px;background:var(--surface2);color:var(--text);cursor:pointer;transition:all .2s}.cbtn:hover{border-color:var(--gold);color:var(--gold)}.cbtn.on{background:var(--go-dim);border-color:var(--gold);color:var(--gold)}
+.out{background:#040804;border:1px solid var(--border);border-radius:6px;padding:14px 16px;font-family:var(--mono);font-size:.82rem;color:var(--cyan);line-height:1.6;margin:10px 0;white-space:pre-wrap;min-height:36px}
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}.sitem{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 14px}.sitem code{font-family:var(--mono);font-size:.82rem;color:var(--gold)}.sitem .d{font-size:.86rem;color:var(--muted);margin-top:3px}
+.check{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:6px;margin:8px 0;font-size:.9rem;background:var(--li-dim);border:1px solid rgba(132,204,22,.2);color:var(--lime)}.check::before{content:'\2713';font-weight:700;font-size:1.1rem}
+.qcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:22px;margin:18px 0}.qq{font-family:var(--serif);font-size:1.05rem;color:var(--heading);margin-bottom:12px}.qopts{display:flex;flex-direction:column;gap:7px}.qo{display:flex;align-items:center;gap:10px;padding:11px 14px;border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:.9rem;transition:all .2s}.qo:hover{border-color:var(--gold)}.qo.c{border-color:var(--lime);background:var(--li-dim);color:var(--lime)}.qo.w{border-color:var(--rose);background:var(--ro-dim);color:var(--rose)}.qo.d{pointer-events:none;opacity:.85}
+.ql{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.75rem;font-weight:700;background:var(--surface2);color:var(--muted);flex-shrink:0}.qo.c .ql{background:var(--lime);color:#000}.qo.w .ql{background:var(--rose);color:#fff}
+.qfb{margin-top:10px;padding:10px 12px;border-radius:6px;font-size:.88rem;display:none;line-height:1.6}.qfb.show{display:block}.qfb.p{background:var(--li-dim);color:var(--lime);border-left:3px solid var(--lime)}.qfb.f{background:var(--ro-dim);color:var(--rose);border-left:3px solid var(--rose)}
+canvas{display:block;width:100%;border-radius:6px}
+@media(max-width:600px){.hero h1{font-size:1.8rem}.sgrid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="pbar"><div class="pfill" id="pf"></div></div>
+<div class="container">
+<div class="hero"><div class="hero-tag">Week 4 &middot; Project</div><h1>Build &amp; Train <em>GPT</em></h1><p>The grand finale. Assemble every piece from Weeks 1&ndash;4 into a working GPT that generates Shakespeare.</p></div><hr class="div">
+
+<div class="section" id="s1"><div class="stag">Overview</div><h2>What You've Built</h2>
+<div class="sgrid"><div class="sitem"><code>Week 1</code><div class="d">How neural networks learn</div></div><div class="sitem"><code>Week 2</code><div class="d">Tokenization &amp; embeddings</div></div><div class="sitem"><code>Week 3</code><div class="d">Multi-head causal attention</div></div><div class="sitem"><code>Week 4</code><div class="d">Blocks, full GPT, training</div></div></div></div><hr class="div">
+
+<div class="section" id="s2"><div class="stag">Architecture</div><h2>Complete GPT</h2>
+<div class="cw"><div class="cw-title">&#9656; Full Architecture</div><canvas id="archCanvas" height="400"></canvas></div>
+<pre><span class="kw">class</span> <span class="fn">GPT</span>(nn.Module):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, vocab_size, d_model, num_heads,
+                 num_layers, max_seq=<span class="num">512</span>, dropout=<span class="num">0.1</span>):
+        <span class="fn">super</span>().__init__()
+        self.token_embedding = nn.Embedding(vocab_size, d_model)
+        self.position_embedding = nn.Embedding(max_seq, d_model)
+        self.dropout = nn.Dropout(dropout)
+        self.blocks = nn.ModuleList([
+            TransformerBlock(d_model, num_heads, <span class="kw">None</span>, max_seq, dropout)
+            <span class="kw">for</span> _ <span class="kw">in</span> range(num_layers)])
+        self.ln_final = nn.LayerNorm(d_model)
+        self.lm_head = nn.Linear(d_model, vocab_size, bias=<span class="kw">False</span>)
+        self.lm_head.weight = self.token_embedding.weight  <span class="cm"># tied!</span></pre></div><hr class="div">
+
+<div class="section" id="s3"><div class="stag">Tests</div><h2>Verification</h2>
+<div class="cw"><div class="cw-title">&#9656; Run Tests</div>
+<div class="ctrls"><button class="cbtn" onclick="runT('shapes')">Shapes</button><button class="cbtn" onclick="runT('tied')">Weight Tie</button><button class="cbtn" onclick="runT('loss')">Loss</button><button class="cbtn" onclick="runT('gen')">Generation</button><button class="cbtn" onclick="runT('all')">All &#10003;</button></div>
+<div class="out" id="testOut">Click a test...</div></div></div><hr class="div">
+
+<div class="section" id="s4"><div class="stag">Training</div><h2>Watch It Learn</h2>
+<div class="cw"><div class="cw-title">&#9656; Training Run</div>
+<canvas id="trainCanvas" height="200"></canvas>
+<div class="ctrls"><button class="cbtn on" onclick="runTrain()">&#9654; Train</button><button class="cbtn" onclick="resetTrain()">Reset</button></div>
+<div class="out" id="trainOut">Click Train to begin...</div></div></div><hr class="div">
+
+<div class="section" id="s5"><div class="stag">Output</div><h2>Generated Shakespeare</h2>
+<div class="cw"><div class="cw-title">&#9656; Sample Outputs</div>
+<div class="ctrls"><button class="cbtn on" onclick="showGen('romeo')">ROMEO:</button><button class="cbtn" onclick="showGen('juliet')">JULIET:</button><button class="cbtn" onclick="showGen('o')">O, </button><button class="cbtn" onclick="showGen('what')">What </button></div>
+<div class="out" id="genOut" style="min-height:80px;"></div>
+<div class="ctrls"><button class="cbtn" onclick="reGen()">&#8635; Regenerate</button></div></div></div><hr class="div">
+
+<div class="section" id="s6"><div class="stag">Review</div><h2>Final Check</h2>
+<div class="qcard" id="q1"><div class="qq">&#129513; Correct GPT data flow?</div><div class="qopts">
+<div class="qo" onclick="ck('q1',this,true)"><span class="ql">A</span> Embeds &rarr; Blocks &rarr; LayerNorm &rarr; LM Head</div>
+<div class="qo" onclick="ck('q1',this,false)"><span class="ql">B</span> LM Head &rarr; Blocks &rarr; Embeds</div>
+<div class="qo" onclick="ck('q1',this,false)"><span class="ql">C</span> Blocks &rarr; Embeds &rarr; LM Head</div>
+</div><div class="qfb" id="q1-fb"></div></div>
+<div class="qcard" id="q2"><div class="qq">&#129513; Which sublayers use residual connections?</div><div class="qopts">
+<div class="qo" onclick="ck('q2',this,false)"><span class="ql">A</span> Only attention</div>
+<div class="qo" onclick="ck('q2',this,true)"><span class="ql">B</span> Both attention and FFN</div>
+<div class="qo" onclick="ck('q2',this,false)"><span class="ql">C</span> Only the embedding layer</div>
+</div><div class="qfb" id="q2-fb"></div></div>
+<div class="qcard" id="q3"><div class="qq">&#129513; What enables autoregressive generation?</div><div class="qopts">
+<div class="qo" onclick="ck('q3',this,false)"><span class="ql">A</span> Weight tying</div>
+<div class="qo" onclick="ck('q3',this,true)"><span class="ql">B</span> Causal masking</div>
+<div class="qo" onclick="ck('q3',this,false)"><span class="ql">C</span> The FFN expansion factor</div>
+</div><div class="qfb" id="q3-fb"></div></div>
+</div><hr class="div">
+
+<div class="section" id="s7"><div class="stag">Complete</div><h2>&#127881; Week 4 Complete!</h2>
+<div class="check">Character tokenizer &amp; dataset</div>
+<div class="check">Multi-head causal attention</div>
+<div class="check">Feed-forward network with GELU</div>
+<div class="check">Transformer blocks with Pre-LayerNorm</div>
+<div class="check">Complete GPT with weight tying</div>
+<div class="check">Training loop with gradient clipping</div>
+<div class="check">Autoregressive text generation</div>
+<div class="callout pass"><strong>You built GPT from scratch!</strong> The exact same architecture as GPT-2 and GPT-3. Only the scale differs.</div>
+</div></div>
+
+<script>
+var secs=document.querySelectorAll('.section');
+function upd(){var st=window.scrollY,h=document.body.scrollHeight-innerHeight;document.getElementById('pf').style.width=Math.min(100,st/h*100)+'%';secs.forEach(function(s){if(s.getBoundingClientRect().top<innerHeight*.85)s.classList.add('vis')});}
+window.addEventListener('scroll',upd);upd();
+
+function drawArch(){
+  var c=document.getElementById('archCanvas'),dpr=devicePixelRatio||1,w=c.clientWidth;
+  c.width=w*dpr;c.height=400*dpr;var ctx=c.getContext('2d');ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,400);
+  var cx=w/2,bw=Math.min(240,w-80);
+  var boxes=[{y:8,h:28,t:'Token IDs',c:'#5a9070'},{y:44,h:28,t:'Token + Position Embedding',c:'#d4a020'},{y:82,h:28,t:'Dropout',c:'#5a9070'},{y:122,h:80,t:'Transformer Blocks \u00d7 N',c:'#a855f7'},{y:214,h:28,t:'Final LayerNorm',c:'#22d3ee'},{y:252,h:28,t:'LM Head (weight-tied)',c:'#f97316'},{y:290,h:28,t:'Logits \u2192 Softmax \u2192 Sample',c:'#84cc16'},{y:340,h:28,t:'Next Token',c:'#84cc16'}];
+  boxes.forEach(function(b){ctx.fillStyle=b.c+'18';ctx.strokeStyle=b.c;ctx.lineWidth=1.5;ctx.beginPath();ctx.roundRect(cx-bw/2,b.y,bw,b.h,6);ctx.fill();ctx.stroke();ctx.fillStyle=b.c;ctx.font='600 11px Sora';ctx.textAlign='center';ctx.fillText(b.t,cx,b.y+b.h/2+4);});
+  [36,72,110,202,242,280,318].forEach(function(y){ctx.strokeStyle='#1e4030';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(cx,y);ctx.lineTo(cx,y+8);ctx.stroke();});
+  var rx=cx+bw/2+18;ctx.strokeStyle='rgba(132,204,22,0.3)';ctx.lineWidth=1.5;ctx.setLineDash([4,3]);ctx.beginPath();ctx.moveTo(rx,354);ctx.lineTo(rx+12,354);ctx.lineTo(rx+12,22);ctx.lineTo(rx,22);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='rgba(132,204,22,0.4)';ctx.font='400 9px "Space Mono"';ctx.textAlign='left';ctx.fillText('loop',rx+16,190);
+}
+drawArch();window.addEventListener('resize',drawArch);
+
+function runT(t){
+  document.querySelectorAll('.ctrls .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+  var o='';
+  if(t==='shapes'||t==='all'){o+='\u2550\u2550\u2550 Shape Tests \u2550\u2550\u2550\n  (2,10) \u2192 (2,10,50)  \u2713\n  (1,128) \u2192 (1,128,50)  \u2713\n\n';}
+  if(t==='tied'||t==='all'){o+='\u2550\u2550\u2550 Weight Tying \u2550\u2550\u2550\n  Same object: True  \u2713\n  Params saved: 3,200  \u2713\n\n';}
+  if(t==='loss'||t==='all'){o+='\u2550\u2550\u2550 Loss \u2550\u2550\u2550\n  Random loss: 3.91 \u2248 ln(50)  \u2713\n  Gradients OK  \u2713\n\n';}
+  if(t==='gen'||t==='all'){o+='\u2550\u2550\u2550 Generation \u2550\u2550\u2550\n  10 tokens generated  \u2713\n  All in vocab range  \u2713\n\n';}
+  if(t==='all') o+='All passed! \u2705';
+  document.getElementById('testOut').textContent=o;
+}
+
+var trainData=[],trainAnim=null;
+function runTrain(){if(trainAnim)return;trainData=[];var ep=0;function step(){if(ep>=20){trainAnim=null;document.getElementById('trainOut').textContent+='\n\nDone! GPT ready to generate.';return;}var loss=3.9*Math.exp(-0.18*ep)+0.7+Math.random()*0.12;trainData.push(loss);ep++;drawTrain();document.getElementById('trainOut').textContent='Epoch '+ep+'/20 | Loss: '+loss.toFixed(4);trainAnim=setTimeout(step,180);}step();}
+function resetTrain(){if(trainAnim){clearTimeout(trainAnim);trainAnim=null;}trainData=[];drawTrain();document.getElementById('trainOut').textContent='Click Train...';}
+function drawTrain(){var c=document.getElementById('trainCanvas'),dpr=devicePixelRatio||1,w=c.clientWidth;c.width=w*dpr;c.height=200*dpr;var ctx=c.getContext('2d');ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,200);var ox=45,oy=10,gw=w-65,gh=170;ctx.strokeStyle='var(--border)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(ox,oy);ctx.lineTo(ox,oy+gh);ctx.lineTo(ox+gw,oy+gh);ctx.stroke();ctx.fillStyle='var(--muted)';ctx.font='400 9px "Space Mono"';ctx.textAlign='right';[0,1,2,3,4].forEach(function(v){var y=oy+gh-v/4.5*gh;ctx.fillText(v,ox-5,y+3);});if(trainData.length<2)return;ctx.strokeStyle='var(--gold)';ctx.lineWidth=2.5;ctx.beginPath();trainData.forEach(function(l,i){var x=ox+i/19*gw,y=oy+gh-l/4.5*gh;if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);});ctx.stroke();trainData.forEach(function(l,i){var x=ox+i/19*gw,y=oy+gh-l/4.5*gh;ctx.fillStyle='var(--gold)';ctx.beginPath();ctx.arc(x,y,2.5,0,Math.PI*2);ctx.fill();});}
+drawTrain();
+
+var curP='romeo';
+var GS={romeo:["ROMEO: O, speak again, bright angel!\nFor thou art as glorious to this night,\nBeing o'er my head, as a winged\nmessenger of heaven.","ROMEO: Shall I hear more, or shall\nI speak at this? But soft, what light\nthrough yonder window breaks?"],juliet:["JULIET: O Romeo, Romeo! wherefore\nart thou Romeo? Deny thy father\nand refuse thy name; or, if thou\nwilt not, be but sworn my love.","JULIET: 'Tis but thy name that is\nmy enemy; thou art thyself, though\nnot a Montague. What's in a name?"],o:["O, that I were a glove upon that hand,\nThat I might touch that cheek!\nShe speaks, yet she says nothing.","O, that she knew she were!\nTwo of the fairest stars in all\nthe heaven, having some business."],what:["What if her eyes were there, they\nin her head? The brightness of her\ncheek would shame those stars.","What's Montague? It is nor hand,\nnor foot, nor arm, nor face,\nnor any other part."]};
+function showGen(p){curP=p;document.querySelectorAll('.ctrls .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');var s=GS[p];document.getElementById('genOut').textContent=s[Math.floor(Math.random()*s.length)];}
+function reGen(){showGen(curP);}
+showGen('romeo');
+
+function ck(id,el,ok){var card=document.getElementById(id);if(card.dataset.a)return;card.dataset.a='1';card.querySelectorAll('.qo').forEach(function(o){o.classList.add('d')});var fb=document.getElementById(id+'-fb');if(ok){el.classList.add('c');fb.className='qfb p show';fb.textContent='\u2705 Correct!';}else{el.classList.add('w');card.querySelectorAll('.qo').forEach(function(o){if(o.onclick&&o.onclick.toString().indexOf('true')>-1)o.classList.add('c')});fb.className='qfb f show';var ex={q1:'Embeddings (token+position) \u2192 Transformer blocks \u2192 Final LayerNorm \u2192 LM Head \u2192 Logits.',q2:'Both attention AND FFN sublayers use residual connections in each block.',q3:'Causal masking prevents seeing future tokens, matching the generation setting.'};fb.textContent='\u274c '+ex[id];}}
+</script>
+</body>
+</html>
