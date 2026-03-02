@@ -13,9 +13,9 @@ This is the culmination of everything you've learned. We assemble all the pieces
 Run each lesson in order:
 
 ```bash
-python 01_transformer_block.py  # ~30 min - The building block
-python 02_complete_gpt.py       # ~45 min - Full GPT architecture
-python 03_training.py           # ~45 min - Training on Shakespeare
+python 01_transformer_block.py  #  The building block
+python 02_complete_gpt.py       #  Full GPT architecture
+python 03_training.py           # Training on Shakespeare
 ```
 
 ## This Week's Project
