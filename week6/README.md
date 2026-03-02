@@ -14,9 +14,9 @@ You've built GPT from scratch and understand pretraining. Now we'll learn fine-t
 Run each lesson in order:
 
 ```bash
-python 01_finetuning_intro.py    # ~20 min - Fine-tuning fundamentals
-python 02_sentiment.py           # ~25 min - Sentiment classifier
-python 03_spam_multiclass.py     # ~30 min - Spam + topic classification
+python 01_finetuning_intro.py    
+python 02_sentiment.py           
+python 03_spam_multiclass.py     
 ```
 
 ## This Week's Project
