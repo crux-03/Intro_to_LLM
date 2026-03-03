@@ -162,7 +162,10 @@ window.addEventListener('scroll',upd);upd();
 var currentTask='sentiment';
 function setTask(t){
   currentTask=t;
-  document.querySelectorAll('#s1 .ctrls .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+  document.querySelectorAll('#s1 .ctrls .cbtn').forEach(function(b){b.classList.remove('on')});
+  if (typeof event !== 'undefined' && event.target) {
+    event.target.classList.add('on');
+  }
   var defaults={sentiment:'This movie was absolutely brilliant!',spam:'You won a million dollars! Click here!',topic:'Lakers win championship in overtime thriller'};
   document.getElementById('uniInput').value=defaults[t];
   unifiedPredict();
@@ -210,7 +213,10 @@ function unifiedPredict(){
 unifiedPredict();
 
 function showResults(mode){
-  document.querySelectorAll('#s3 .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+  document.querySelectorAll('#s3 .cbtn').forEach(function(b){b.classList.remove('on')});
+  if (typeof event !== 'undefined' && event.target) {
+    event.target.classList.add('on');
+  }
   var o=document.getElementById('resultsOut');
   var info={
     all:'MODEL PERFORMANCE SUMMARY\n'+('=').repeat(50)+'\n\n1. Sentiment Classifier\n   Accuracy: 87.5%  |  F1: 92.3%\n   Classes: Negative, Positive\n\n2. Spam Detector\n   Accuracy: 87.5%  |  F1: 85.7%\n   Classes: Ham, Spam\n\n3. Topic Classifier (4 classes)\n   Accuracy: 75.0%  |  Macro F1: 72.5%\n   Classes: Sports, Tech, Politics, Entertainment\n\nAll models use the same GPT backbone architecture\nwith different classification heads!',

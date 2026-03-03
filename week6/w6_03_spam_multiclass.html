@@ -194,7 +194,10 @@ classifySpam();
 
 // Spam signals
 function showSpamType(type){
-  document.querySelectorAll('#s1 .cw:nth-child(3) .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+  document.querySelectorAll('#s1 .cw:nth-child(3) .cbtn').forEach(function(b){b.classList.remove('on')});
+  if (typeof event !== 'undefined' && event.target) {
+    event.target.classList.add('on');
+  }
   var signals={
     money:'MONEY/PRIZE SIGNALS\n\nKeywords that suggest financial spam:\n  "won"       "prize"       "million"\n  "dollar"    "cash"        "free"\n  "discount"  "offer"       "lottery"\n  "bitcoin"   "inheritance" "guaranteed"\n\nThese words rarely appear in legitimate messages\nbut are extremely common in spam.',
     urgency:'URGENCY SIGNALS\n\nWords that create artificial time pressure:\n  "urgent"      "immediately"   "act now"\n  "limited time" "expires"       "hurry"\n  "24 hours"    "suspended"     "alert"\n\nSpammers create urgency to prevent you from\nthinking critically about the message.',
@@ -231,7 +234,10 @@ classifyTopic();
 
 // Metrics
 function showMetrics(mode){
-  document.querySelectorAll('#s2 .cw:nth-last-child(2) .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+  document.querySelectorAll('#s2 .cw:nth-last-child(2) .cbtn').forEach(function(b){b.classList.remove('on')});
+  if (typeof event !== 'undefined' && event.target) {
+    event.target.classList.add('on');
+  }
   var o=document.getElementById('metricsOut');
   if(mode==='balanced'){
     o.textContent='BALANCED MODEL - Per-class metrics:\n\nClass           Precision  Recall    F1\n'+'-'.repeat(50)+'\nSports          92.0%      88.0%     89.9%\nTechnology      85.0%      90.0%     87.4%\nPolitics        88.0%      85.0%     86.5%\nEntertainment   90.0%      92.0%     91.0%\n'+'-'.repeat(50)+'\nMacro Average   88.8%      88.8%     88.7%\n\nOverall Accuracy: 88.8%\n\nAll classes perform similarly well.';
@@ -243,7 +249,10 @@ showMetrics('balanced');
 
 // Comparison
 function showComp(mode){
-  document.querySelectorAll('#s3 .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+  document.querySelectorAll('#s3 .cbtn').forEach(function(b){b.classList.remove('on')});
+  if (typeof event !== 'undefined' && event.target) {
+    event.target.classList.add('on');
+  }
   var o=document.getElementById('compOut');
   var info={
     arch:'ARCHITECTURE COMPARISON\n\nBinary (Spam Detection):\n  Linear(d_model, 2)  ->  [spam_logit, ham_logit]\n\nMulti-class (Topic Classification):\n  Linear(d_model, 4)  ->  [sports, tech, politics, entertainment]\n\nEverything else is IDENTICAL:\n  - Same GPT backbone\n  - Same last-token extraction\n  - Same forward pass\n  - Only the final layer size changes!',

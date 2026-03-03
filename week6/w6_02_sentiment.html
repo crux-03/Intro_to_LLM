@@ -286,7 +286,10 @@ updateCM();
 
 // Predictions
 function showPreds(mode){
-  document.querySelectorAll('#s4 .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+  document.querySelectorAll('#s4 .cbtn').forEach(function(b){b.classList.remove('on')});
+  if (typeof event !== 'undefined' && event.target) {
+    event.target.classList.add('on');
+  }
   var preds={
     easy:[
       {text:'I absolutely loved this movie! Best film ever!',sent:'Positive',conf:97},

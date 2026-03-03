@@ -220,7 +220,10 @@ function upd(){var st=window.scrollY,h=document.body.scrollHeight-innerHeight;do
 window.addEventListener('scroll',upd);upd();
 
 function showCompare(mode){
-  document.querySelectorAll('#s1 .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+  document.querySelectorAll('#s1 .cbtn').forEach(function(b){b.classList.remove('on')});
+  if (typeof event !== 'undefined' && event.target) {
+    event.target.classList.add('on');
+  }
   var o=document.getElementById('compareOut');
   if(mode==='pretrain'){
     o.textContent='PRETRAINING\n'+
@@ -245,7 +248,10 @@ function showCompare(mode){
 showCompare('pretrain');
 
 function showLayers(mode){
-  document.querySelectorAll('#s2 .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+  document.querySelectorAll('#s2 .cbtn').forEach(function(b){b.classList.remove('on')});
+  if (typeof event !== 'undefined' && event.target) {
+    event.target.classList.add('on');
+  }
   var v=document.getElementById('layerVis');
   var layers=[
     {name:'Embeddings',pre:'Token representations',post:'Token representations',change:5},
@@ -270,7 +276,10 @@ function showLayers(mode){
 showLayers('pretrained');
 
 function showFreeze(mode){
-  document.querySelectorAll('#s4 .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+  document.querySelectorAll('#s4 .cbtn').forEach(function(b){b.classList.remove('on')});
+  if (typeof event !== 'undefined' && event.target) {
+    event.target.classList.add('on');
+  }
   var v=document.getElementById('freezeVis');
   var o=document.getElementById('freezeOut');
   var layers=['Embeddings','Layer 1','Layer 2','Layer 3','Layer 4','Classifier Head'];
