@@ -434,7 +434,10 @@ document.querySelectorAll('.section').forEach(s=>obs.observe(s));
 const embTable=[];const words=['the','cat','dog','sat','piano'];
 for(let i=0;i<5;i++){const row=[];for(let j=0;j<8;j++)row.push((Math.random()*2-1).toFixed(2));embTable.push(row)}
 function showLook(idx){
-  document.querySelectorAll('#lookCtrls .cbtn').forEach(b=>b.classList.remove('on'));event.target.classList.add('on');
+  document.querySelectorAll('#lookCtrls .cbtn').forEach(b=>b.classList.remove('on'));
+  if (typeof event !== 'undefined' && event.target) {
+    event.target.classList.add('on');
+  }
   let html=`<div class="egrid" style="grid-template-columns:60px repeat(8,44px);">`;
   html+=`<div class="elabel"></div>`;for(let j=0;j<8;j++)html+=`<div class="elabel">d${j}</div>`;
   for(let i=0;i<5;i++){

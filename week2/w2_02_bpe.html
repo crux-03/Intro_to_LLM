@@ -538,7 +538,10 @@ const encData={
   unhappiness:{steps:['u n h a p p i n e s s','un h a p p i n e s s','un h a pp i n e s s','un h app i n e s s','un happ i n e s s','un happi n e s s','un happi ness','unhappi ness','unhappiness'],final:['un','happiness'],note:'"un" is a very common prefix — BPE learns it early. "happiness" is common enough to be a single token. So BPE naturally decomposes this into meaningful morphemes: "un" + "happiness". The model can leverage both pieces!'}
 };
 function showEnc(w){
-  document.querySelectorAll('#encCtrls .cbtn').forEach(b=>b.classList.remove('on'));event.target.classList.add('on');
+  document.querySelectorAll('#encCtrls .cbtn').forEach(b=>b.classList.remove('on'));
+  if (typeof event !== 'undefined' && event.target) {
+    event.target.classList.add('on');
+  }
   const d=encData[w];let txt=`Encoding "${w}":\n\n`;
   d.steps.forEach((s,i)=>{txt+=`  Step ${i}: [${s.split(' ').join(', ')}]\n`});
   txt+=`\n  Final tokens: [${d.final.join(', ')}]`;

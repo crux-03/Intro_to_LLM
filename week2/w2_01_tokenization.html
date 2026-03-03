@@ -562,7 +562,9 @@ const vocabData={
 };
 function showVocab(w){
   document.querySelectorAll('#vocabCtrls .cbtn').forEach(b=>b.classList.remove('on'));
-  event.target.classList.add('on');
+  if (typeof event !== 'undefined' && event.target) {
+    event.target.classList.add('on');
+  }
   const words=vocabData[w];
   document.getElementById('vocabChips').innerHTML=words.map(v=>`<span class="chip word">${v}</span>`).join('');
   document.getElementById('vocabNote').textContent=`Just 1 base word "${w}" creates ${words.length} vocabulary entries — and this list isn't exhaustive. The model treats each form as completely independent.`;
@@ -602,7 +604,9 @@ updateSeq();
 // ── Strategy comparison ──
 function showStrat(s){
   document.querySelectorAll('#stratCtrls .cbtn').forEach(b=>b.classList.remove('on'));
-  event.target.classList.add('on');
+  if (typeof event !== 'undefined' && event.target) {
+    event.target.classList.add('on');
+  }
   const text="The unfortunately misspelled wrods";
   let tokens,cls,note;
   if(s==='word'){
