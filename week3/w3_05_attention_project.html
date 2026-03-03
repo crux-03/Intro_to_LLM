@@ -112,7 +112,10 @@ function upd(){const st=window.scrollY,h=document.body.scrollHeight-innerHeight;
 window.addEventListener('scroll',upd);upd();
 
 function runTest(t){
-  document.querySelectorAll('.ctrls .cbtn').forEach(b=>b.classList.remove('on'));event.target.classList.add('on');
+  document.querySelectorAll('.ctrls .cbtn').forEach(b=>b.classList.remove('on'));
+  if (typeof event !== 'undefined' && event.target) {
+    event.target.classList.add('on');
+  }
   let o='';
   if(t==='shapes'||t==='all'){o+='\u2550\u2550\u2550 Shape Tests \u2550\u2550\u2550\n';[[1,10,64],[4,32,64],[8,64,64]].forEach(([b,s,d])=>{o+='  Input ('+b+','+s+','+d+') \u2192 Output ('+b+','+s+','+d+')  \u2713\n';});o+='\n';}
   if(t==='mask'||t==='all'){o+='\u2550\u2550\u2550 Causal Mask \u2550\u2550\u2550\n  Future positions = 0  \u2713\n  Past positions > 0    \u2713\n  Rows sum to 1.000    \u2713\n\n';}

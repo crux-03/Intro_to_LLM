@@ -298,7 +298,10 @@ function showMS(s){
 showMS(0);
 
 function showType(t){
-  document.querySelectorAll('.ctrls .cbtn').forEach(b=>b.classList.remove('on'));event.target.classList.add('on');
+  document.querySelectorAll('.ctrls .cbtn').forEach(b=>b.classList.remove('on'));
+  if (typeof event !== 'undefined' && event.target) {
+    event.target.classList.add('on');
+  }
   const c=document.getElementById('typeCanvas'),dpr=devicePixelRatio||1,w=c.clientWidth;
   c.width=w*dpr;c.height=230*dpr;const ctx=c.getContext('2d');ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,230);
   const n=5,cs=36,ox=w/2-n*cs/2,oy=50;

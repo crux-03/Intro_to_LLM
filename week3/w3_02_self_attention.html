@@ -354,7 +354,9 @@ showParams(64);
 // ═══ Dropout visualization ═══
 function showDropout(mode){
   document.querySelectorAll('.ctrls .cbtn').forEach(b=>b.classList.remove('on'));
-  event.target.classList.add('on');
+  if (typeof event !== 'undefined' && event.target) {
+    event.target.classList.add('on');
+  }
   const c=document.getElementById('dropCanvas'),dpr=devicePixelRatio||1,w=c.clientWidth;
   c.width=w*dpr;c.height=180*dpr;const ctx=c.getContext('2d');ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,180);
   const words=["The","cat","sat","on"];

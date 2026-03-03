@@ -227,7 +227,10 @@ function upd(){const st=window.scrollY,h=document.body.scrollHeight-innerHeight;
 window.addEventListener('scroll',upd);upd();
 
 function showReshape(d,h){
-  document.querySelectorAll('.ctrls .cbtn').forEach(b=>b.classList.remove('on'));event.target.classList.add('on');
+  document.querySelectorAll('.ctrls .cbtn').forEach(b=>b.classList.remove('on'));
+  if (typeof event !== 'undefined' && event.target) {
+    event.target.classList.add('on');
+  }
   const hd=d/h,b=2,s=8;
   let o=`d_model=${d}, num_heads=${h}, head_dim=${hd}\n`;
   o+=`batch=2, seq=8\n${'─'.repeat(50)}\n\n`;
@@ -281,7 +284,10 @@ showHead(0);
 
 const gptSpecs={small:{d:768,h:12},medium:{d:1024,h:16},large:{d:1280,h:20},xl:{d:1600,h:25}};
 function showGPT(size){
-  document.querySelectorAll('.ctrls .cbtn').forEach(b=>b.classList.remove('on'));event.target.classList.add('on');
+  document.querySelectorAll('.ctrls .cbtn').forEach(b=>b.classList.remove('on'));
+  if (typeof event !== 'undefined' && event.target) {
+    event.target.classList.add('on');
+  }
   const s=gptSpecs[size],hd=s.d/s.h;
   const qkvP=s.d*(3*s.d)+3*s.d;const outP=s.d*s.d+s.d;const total=qkvP+outP;
   let o=`GPT-2 ${size.charAt(0).toUpperCase()+size.slice(1)}\n${'─'.repeat(40)}\n\n`;

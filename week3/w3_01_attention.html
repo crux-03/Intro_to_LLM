@@ -376,7 +376,9 @@ window.addEventListener('resize',()=>drawDist(
 // ═══ QKV demo ═══
 function showQKV(type){
   document.querySelectorAll('#qkvBtns .cbtn').forEach(b=>b.classList.remove('on'));
-  event.target.classList.add('on');
+  if (typeof event !== 'undefined' && event.target) {
+    event.target.classList.add('on');
+  }
   const words=["The","cat","sat","on","the","mat","because","it","was","tired"];
   let scores,explanation;
   if(type==='noun'){
@@ -446,7 +448,7 @@ const sentences=[
   {words:["She","gave","him","the","book"],weights:[[.30,.25,.20,.10,.15],[.20,.25,.15,.15,.25],[.25,.20,.30,.10,.15],[.10,.10,.10,.35,.35],[.15,.20,.15,.20,.30]]},
   {words:["Dogs","and","cats","play"],weights:[[.35,.10,.35,.20],[.25,.20,.25,.30],[.35,.10,.30,.25],[.30,.10,.30,.30]]}
 ];
-let curSent=0,hoverCell=null;
+let curSent=0;hoverCell=null;
 
 function showSent(idx){
   curSent=idx;hoverCell=null;
