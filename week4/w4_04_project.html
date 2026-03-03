@@ -119,7 +119,10 @@ function drawArch(){
 drawArch();window.addEventListener('resize',drawArch);
 
 function runT(t){
-  document.querySelectorAll('.ctrls .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+  document.querySelectorAll('.ctrls .cbtn').forEach(function(b){b.classList.remove('on')});
+  if (typeof event !== 'undefined' && event.target) {
+    event.target.classList.add('on');
+  }
   var o='';
   if(t==='shapes'||t==='all'){o+='\u2550\u2550\u2550 Shape Tests \u2550\u2550\u2550\n  (2,10) \u2192 (2,10,50)  \u2713\n  (1,128) \u2192 (1,128,50)  \u2713\n\n';}
   if(t==='tied'||t==='all'){o+='\u2550\u2550\u2550 Weight Tying \u2550\u2550\u2550\n  Same object: True  \u2713\n  Params saved: 3,200  \u2713\n\n';}
@@ -137,7 +140,7 @@ drawTrain();
 
 var curP='romeo';
 var GS={romeo:["ROMEO: O, speak again, bright angel!\nFor thou art as glorious to this night,\nBeing o'er my head, as a winged\nmessenger of heaven.","ROMEO: Shall I hear more, or shall\nI speak at this? But soft, what light\nthrough yonder window breaks?"],juliet:["JULIET: O Romeo, Romeo! wherefore\nart thou Romeo? Deny thy father\nand refuse thy name; or, if thou\nwilt not, be but sworn my love.","JULIET: 'Tis but thy name that is\nmy enemy; thou art thyself, though\nnot a Montague. What's in a name?"],o:["O, that I were a glove upon that hand,\nThat I might touch that cheek!\nShe speaks, yet she says nothing.","O, that she knew she were!\nTwo of the fairest stars in all\nthe heaven, having some business."],what:["What if her eyes were there, they\nin her head? The brightness of her\ncheek would shame those stars.","What's Montague? It is nor hand,\nnor foot, nor arm, nor face,\nnor any other part."]};
-function showGen(p){curP=p;document.querySelectorAll('.ctrls .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');var s=GS[p];document.getElementById('genOut').textContent=s[Math.floor(Math.random()*s.length)];}
+function showGen(p){curP=p;document.querySelectorAll('.ctrls .cbtn').forEach(function(b){b.classList.remove('on')});if (typeof event !== 'undefined' && event.target) { event.target.classList.add('on'); }var s=GS[p];document.getElementById('genOut').textContent=s[Math.floor(Math.random()*s.length)];}
 function reGen(){showGen(curP);}
 showGen('romeo');
 

@@ -208,7 +208,10 @@ var epochSamples=[
   {t:"ROMEO: O, speak again! for thou art\nAs glorious to this night, being o'er",n:'Recognizable Shakespeare! Dialogue format, vocabulary, and rhythm learned.'}
 ];
 function showEpoch(e){
-  document.querySelectorAll('.ctrls .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+  document.querySelectorAll('.ctrls .cbtn').forEach(function(b){b.classList.remove('on')});
+  if (typeof event !== 'undefined' && event.target) {
+    event.target.classList.add('on');
+  }
   var idx=e===0?0:e===5?1:e===10?2:3;
   document.getElementById('epochOut').textContent=epochSamples[idx].t;
   document.getElementById('epochNote').textContent=epochSamples[idx].n;

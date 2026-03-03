@@ -179,7 +179,10 @@ function drawArch(){
 drawArch();window.addEventListener('resize',drawArch);
 
 function showTie(v,d){
-  document.querySelectorAll('.ctrls .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+  document.querySelectorAll('.ctrls .cbtn').forEach(function(b){b.classList.remove('on')});
+  if (typeof event !== 'undefined' && event.target) {
+    event.target.classList.add('on');
+  }
   var without=v*d*2,with_=v*d,saved=v*d;
   var o='vocab_size='+v.toLocaleString()+', d_model='+d+'\n'+'-'.repeat(40)+'\n';
   o+='Without tying: 2 \u00d7 ('+v.toLocaleString()+' \u00d7 '+d+') = '+without.toLocaleString()+'\n';
@@ -209,7 +212,10 @@ showFwd(0);
 
 var gptConfigs={small:{d:768,h:12,l:12,p:124},medium:{d:1024,h:16,l:24,p:350},large:{d:1280,h:20,l:36,p:774},xl:{d:1600,h:25,l:48,p:1500}};
 function showGPT(sz){
-  document.querySelectorAll('.ctrls .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+  document.querySelectorAll('.ctrls .cbtn').forEach(function(b){b.classList.remove('on')});
+  if (typeof event !== 'undefined' && event.target) {
+    event.target.classList.add('on');
+  }
   var g=gptConfigs[sz],c=document.getElementById('gptCanvas'),dpr=devicePixelRatio||1,w=c.clientWidth;
   c.width=w*dpr;c.height=180*dpr;var ctx=c.getContext('2d');ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,180);
   var sizes={small:1,medium:2.8,large:6.2,xl:12.1};
@@ -232,7 +238,10 @@ function showGPT(sz){
 showGPT('small');
 
 function showTemp(t){
-  document.querySelectorAll('.ctrls .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+  document.querySelectorAll('.ctrls .cbtn').forEach(function(b){b.classList.remove('on')});
+  if (typeof event !== 'undefined' && event.target) {
+    event.target.classList.add('on');
+  }
   var rawLogits=[3.2,2.8,1.5,0.3,-0.5,-1.2];
   var labels=['the','a','his','my','our','her'];
   var scaled=rawLogits.map(function(v){return v/t;});

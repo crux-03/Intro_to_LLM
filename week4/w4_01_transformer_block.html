@@ -172,7 +172,10 @@ function upd(){var st=window.scrollY,h=document.body.scrollHeight-innerHeight;do
 window.addEventListener('scroll',upd);upd();
 
 function showLN(mode){
-  document.querySelectorAll('.ctrls .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+  document.querySelectorAll('.ctrls .cbtn').forEach(function(b){b.classList.remove('on')});
+  if (typeof event !== 'undefined' && event.target) {
+    event.target.classList.add('on');
+  }
   var c=document.getElementById('lnCanvas'),dpr=devicePixelRatio||1,w=c.clientWidth;
   c.width=w*dpr;c.height=200*dpr;var ctx=c.getContext('2d');ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,200);
   var vals,title,col;
@@ -220,7 +223,10 @@ function drawGelu(){
 drawGelu();window.addEventListener('resize',drawGelu);
 
 function showFFN(d){
-  document.querySelectorAll('.ctrls .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+  document.querySelectorAll('.ctrls .cbtn').forEach(function(b){b.classList.remove('on')});
+  if (typeof event !== 'undefined' && event.target) {
+    event.target.classList.add('on');
+  }
   var dff=4*d,p1=d*dff+dff,p2=dff*d+d,tot=p1+p2;
   var o='d_model = '+d+', d_ff = '+dff+'\n'+'-'.repeat(36)+'\n';
   o+='fc1: '+d+' \u00d7 '+dff+' + '+dff+' bias = '+p1.toLocaleString()+'\n';
@@ -235,7 +241,10 @@ function showFFN(d){
 showFFN(64);
 
 function showRes(mode){
-  document.querySelectorAll('.ctrls .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+  document.querySelectorAll('.ctrls .cbtn').forEach(function(b){b.classList.remove('on')});
+  if (typeof event !== 'undefined' && event.target) {
+    event.target.classList.add('on');
+  }
   var c=document.getElementById('resCanvas'),dpr=devicePixelRatio||1,w=c.clientWidth;
   c.width=w*dpr;c.height=200*dpr;var ctx=c.getContext('2d');ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,200);
   var n=8,bw=50,gap=(w-n*bw)/(n+1);
@@ -295,7 +304,10 @@ function drawBlock(){
 drawBlock();window.addEventListener('resize',drawBlock);
 
 function showStack(blocks,d,h){
-  document.querySelectorAll('.ctrls .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+  document.querySelectorAll('.ctrls .cbtn').forEach(function(b){b.classList.remove('on')});
+  if (typeof event !== 'undefined' && event.target) {
+    event.target.classList.add('on');
+  }
   var hd=d/h,dff=4*d;
   var attnP=d*(3*d)+(3*d)+d*d+d;
   var ffnP=d*dff+dff+dff*d+d;
