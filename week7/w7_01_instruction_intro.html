@@ -187,7 +187,10 @@ function upd(){var st=window.scrollY,h=document.body.scrollHeight-innerHeight;do
 window.addEventListener('scroll',upd);upd();
 
 function showModel(mode){
-  document.querySelectorAll('#s1 .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+  document.querySelectorAll('#s1 .cbtn').forEach(function(b){b.classList.remove('on')});
+  if (typeof event !== 'undefined' && event.target) {
+    event.target.classList.add('on');
+  }
   var o=document.getElementById('modelOut');
   if(mode==='base'){
     o.textContent='BASE GPT (pretrained only)\n\nInput:  "Write a poem about cats"\nOutput: "Write a poem about cats and dogs. The poem\n         should be at least 10 lines long and include\n         references to their behavior..."\n\nIt CONTINUES the text, not FOLLOWS the instruction!\nThe model sees your instruction as text to complete.\n\nInput:  "What is the capital of France?"\nOutput: "What is the capital of France? This question\n         has been asked by many students over the years..."';
@@ -198,7 +201,10 @@ function showModel(mode){
 showModel('base');
 
 function showCategory(cat){
-  document.querySelectorAll('#s2 .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+  document.querySelectorAll('#s2 .cbtn').forEach(function(b){b.classList.remove('on')});
+  if (typeof event !== 'undefined' && event.target) {
+    event.target.classList.add('on');
+  }
   var el=document.getElementById('catExamples');
   var data={
     qa:[['What is the capital of Japan?','The capital of Japan is Tokyo.'],['Who wrote Hamlet?','William Shakespeare wrote Hamlet.'],['What is the largest planet?','Jupiter is the largest planet in our solar system.']],
@@ -233,12 +239,18 @@ function showMask(mode){
   html+='</div></div>';
   el.innerHTML=html;
   o.textContent='Prompt tokens (pink): '+ex.prompt.length+' tokens \u2192 masked with -100 (no loss)\nResponse tokens (green): '+ex.response.length+' tokens \u2192 loss computed here\n\nThe model learns: "After seeing the prompt, generate these response tokens."';
-  document.querySelectorAll('#s3 .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+  document.querySelectorAll('#s3 .cbtn').forEach(function(b){b.classList.remove('on')});
+  if (typeof event !== 'undefined' && event.target) {
+    event.target.classList.add('on');
+  }
 }
 showMask('simple');
 
 function showWhy(mode){
-  document.querySelectorAll('#s4 .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+  document.querySelectorAll('#s4 .cbtn').forEach(function(b){b.classList.remove('on')});
+  if (typeof event !== 'undefined' && event.target) {
+    event.target.classList.add('on');
+  }
   var o=document.getElementById('whyOut');
   var info={
     knowledge:'EXISTING KNOWLEDGE (from pretraining)\n\nThe model already knows:\n  \u2713 Paris is the capital of France\n  \u2713 2 + 2 = 4\n  \u2713 Shakespeare wrote Hamlet\n  \u2713 How to form grammatical sentences\n  \u2713 What a poem looks like\n  \u2713 How conversations flow\n\nThis knowledge was learned from billions of tokens\nduring months of pretraining.',

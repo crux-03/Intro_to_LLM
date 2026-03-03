@@ -200,7 +200,10 @@ function upd(){var st=window.scrollY,h=document.body.scrollHeight-innerHeight;do
 window.addEventListener('scroll',upd);upd();
 
 function showEncode(mode){
-  document.querySelectorAll('#s1 .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+  document.querySelectorAll('#s1 .cbtn').forEach(function(b){b.classList.remove('on')});
+  if (typeof event !== 'undefined' && event.target) {
+    event.target.classList.add('on');
+  }
   var o=document.getElementById('encodeOut');
   if(mode==='train'){
     o.textContent='TRAINING: encode_instruction("What is 2+2?", "4.")\n\nTokens: [<USER>] [what] [is] [2+2] [?] [<ASST>] [4] [.] [<END>]\nIDs:    [  2  ] [ 42 ] [15] [ 88] [33] [  3  ] [67] [28] [ 4 ]\n\nResponse starts at position 6 (after <ASST>)\nThis position is used to create the loss mask.\n\nPadded to max_length with <PAD> (ID 0) tokens.';
@@ -211,7 +214,10 @@ function showEncode(mode){
 showEncode('train');
 
 function showData(mode){
-  document.querySelectorAll('#s2 .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+  document.querySelectorAll('#s2 .cbtn').forEach(function(b){b.classList.remove('on')});
+  if (typeof event !== 'undefined' && event.target) {
+    event.target.classList.add('on');
+  }
   var o=document.getElementById('dataOut');
   var data={
     ex1:'Q&A EXAMPLE\n\nInstruction: "What is the capital of France?"\nResponse:    "The capital of France is Paris."\n\ninput_ids: [2, 42, 15, 8, 67, 23, 91, 33, 3, 8, 67, 23, 91, 15, 55, 28, 4, 0, 0, ...]\n           |<-- prompt tokens -->|           |<-- response tokens -->|  |<-pad->|\n\nlabels:    [-100, -100, -100, -100, -100, -100, -100, -100, -100, 8, 67, 23, 91, 15, 55, 28, 4, -100, -100, ...]\n           |<-------- masked (no loss) -------->|              |<-- loss computed here -->|  |<-pad->|',
@@ -250,7 +256,10 @@ function drawLoss(){
 drawLoss();
 
 function showChat(mode){
-  document.querySelectorAll('#s4 .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+  document.querySelectorAll('#s4 .cbtn').forEach(function(b){b.classList.remove('on')});
+  if (typeof event !== 'undefined' && event.target) {
+    event.target.classList.add('on');
+  }
   var o=document.getElementById('chatOut');
   var info={
     known:'KNOWN QUESTIONS (from training data)\n\nUser: Hello!\nAssistant: Hello! How can I help you today?\n\nUser: What is the capital of France?\nAssistant: The capital of France is Paris.\n\nUser: What is 5 times 3?\nAssistant: 5 times 3 equals 15.\n\nUser: Say hello in Spanish.\nAssistant: Hola!\n\nThese work well because similar examples\nwere in the training data.',

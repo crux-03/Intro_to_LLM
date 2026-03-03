@@ -203,7 +203,10 @@ clearChat();
 
 // Personality
 function showPersonality(mode){
-  document.querySelectorAll('#s2 .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+  document.querySelectorAll('#s2 .cbtn').forEach(function(b){b.classList.remove('on')});
+  if (typeof event !== 'undefined' && event.target) {
+    event.target.classList.add('on');
+  }
   var o=document.getElementById('personalityOut');
   var info={
     'default':'NO SYSTEM PROMPT\n\nUser: What is the sun?\nBot: The sun is a star at the center of our\n     solar system that provides light and heat.\n\nUser: Hello!\nBot: Hello! How can I help you today?',
@@ -217,7 +220,10 @@ showPersonality('default');
 
 // Architecture
 function showArch(mode){
-  document.querySelectorAll('#s3 .cw .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+  document.querySelectorAll('#s3 .cw .cbtn').forEach(function(b){b.classList.remove('on')});
+  if (typeof event !== 'undefined' && event.target) {
+    event.target.classList.add('on');
+  }
   var o=document.getElementById('archOut');
   var info={
     tokens:'1. TOKENIZATION (Week 2 + Week 7)\n\nSpecial tokens: <PAD> <UNK> <SYS> <USER> <ASST> <END>\n\nTraining encoding:\n  <SYS> system prompt <USER> message <ASST> response <END>\n\nGeneration encoding:\n  <SYS> system prompt <USER> message <ASST>\n  (model generates from here)\n\nVocabulary: ~500 tokens from training data\nMax length: 48-64 tokens per sequence',

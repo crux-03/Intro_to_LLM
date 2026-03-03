@@ -318,7 +318,10 @@ help:'HELP & OTHER (9+ pairs)\n\n  Help requests:\n    "I need help."        →
 };
 function showCat(cat){
   document.querySelectorAll('.cat-card').forEach(function(c){c.classList.remove('on')});
-  event.target.closest('.cat-card').classList.add('on');
+
+  if (typeof event !== 'undefined' && event.target) {
+    event.target.closest('.cat-card').classList.add('on');
+  }
   document.getElementById('catOut').textContent=catData[cat];
 }
 showCat('greet');document.querySelector('.cat-card').classList.add('on');
@@ -331,7 +334,10 @@ ffn:'Feed-Forward Network\n━━━━━━━━━━━━━━━━━�
 generate:'Autoregressive Generation\n━━━━━━━━━━━━━━━━━━━━━━━━━\n\nmodel.generate(prompt_ids, max_new=30, temp=0.7)\n\nStep by step:\n  1. Start with: <USER> hello <ASST>\n  2. Forward pass → logits for position after <ASST>\n  3. Divide logits by temperature (0.7)\n  4. Softmax → probability distribution\n  5. Sample from distribution (torch.multinomial)\n  6. Append sampled token to sequence\n  7. Repeat from step 2\n  8. Stop at <END> token or max_new tokens\n\nTemperature effects:\n  0.1 = very deterministic (always picks top word)\n  0.7 = balanced (default)\n  1.5 = very creative (more randomness)'
 };
 function showLayer(mode){
-  document.querySelectorAll('#s2 .cw .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+  document.querySelectorAll('#s2 .cw .cbtn').forEach(function(b){b.classList.remove('on')});
+  if (typeof event !== 'undefined' && event.target) {
+    event.target.classList.add('on');
+  }
   document.getElementById('layerOut').textContent=layerInfo[mode];
 }
 showLayer('overview');
@@ -437,7 +443,9 @@ function showHistory(){
 function setPersonality(p){
   curPersonality=p;
   document.querySelectorAll('#s4 .cw .ctrls:first-of-type .cbtn').forEach(function(b){b.classList.remove('on')});
-  event.target.classList.add('on');
+  if (typeof event !== 'undefined' && event.target) {
+    event.target.classList.add('on');
+  }
   document.getElementById('sysLabel').textContent=personalities[p].label;
   clearConvo();
   if(p!=='default')addChatMsg('assistant','Personality set to '+p+'! Try asking me something.');
@@ -452,7 +460,10 @@ personality:'PERSONALITY TEST\n━━━━━━━━━━━━━━━━�
 limits:'LIMITATIONS (honest assessment)\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n1. SMALL VOCABULARY (~500 tokens)\n   → Can\'t handle words not in training data\n   → Unknown words become <UNK>\n\n2. LIMITED KNOWLEDGE (90 pairs)\n   → Can\'t answer questions outside its training\n   → No real "understanding" - pattern matching\n\n3. NO REAL CONTEXT (simplified)\n   → Doesn\'t truly use conversation history for context\n   → Each response is mainly based on current input\n\n4. TINY MODEL (~85K params)\n   → GPT-3: 175 billion parameters (2 million× larger)\n   → Our model memorizes; GPT-3 generalizes\n\n5. NO RLHF\n   → No human preference alignment\n   → May not always give "helpful" responses\n\nBUT: You understand exactly HOW it works!\nThat\'s the real achievement of this course.'
 };
 function showTest(t){
-  document.querySelectorAll('#s5 .cw .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+  document.querySelectorAll('#s5 .cw .cbtn').forEach(function(b){b.classList.remove('on')});
+  if (typeof event !== 'undefined' && event.target) {
+    event.target.classList.add('on');
+  }
   document.getElementById('testOut').textContent=testInfo[t];
 }
 showTest('known');
