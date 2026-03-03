@@ -102,10 +102,13 @@ function drawT(){var c=document.getElementById('trainCanvas'),dpr=devicePixelRat
 drawT();
 
 var decSamples={greedy:"ROMEO: the the and the the and\nthe her the and the the...\n\n(Repetitive - always picks most likely)",t05:"ROMEO: Shall I hear more, or shall\nI speak at this? What is the\neast and the fair sun...\n\n(Coherent but conservative)",t08:"ROMEO: O, speak again bright angel!\nFor thou art as glorious to\nthis night, being o'er my head...\n\n(Balanced creativity)",topk:"ROMEO: She speaks yet she says\nnothing. What of that? Her eye\ndiscourses; I will answer it.\n\n(Top-k=10: filtered long tail)",topp:"ROMEO: O, that I were a glove\nupon that hand, that I might\ntouch that cheek! Ay me!\n\n(Top-p=0.9: adaptive nucleus)",combo:"ROMEO: But soft! what light through\nyonder window breaks? It is the\neast, and Juliet is the sun.\n\n(T=0.7+p=0.9: ChatGPT-style)"};
-function showDec(s){document.querySelectorAll('.ctrls .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');document.getElementById('decOut').textContent=decSamples[s];}
+function showDec(s){document.querySelectorAll('.ctrls .cbtn').forEach(function(b){b.classList.remove('on')});if (typeof event !== 'undefined' && event.target) { event.target.classList.add('on'); }document.getElementById('decOut').textContent=decSamples[s];}
 showDec('greedy');
 
-function showCk(m){document.querySelectorAll('.ctrls .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+function showCk(m){document.querySelectorAll('.ctrls .cbtn').forEach(function(b){b.classList.remove('on')});
+  if (typeof event !== 'undefined' && event.target) {
+    event.target.classList.add('on');
+  }
 var o={save:'Saving checkpoint...\n\ncheckpoint = {\n  epoch: 8,\n  model_state_dict: <124 tensors>,\n  optimizer_state_dict: <momentum terms>,\n  train_loss: 0.843,\n  val_loss: 1.201,\n  config: {d=64, heads=4, layers=4}\n}\ntorch.save(checkpoint, "best_model.pt")\n\n\u2713 Saved! (412 KB)',load:'Loading checkpoint...\n\ncheckpoint = torch.load("best_model.pt")\nmodel = GPT(**checkpoint["config"])\nmodel.load_state_dict(checkpoint["model_state_dict"])\noptimizer.load_state_dict(checkpoint["optimizer_state_dict"])\n\nResuming from epoch 8\n\n\u2713 Loaded!',verify:'Verifying loaded model...\n\nVal loss (original):  1.201\nVal loss (loaded):    1.201\nMatch: True  \u2713\n\nGeneration test: "ROMEO: O speak..."\n\u2713 Model generates coherent text\n\nCheckpoint verified!'};
 document.getElementById('ckOut').textContent=o[m];}
 

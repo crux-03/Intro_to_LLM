@@ -142,7 +142,10 @@ function drawLoss(){
 drawLoss();window.addEventListener('resize',drawLoss);
 
 function showPPL(loss){
-  document.querySelectorAll('.ctrls .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+  document.querySelectorAll('.ctrls .cbtn').forEach(function(b){b.classList.remove('on')});
+  if (typeof event !== 'undefined' && event.target) {
+    event.target.classList.add('on');
+  }
   var ppl=Math.exp(loss);
   var c=document.getElementById('pplCanvas'),dpr=devicePixelRatio||1,w=c.clientWidth;
   c.width=w*dpr;c.height=160*dpr;var ctx=c.getContext('2d');ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,160);

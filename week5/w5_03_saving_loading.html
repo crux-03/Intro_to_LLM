@@ -113,7 +113,10 @@ function upd(){var st=window.scrollY,h=document.body.scrollHeight-innerHeight;do
 window.addEventListener('scroll',upd);upd();
 
 function showSD(sz){
-  document.querySelectorAll('.ctrls .cbtn').forEach(function(b){b.classList.remove('on')});event.target.classList.add('on');
+  document.querySelectorAll('.ctrls .cbtn').forEach(function(b){b.classList.remove('on')});
+  if (typeof event !== 'undefined' && event.target) {
+    event.target.classList.add('on');
+  }
   var configs={tiny:{d:64,h:4,l:4,v:50,ms:128},small:{d:768,h:12,l:12,v:50257,ms:1024},xl:{d:1600,h:25,l:48,v:50257,ms:1024}};
   var c=configs[sz],o='state_dict keys for '+sz+' model:\n'+'-'.repeat(44)+'\n\n';
   o+='token_embedding.weight     ('+c.v+', '+c.d+')\n';
