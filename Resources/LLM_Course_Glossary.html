@@ -1,0 +1,2511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LLM Course &middot; Keyword Glossary</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;1,400&family=Source+Code+Pro:wght@400;500;600&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f7f8fa;--surface:#ffffff;--surface2:#eef0f4;--border:#d8dce4;--text:#334;--muted:#778;--heading:#111;--accent:#0d9488;--ac-dim:rgba(13,148,136,.10);--ac-glow:rgba(13,148,136,.25);--amber:#d97706;--am-dim:rgba(217,119,6,.08);--rose:#e11d48;--ro-dim:rgba(225,29,72,.08);--lime:#16a34a;--li-dim:rgba(22,163,74,.08);--indigo:#4f46e5;--in-dim:rgba(79,70,229,.08);--mono:'Source Code Pro',monospace;--serif:'Fraunces',serif;--sans:'Public Sans',sans-serif;--r:10px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);line-height:1.76;font-size:15.5px}
+.container{max-width:820px;margin:0 auto;padding:48px 24px 80px}
+
+/* ── Print ── */
+@media print{
+  body{font-size:10px;line-height:1.4;background:#fff}
+  .container{max-width:100%;padding:10px}
+  .hero{padding:10px 0 14px}
+  .hero h1{font-size:1.3rem}
+  .no-print{display:none}
+  .term-card{break-inside:avoid;margin:6px 0;padding:10px;border:1px solid #ccc}
+  .code-block{font-size:.65rem;padding:6px 8px;background:#f0f0f0;color:#222;border:1px solid #ccc}
+  .filters{display:none}
+  .search-box{display:none}
+}
+
+/* ── Hero ── */
+.hero{text-align:center;padding:32px 0 24px}
+.hero-tag{font-family:var(--mono);font-size:.72rem;color:var(--accent);letter-spacing:.14em;text-transform:uppercase}
+.hero h1{font-family:var(--serif);font-size:2.4rem;font-weight:700;color:var(--heading);margin:8px 0}
+.hero h1 em{color:var(--accent);font-style:italic}
+.hero p{color:var(--muted);font-size:1.02rem;max-width:560px;margin:0 auto}
+.hero-badge{display:inline-block;margin-top:14px;font-family:var(--mono);font-size:.78rem;padding:6px 16px;background:var(--ac-dim);border:1px solid rgba(13,148,136,.25);border-radius:20px;color:var(--accent)}
+
+/* ── Stats ── */
+.stats{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:16px 0 28px}
+.stat-chip{font-family:var(--mono);font-size:.74rem;padding:5px 12px;background:var(--surface);border:1px solid var(--border);border-radius:16px;color:var(--muted)}
+.stat-chip b{color:var(--accent);margin-left:4px}
+
+/* ── Search & Filters ── */
+.search-box{margin:0 0 16px;position:relative}
+.search-box input{width:100%;padding:12px 18px 12px 44px;border:1px solid var(--border);border-radius:var(--r);font-family:var(--sans);font-size:.95rem;background:var(--surface);color:var(--text);outline:none;transition:border .2s}
+.search-box input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--ac-dim)}
+.search-box svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted)}
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px}
+.filters .tab{font-family:var(--mono);font-size:.74rem;padding:6px 14px;border:1px solid var(--border);border-radius:18px;background:var(--surface);color:var(--muted);cursor:pointer;transition:all .2s;user-select:none}
+.filters .tab:hover{border-color:var(--accent);color:var(--accent)}
+.filters .tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.wk-filters{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 24px}
+.wk-filters .wk-tab{font-family:var(--mono);font-size:.68rem;padding:4px 10px;border:1px solid var(--border);border-radius:14px;background:var(--surface);color:var(--muted);cursor:pointer;transition:all .2s;user-select:none}
+.wk-filters .wk-tab:hover{border-color:var(--amber);color:var(--amber)}
+.wk-filters .wk-tab.active{background:var(--amber);color:#fff;border-color:var(--amber)}
+
+/* ── Counter ── */
+.count-bar{font-family:var(--mono);font-size:.78rem;color:var(--muted);margin:0 0 14px;padding:8px 0;border-bottom:1px solid var(--border)}
+.count-bar b{color:var(--accent)}
+
+/* ── Term cards ── */
+.term-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px 20px;margin:10px 0;transition:box-shadow .2s}
+.term-card:hover{box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.term-card.hidden{display:none}
+.term-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+.term-name{font-family:var(--mono);font-size:.95rem;font-weight:600;color:var(--heading)}
+.term-cat{font-family:var(--mono);font-size:.62rem;padding:3px 8px;border-radius:10px;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
+.cat-ml--llm-concepts{background:var(--ac-dim);color:var(--accent)}
+.cat-pytorch-functions--classes{background:var(--in-dim);color:var(--indigo)}
+.cat-python-essentials{background:var(--am-dim);color:var(--amber)}
+.cat-architecture--components{background:var(--ro-dim);color:var(--rose)}
+.cat-tools--libraries{background:var(--li-dim);color:var(--lime)}
+.term-desc{font-size:.9rem;color:var(--text);line-height:1.65}
+.term-desc code{font-family:var(--mono);font-size:.82em;color:var(--accent);background:var(--ac-dim);padding:1px 5px;border-radius:3px}
+.code-block{background:#1e1e2e;color:#cdd6f4;font-family:var(--mono);font-size:.8rem;padding:14px 16px;border-radius:8px;margin:10px 0 6px;overflow-x:auto;white-space:pre;line-height:1.55}
+.code-block code{background:transparent;color:inherit;padding:0;font-size:inherit}
+.term-weeks{margin-top:8px;display:flex;flex-wrap:wrap;gap:5px}
+.wk-badge{font-family:var(--mono);font-size:.62rem;padding:2px 7px;border-radius:8px;background:var(--surface2);color:var(--muted)}
+
+/* ── Footer ── */
+.footer{text-align:center;margin-top:48px;padding:20px 0;border-top:1px solid var(--border);font-family:var(--mono);font-size:.78rem;color:var(--muted)}
+.btn-print{display:inline-block;margin:20px auto 0;padding:10px 28px;background:var(--accent);color:#fff;border:none;border-radius:var(--r);font-family:var(--mono);font-size:.85rem;cursor:pointer;transition:opacity .2s}
+.btn-print:hover{opacity:.85}
+@media(max-width:600px){.hero h1{font-size:1.7rem}.filters{gap:5px}.term-head{flex-direction:column;align-items:flex-start}}
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- ═══ HERO ═══ -->
+<div class="hero">
+<div class="hero-tag">Build Your Own LLM &middot; From Zero to Chatbot</div>
+<h1>Course <em>Keyword Glossary</em></h1>
+<p>Every ML, LLM, PyTorch, and Python term from all 7 weeks &mdash; explained with context, usage, and code examples.</p>
+<div class="hero-badge">207 TERMS &middot; 170 CODE EXAMPLES &middot; 7 WEEKS</div>
+</div>
+
+<!-- ═══ STATS ═══ -->
+<div class="stats">
+<span class="stat-chip">ML & LLM Concepts <b>102</b></span>
+<span class="stat-chip">PyTorch Functions & Classes <b>40</b></span>
+<span class="stat-chip">Python Essentials <b>20</b></span>
+<span class="stat-chip">Architecture & Components <b>28</b></span>
+<span class="stat-chip">Tools & Libraries <b>17</b></span>
+
+</div>
+
+<!-- ═══ SEARCH ═══ -->
+<div class="search-box no-print">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+<input type="text" id="searchInput" placeholder="Search terms (e.g. attention, nn.Linear, softmax&hellip;)" autocomplete="off">
+</div>
+
+<!-- ═══ CATEGORY TABS ═══ -->
+<div class="filters no-print">
+<span class="tab active" data-cat="All">All</span>
+<span class="tab" data-cat="ML & LLM Concepts">ML & LLM Concepts</span>
+<span class="tab" data-cat="PyTorch Functions & Classes">PyTorch Functions & Classes</span>
+<span class="tab" data-cat="Python Essentials">Python Essentials</span>
+<span class="tab" data-cat="Architecture & Components">Architecture & Components</span>
+<span class="tab" data-cat="Tools & Libraries">Tools & Libraries</span>
+</div>
+
+<!-- ═══ WEEK TABS ═══ -->
+<div class="wk-filters no-print">
+<span class="wk-tab active" data-wk="0">All Weeks</span>
+<span class="wk-tab" data-wk="1">Week 1</span>
+<span class="wk-tab" data-wk="2">Week 2</span>
+<span class="wk-tab" data-wk="3">Week 3</span>
+<span class="wk-tab" data-wk="4">Week 4</span>
+<span class="wk-tab" data-wk="5">Week 5</span>
+<span class="wk-tab" data-wk="6">Week 6</span>
+<span class="wk-tab" data-wk="7">Week 7</span>
+</div>
+
+<!-- ═══ COUNT ═══ -->
+<div class="count-bar" id="countBar">Showing <b>207</b> of 207 terms</div>
+
+<!-- ═══ TERM CARDS ═══ -->
+<div id="cardContainer">
+<div class="term-card" data-cat="Python Essentials" data-weeks="2,4,5,6">
+<div class="term-head">
+<span class="term-name">__len__ / __getitem__</span>
+<span class="term-cat cat-python-essentials">Python Essentials</span>
+</div>
+<div class="term-desc">Python's data-model methods implemented by PyTorch <code>Dataset</code> subclasses. <code>__len__</code> returns the dataset size; <code>__getitem__</code> returns a single sample by index.</div>
+<pre class="code-block"><code>class TextDataset(Dataset):
+    def __len__(self):
+        return len(self.sequences)
+
+    def __getitem__(self, idx):
+        seq = self.sequences[idx]
+        return seq[:-1], seq[1:]   # input, target</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="2">W2</span> <span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="6">W6</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="1">
+<div class="term-head">
+<span class="term-name">Accuracy</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">The fraction of predictions that match the ground-truth labels, reported during training and evaluation loops. The MNIST project targets &gt;95% test accuracy.</div>
+<pre class="code-block"><code>predictions = outputs.argmax(dim=1)
+correct = (predictions == labels).sum().item()
+accuracy = correct / len(labels)</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="1">
+<div class="term-head">
+<span class="term-name">Activation Function</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">A non-linear function applied after a linear transformation to let the network learn complex patterns. The course covers ReLU, Sigmoid, Tanh, Softmax, and GELU.</div>
+<pre class="code-block"><code>x = torch.linspace(-3, 3, 7)
+print(F.relu(x))      # [0, 0, 0, 0, 1, 2, 3]
+print(torch.sigmoid(x))  # smooth S-curve into (0,1)
+print(F.gelu(x))       # smooth, lets small negatives through</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span></div>
+</div>
+<div class="term-card" data-cat="Python Essentials" data-weeks="5,6,7">
+<div class="term-head">
+<span class="term-name">argparse Module</span>
+<span class="term-cat cat-python-essentials">Python Essentials</span>
+</div>
+<div class="term-desc">Python's standard command-line argument parser. Used in training scripts to accept hyperparameters from the terminal: <code>--epochs</code>, <code>--lr</code>, <code>--batch_size</code>.</div>
+<pre class="code-block"><code>import argparse
+parser = argparse.ArgumentParser()
+parser.add_argument(&#x27;--epochs&#x27;, type=int, default=10)
+parser.add_argument(&#x27;--lr&#x27;, type=float, default=1e-3)
+args = parser.parse_args()</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="6">W6</span> <span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="3">
+<div class="term-head">
+<span class="term-name">Attention Head</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">A single attention computation within multi-head attention, operating on a <code>d_model/num_heads</code> dimensional subspace. GPT-2 Small uses 12 heads each with head_dim=64.</div>
+<div class="term-weeks"><span class="wk-badge" data-wk="3">W3</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="2,3">
+<div class="term-head">
+<span class="term-name">Attention Mask (Padding Mask)</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">A binary tensor (1 for real tokens, 0 for padding) so that padded positions are ignored in attention computation and loss calculation.</div>
+<pre class="code-block"><code># 1 = real token, 0 = padding
+mask = torch.tensor([1, 1, 1, 1, 0, 0])  # 4 real + 2 pad
+scores = scores.masked_fill(mask == 0, float(&#x27;-inf&#x27;))</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="2">W2</span> <span class="wk-badge" data-wk="3">W3</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="3">
+<div class="term-head">
+<span class="term-name">Attention Mechanism</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">A mechanism that computes a weighted combination of value vectors using similarity scores between query and key vectors, allowing every position to directly access information from every other position.</div>
+<pre class="code-block"><code>def attention(Q, K, V):
+    d_k = K.shape[-1]
+    scores = Q @ K.transpose(-2, -1) / math.sqrt(d_k)
+    weights = F.softmax(scores, dim=-1)
+    return weights @ V</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="3">W3</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="3">
+<div class="term-head">
+<span class="term-name">Attention Weights</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">The output of softmax over scaled dot-product scores; a probability distribution indicating how much each position should attend to every other position. They reveal interpretable patterns in trained models.</div>
+<pre class="code-block"><code>scores = Q @ K.transpose(-2, -1) / math.sqrt(d_k)
+weights = F.softmax(scores, dim=-1)
+# Each row sums to 1.0 — a probability distribution</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="3">W3</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="1">
+<div class="term-head">
+<span class="term-name">Automatic Differentiation (Autograd)</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">PyTorch's engine for computing gradients automatically. When <code>requires_grad=True</code> is set, every operation on a tensor is recorded in a computational graph, and <code>.backward()</code> traverses it to compute all partial derivatives via the chain rule.</div>
+<pre class="code-block"><code>x = torch.tensor(3.0, requires_grad=True)
+y = x ** 2
+y.backward()
+print(x.grad)   # tensor(6.)  ← dy/dx = 2x = 6</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="5">
+<div class="term-head">
+<span class="term-name">Autoregressive Generation</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">Producing text one token at a time by feeding each predicted token back as input for the next step. The loop runs until <code>&lt;EOS&gt;</code> is generated or a maximum length is reached.</div>
+<pre class="code-block"><code>for _ in range(max_new_tokens):
+    logits, _ = model(input_ids[:, -max_seq_len:])
+    next_logits = logits[:, -1, :]        # last position
+    probs = F.softmax(next_logits, dim=-1)
+    next_token = torch.multinomial(probs, 1)
+    input_ids = torch.cat([input_ids, next_token], dim=1)</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="5">W5</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="1">
+<div class="term-head">
+<span class="term-name">Backpropagation</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">The algorithm that applies the chain rule of calculus backwards through the computational graph to compute gradients of the loss with respect to every learnable parameter. In PyTorch it is triggered by calling <code>loss.backward()</code>.</div>
+<pre class="code-block"><code>output = model(x)             # forward pass
+loss = criterion(output, y)   # compute loss
+loss.backward()               # backpropagation
+optimizer.step()              # update weights</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="1,2,3">
+<div class="term-head">
+<span class="term-name">Batch</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">A subset of training samples processed together in one forward/backward pass. Using mini-batches (e.g., 32 samples) speeds up training and provides noisy but useful gradient estimates.</div>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span> <span class="wk-badge" data-wk="2">W2</span> <span class="wk-badge" data-wk="3">W3</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="5">
+<div class="term-head">
+<span class="term-name">Beam Search</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">A decoding strategy that maintains the top-k most likely partial sequences at each step, expanding all of them and keeping the best. More thorough than greedy but more expensive.</div>
+<div class="term-weeks"><span class="wk-badge" data-wk="5">W5</span></div>
+</div>
+<div class="term-card" data-cat="Tools & Libraries" data-weeks="2,3">
+<div class="term-head">
+<span class="term-name">BERT</span>
+<span class="term-cat cat-tools-libraries">Tools & Libraries</span>
+</div>
+<div class="term-desc">Bidirectional Encoder Representations from Transformers; an encoder-only model pre-trained with masked language modelling. Contrasted with GPT to explain bidirectional vs causal attention.</div>
+<div class="term-weeks"><span class="wk-badge" data-wk="2">W2</span> <span class="wk-badge" data-wk="3">W3</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="3">
+<div class="term-head">
+<span class="term-name">Bidirectional vs Causal Attention</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">Bidirectional attention (BERT) lets every position attend to every other; causal attention (GPT) restricts each position to attending only to itself and earlier positions, enabling autoregressive generation.</div>
+<div class="term-weeks"><span class="wk-badge" data-wk="3">W3</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="2">
+<div class="term-head">
+<span class="term-name">Byte Pair Encoding (BPE)</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">A subword tokenization algorithm that iteratively merges the most frequent adjacent token pair until a target vocabulary size is reached. Used by GPT-2/3/4 and implemented from scratch in Week 2.</div>
+<pre class="code-block"><code>def count_pairs(vocab):
+    pairs = Counter()
+    for word, freq in vocab.items():
+        tokens = word.split()
+        for i in range(len(tokens) - 1):
+            pairs[(tokens[i], tokens[i+1])] += freq
+    return pairs</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="2">W2</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="6">
+<div class="term-head">
+<span class="term-name">Catastrophic Forgetting</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">When fine-tuning causes the model to lose previously learned knowledge. Mitigated by using a small learning rate, short fine-tuning duration, and keeping the general pre-training intact.</div>
+<div class="term-weeks"><span class="wk-badge" data-wk="6">W6</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="3">
+<div class="term-head">
+<span class="term-name">Causal Masking</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">Applying a lower-triangular mask to attention scores before softmax so that position i can only attend to positions &le; i. Prevents GPT from 'peeking' at future tokens during training.</div>
+<pre class="code-block"><code>mask = torch.tril(torch.ones(seq_len, seq_len))
+scores = Q @ K.transpose(-2, -1) / math.sqrt(d_k)
+scores = scores.masked_fill(mask == 0, float(&#x27;-inf&#x27;))
+weights = F.softmax(scores, dim=-1)</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="3">W3</span></div>
+</div>
+<div class="term-card" data-cat="Architecture & Components" data-weeks="3,4,5,6,7">
+<div class="term-head">
+<span class="term-name">CausalSelfAttention Module</span>
+<span class="term-cat cat-architecture-components">Architecture & Components</span>
+</div>
+<div class="term-desc">Extends SelfAttention by registering a causal mask as a buffer and applying <code>masked_fill</code> before softmax. The GPT-specific variant preventing future-token attention.</div>
+<pre class="code-block"><code># In __init__:
+mask = torch.tril(torch.ones(max_seq, max_seq))
+self.register_buffer(&#x27;mask&#x27;, mask)
+# In forward:
+scores.masked_fill(self.mask[:S,:S] == 0, float(&#x27;-inf&#x27;))</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="3">W3</span> <span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="6">W6</span> <span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="7">
+<div class="term-head">
+<span class="term-name">Chatbot</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">An interactive system that takes user questions and generates answers using a fine-tuned language model. The Week 7 BaseProject builds a terminal-based chatbot using MiniGPT.</div>
+<pre class="code-block"><code>while True:
+    question = input(&quot;You: &quot;)
+    prompt = f&quot;Q: {question}\nA:&quot;
+    ids = tokenizer.encode(prompt)
+    output = generate(model, ids, max_new=100)
+    print(&quot;Bot:&quot;, tokenizer.decode(output))</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="4,5,6,7">
+<div class="term-head">
+<span class="term-name">Checkpoint</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">A snapshot of the model's weights (<code>state_dict</code>), optimiser state, epoch number, and loss saved to disk during training, enabling training to be resumed after interruption or the best model to be restored.</div>
+<pre class="code-block"><code>checkpoint = {
+    &#x27;epoch&#x27;: epoch,
+    &#x27;model_state_dict&#x27;: model.state_dict(),
+    &#x27;optimizer_state_dict&#x27;: optimizer.state_dict(),
+    &#x27;loss&#x27;: loss.item()
+}
+torch.save(checkpoint, &#x27;checkpoint.pt&#x27;)</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="6">W6</span> <span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+<div class="term-card" data-cat="Python Essentials" data-weeks="1,2,3,4,5,6,7">
+<div class="term-head">
+<span class="term-name">Class Inheritance (__init__, super())</span>
+<span class="term-cat cat-python-essentials">Python Essentials</span>
+</div>
+<div class="term-desc">The mechanism for building neural network modules. Every custom layer/model calls <code>super().__init__()</code> and defines <code>forward()</code>.</div>
+<pre class="code-block"><code>class MyModel(nn.Module):
+    def __init__(self, d_model):
+        super().__init__()              # MUST call this
+        self.fc = nn.Linear(d_model, d_model)
+
+    def forward(self, x):
+        return F.relu(self.fc(x))</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span> <span class="wk-badge" data-wk="2">W2</span> <span class="wk-badge" data-wk="3">W3</span> <span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="6">W6</span> <span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+<div class="term-card" data-cat="Tools & Libraries" data-weeks="2,4,5,6">
+<div class="term-head">
+<span class="term-name">collate_fn</span>
+<span class="term-cat cat-tools-libraries">Tools & Libraries</span>
+</div>
+<div class="term-desc">A custom function passed to DataLoader that defines how individual samples are combined into a batch. Pads variable-length sequences and creates attention masks.</div>
+<pre class="code-block"><code>def collate_fn(batch, pad_id=0):
+    max_len = max(len(b[&#x27;input_ids&#x27;]) for b in batch)
+    for b in batch:
+        pad = max_len - len(b[&#x27;input_ids&#x27;])
+        b[&#x27;input_ids&#x27;] = torch.cat([b[&#x27;input_ids&#x27;], torch.full((pad,), pad_id)])
+        b[&#x27;mask&#x27;] = torch.cat([torch.ones(len(b[&#x27;input_ids&#x27;])-pad), torch.zeros(pad)])</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="2">W2</span> <span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="6">W6</span></div>
+</div>
+<div class="term-card" data-cat="Python Essentials" data-weeks="2">
+<div class="term-head">
+<span class="term-name">collections.Counter</span>
+<span class="term-cat cat-python-essentials">Python Essentials</span>
+</div>
+<div class="term-desc">A <code>dict</code> subclass that counts hashable objects. Used heavily in BPE to count word frequencies and adjacent token-pair frequencies.</div>
+<pre class="code-block"><code>from collections import Counter
+words = &quot;the cat sat on the mat&quot;.split()
+counts = Counter(words)
+print(counts.most_common(2))   # [(&#x27;the&#x27;, 2), (&#x27;cat&#x27;, 1)]</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="2">W2</span></div>
+</div>
+<div class="term-card" data-cat="Architecture & Components" data-weeks="3,4">
+<div class="term-head">
+<span class="term-name">Combined QKV Projection</span>
+<span class="term-cat cat-architecture-components">Architecture & Components</span>
+</div>
+<div class="term-desc">An efficiency optimisation: a single <code>nn.Linear(d_model, 3*d_model)</code> replaces three separate W_q, W_k, W_v projections, reducing GPU kernel launches.</div>
+<pre class="code-block"><code># One projection instead of three
+self.qkv_proj = nn.Linear(d_model, 3 * d_model)
+qkv = self.qkv_proj(x)   # (batch, seq, 3*d_model)
+Q, K, V = qkv.chunk(3, dim=-1)</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="3">W3</span> <span class="wk-badge" data-wk="4">W4</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="1">
+<div class="term-head">
+<span class="term-name">Computational Graph</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">The directed acyclic graph PyTorch builds on-the-fly as you perform operations on tensors with <code>requires_grad=True</code>. Each node is an operation; backpropagation traverses it in reverse to accumulate gradients.</div>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="2">
+<div class="term-head">
+<span class="term-name">Context Window</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">The maximum number of tokens a language model can attend to at once. GPT-4 has a 128K-token context window; character-level tokenisation reduces effective context by ~10&times; compared to subword tokenisation.</div>
+<div class="term-weeks"><span class="wk-badge" data-wk="2">W2</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="4,5,6">
+<div class="term-head">
+<span class="term-name">Convergence</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">The point during training where the loss stops meaningfully decreasing and the model has learned as much as it can from the data and architecture. Monitored via loss curves plotted with matplotlib.</div>
+<div class="term-weeks"><span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="6">W6</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="4,5">
+<div class="term-head">
+<span class="term-name">Cosine Annealing</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">A learning-rate decay schedule that follows a cosine curve from the peak learning rate down to near zero. Often combined with warmup for transformer training.</div>
+<pre class="code-block"><code>scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
+    optimizer, T_max=num_epochs
+)</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="1,2,3">
+<div class="term-head">
+<span class="term-name">Cross-Entropy Loss</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">The standard classification loss that measures the divergence between the model's predicted probability distribution and the one-hot true label distribution. Used extensively via <code>nn.CrossEntropyLoss</code> and expects raw logits as input.</div>
+<pre class="code-block"><code>criterion = nn.CrossEntropyLoss()
+logits = model(input_ids)   # shape: (batch, vocab_size)
+loss = criterion(logits.view(-1, vocab_size), targets.view(-1))</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span> <span class="wk-badge" data-wk="2">W2</span> <span class="wk-badge" data-wk="3">W3</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="6,7">
+<div class="term-head">
+<span class="term-name">CSV Data Loading</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">Loading training data from a CSV file with columns like 'question' and 'answer'. The practical project requires students to create a CSV with &ge;40 QA pairs on a topic of their choice.</div>
+<pre class="code-block"><code>import csv
+with open(&#x27;qa_data.csv&#x27;) as f:
+    reader = csv.DictReader(f)
+    pairs = [(row[&#x27;question&#x27;], row[&#x27;answer&#x27;]) for row in reader]</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="6">W6</span> <span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+<div class="term-card" data-cat="Python Essentials" data-weeks="6,7">
+<div class="term-head">
+<span class="term-name">csv Module</span>
+<span class="term-cat cat-python-essentials">Python Essentials</span>
+</div>
+<div class="term-desc">Python's built-in CSV reader/writer. Used in the practical project to load QA training data from a CSV file: <code>csv.DictReader(f)</code> iterates rows as dictionaries.</div>
+<pre class="code-block"><code>import csv
+with open(&#x27;qa_data.csv&#x27;) as f:
+    reader = csv.DictReader(f)
+    for row in reader:
+        print(row[&#x27;question&#x27;], row[&#x27;answer&#x27;])</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="6">W6</span> <span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+<div class="term-card" data-cat="Tools & Libraries" data-weeks="1,7">
+<div class="term-head">
+<span class="term-name">CUDA</span>
+<span class="term-cat cat-tools-libraries">Tools & Libraries</span>
+</div>
+<div class="term-desc">NVIDIA's parallel computing platform for GPU acceleration. PyTorch uses CUDA to run tensor operations orders of magnitude faster for large matrix multiplications.</div>
+<pre class="code-block"><code>device = torch.device(&#x27;cuda&#x27; if torch.cuda.is_available() else &#x27;cpu&#x27;)
+model.to(device)
+x = x.to(device)</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span> <span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+<div class="term-card" data-cat="Architecture & Components" data-weeks="3,4,5,6,7">
+<div class="term-head">
+<span class="term-name">d_model</span>
+<span class="term-cat cat-architecture-components">Architecture & Components</span>
+</div>
+<div class="term-desc">The model dimension &mdash; the size of every token's representation vector throughout the transformer. GPT-2 Small uses d_model=768.</div>
+<div class="term-weeks"><span class="wk-badge" data-wk="3">W3</span> <span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="6">W6</span> <span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+<div class="term-card" data-cat="Python Essentials" data-weeks="2,5,6,7">
+<div class="term-head">
+<span class="term-name">Dictionary Comprehension</span>
+<span class="term-cat cat-python-essentials">Python Essentials</span>
+</div>
+<div class="term-desc">Like list comprehension but produces dicts: <code>&#123;k: v for k, v in items&#125;</code>. Used to build <code>stoi</code> and <code>itos</code> vocabulary mappings.</div>
+<pre class="code-block"><code>stoi = {word: i for i, word in enumerate(vocab)}
+itos = {i: word for word, i in stoi.items()}</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="2">W2</span> <span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="6">W6</span> <span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="1,2,3">
+<div class="term-head">
+<span class="term-name">Dropout</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">A regularisation technique that randomly zeroes a fraction of activations during training to prevent co-adaptation and reduce overfitting. Disabled during evaluation by calling <code>model.eval()</code>.</div>
+<pre class="code-block"><code>self.dropout = nn.Dropout(0.2)
+
+# In forward():
+x = F.relu(self.fc1(x))
+x = self.dropout(x)   # zeroes 20% of activations during training</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span> <span class="wk-badge" data-wk="2">W2</span> <span class="wk-badge" data-wk="3">W3</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="2,3">
+<div class="term-head">
+<span class="term-name">Embedding</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">A dense, real-valued vector representation of a discrete token, learned during training. Similar tokens end up with similar vectors; the famous Word2Vec example is king &minus; man + woman &asymp; queen.</div>
+<pre class="code-block"><code>embedding = nn.Embedding(vocab_size, embed_dim)
+token_ids = torch.tensor([45, 892, 1203])
+vectors = embedding(token_ids)   # shape: (3, embed_dim)</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="2">W2</span> <span class="wk-badge" data-wk="3">W3</span></div>
+</div>
+<div class="term-card" data-cat="Python Essentials" data-weeks="1,2,3,4,5,6,7">
+<div class="term-head">
+<span class="term-name">enumerate()</span>
+<span class="term-cat cat-python-essentials">Python Essentials</span>
+</div>
+<div class="term-desc">Built-in that yields <code>(index, value)</code> pairs from an iterable. Used in training loops as <code>for batch_idx, (x, y) in enumerate(dataloader)</code>.</div>
+<pre class="code-block"><code>for batch_idx, (x, y) in enumerate(dataloader):
+    loss = train_step(x, y)
+    if batch_idx % 100 == 0:
+        print(f&#x27;Batch {batch_idx}: loss={loss:.4f}&#x27;)</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span> <span class="wk-badge" data-wk="2">W2</span> <span class="wk-badge" data-wk="3">W3</span> <span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="6">W6</span> <span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="1">
+<div class="term-head">
+<span class="term-name">Epoch</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">One complete pass through the entire training dataset. Training loops iterate for a fixed number of epochs, recording loss and accuracy at each one to monitor learning progress.</div>
+<pre class="code-block"><code>for epoch in range(num_epochs):
+    for batch_x, batch_y in dataloader:
+        loss = train_step(batch_x, batch_y)
+    print(f&#x27;Epoch {epoch+1}/{num_epochs}, Loss: {loss:.4f}&#x27;)</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="1,4,5,6">
+<div class="term-head">
+<span class="term-name">Evaluation Loop</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">A separate loop (with <code>model.eval()</code> and <code>torch.no_grad()</code>) that computes metrics on the validation set after each epoch without updating weights.</div>
+<pre class="code-block"><code>model.eval()
+total_loss = 0
+with torch.no_grad():
+    for x, y in val_loader:
+        loss = criterion(model(x), y)
+        total_loss += loss.item()
+val_loss = total_loss / len(val_loader)</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span> <span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="6">W6</span></div>
+</div>
+<div class="term-card" data-cat="Python Essentials" data-weeks="1,2,3,4,5,6,7">
+<div class="term-head">
+<span class="term-name">f-strings (Formatted String Literals)</span>
+<span class="term-cat cat-python-essentials">Python Essentials</span>
+</div>
+<div class="term-desc">Python 3.6+ string formatting: <code>f'Loss: &#123;loss:.4f&#125;'</code>. Used in every training loop to print metrics with controlled decimal places.</div>
+<pre class="code-block"><code>epoch, loss, acc = 5, 0.0342, 96.7
+print(f&#x27;Epoch {epoch}, Loss: {loss:.4f}, Acc: {acc:.1f}%&#x27;)</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span> <span class="wk-badge" data-wk="2">W2</span> <span class="wk-badge" data-wk="3">W3</span> <span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="6">W6</span> <span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+<div class="term-card" data-cat="PyTorch Functions & Classes" data-weeks="4,5,6">
+<div class="term-head">
+<span class="term-name">F.cross_entropy()</span>
+<span class="term-cat cat-pytorch-functions-classes">PyTorch Functions & Classes</span>
+</div>
+<div class="term-desc">Functional version of <code>nn.CrossEntropyLoss</code>. Accepts logits and targets directly; commonly used inline when you don't need a persistent loss module instance.</div>
+<pre class="code-block"><code>logits = model(input_ids)   # (batch, seq, vocab)
+loss = F.cross_entropy(
+    logits.view(-1, vocab_size),
+    targets.view(-1)
+)</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="6">W6</span></div>
+</div>
+<div class="term-card" data-cat="PyTorch Functions & Classes" data-weeks="1,4">
+<div class="term-head">
+<span class="term-name">F.relu() / F.gelu()</span>
+<span class="term-cat cat-pytorch-functions-classes">PyTorch Functions & Classes</span>
+</div>
+<div class="term-desc">Functional activation functions. <code>F.relu</code> is max(0,x); <code>F.gelu</code> is the smooth Gaussian error linear unit used inside transformer FFN blocks.</div>
+<pre class="code-block"><code>x = self.fc1(x)
+x = F.relu(x)    # week 1: simple networks
+# or
+x = F.gelu(x)    # week 4+: transformer FFN</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span> <span class="wk-badge" data-wk="4">W4</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="4,5,6,7">
+<div class="term-head">
+<span class="term-name">Feed-Forward Network (FFN / MLP)</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">A two-layer MLP with GELU activation inside every transformer block. Expands the hidden dimension 4&times; (d_model &rarr; 4&times;d_model &rarr; d_model) then projects back, adding non-linear capacity.</div>
+<pre class="code-block"><code>class FeedForward(nn.Module):
+    def __init__(self, d_model, d_ff=None):
+        super().__init__()
+        d_ff = d_ff or 4 * d_model
+        self.fc1 = nn.Linear(d_model, d_ff)
+        self.fc2 = nn.Linear(d_ff, d_model)
+
+    def forward(self, x):
+        return self.fc2(F.gelu(self.fc1(x)))</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="6">W6</span> <span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="1">
+<div class="term-head">
+<span class="term-name">Feedforward Neural Network</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">A neural network where data flows in one direction &mdash; input &rarr; hidden &rarr; output &mdash; with no cycles. Week 1 builds multi-layer feedforward networks for digit and binary classification.</div>
+<pre class="code-block"><code>model = nn.Sequential(
+    nn.Linear(784, 128),
+    nn.ReLU(),
+    nn.Linear(128, 10)   # 10 digit classes
+)</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span></div>
+</div>
+<div class="term-card" data-cat="Architecture & Components" data-weeks="4">
+<div class="term-head">
+<span class="term-name">FFN Expansion Factor (4&times;)</span>
+<span class="term-cat cat-architecture-components">Architecture & Components</span>
+</div>
+<div class="term-desc">The convention of expanding the hidden dimension by 4&times; inside the feed-forward network: <code>d_model &rarr; 4*d_model &rarr; d_model</code>. Adds non-linear capacity at a controlled cost.</div>
+<pre class="code-block"><code>d_ff = 4 * d_model   # expansion factor
+self.fc1 = nn.Linear(d_model, d_ff)     # expand
+self.fc2 = nn.Linear(d_ff, d_model)     # contract</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="4">W4</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="6,7">
+<div class="term-head">
+<span class="term-name">Fine-Tuning</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">Taking a pre-trained model and continuing training on a smaller, task-specific dataset to specialise its knowledge. Week 6 fine-tunes MiniGPT on QA data loaded from CSV to build a domain chatbot.</div>
+<pre class="code-block"><code># Load pre-trained model, then train on new data
+model = MiniGPT(config)
+model.load_state_dict(torch.load(&#x27;pretrained.pt&#x27;))
+optimizer = torch.optim.AdamW(model.parameters(), lr=5e-5)
+# Train on task-specific QA pairs...</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="6">W6</span> <span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="1">
+<div class="term-head">
+<span class="term-name">Forward Pass</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">The stage of a training step where input data flows through the model layer-by-layer to produce predictions (logits or probabilities). It is the first of the four-step training loop: forward &rarr; loss &rarr; backward &rarr; update.</div>
+<pre class="code-block"><code># The 4-step training loop
+output = model(x)             # 1. Forward pass
+loss = criterion(output, y)   # 2. Compute loss
+loss.backward()               # 3. Backward pass
+optimizer.step()              # 4. Update weights</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="4">
+<div class="term-head">
+<span class="term-name">GELU (Gaussian Error Linear Unit)</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">The activation function used inside the feed-forward network of every transformer block. Defined as <code>x &times; &Phi;(x)</code> where &Phi; is the Gaussian CDF; smoother than ReLU and gives better gradient flow.</div>
+<pre class="code-block"><code>x = torch.linspace(-3, 3, 7)
+print(F.relu(x).tolist())   # sharp cutoff at 0
+print(F.gelu(x).tolist())   # smooth, small negatives pass</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="4">W4</span></div>
+</div>
+<div class="term-card" data-cat="Architecture & Components" data-weeks="4,5,6,7">
+<div class="term-head">
+<span class="term-name">GPT Model (Full)</span>
+<span class="term-cat cat-architecture-components">Architecture & Components</span>
+</div>
+<div class="term-desc">The complete model: token embedding + positional embedding + N transformer blocks + final LayerNorm + LM head (with optional weight tying). Built from scratch in Week 4.</div>
+<pre class="code-block"><code>def forward(self, input_ids, targets=None):
+    tok = self.token_embedding(input_ids)
+    pos = self.pos_embedding(torch.arange(S, device=x.device))
+    x = self.dropout(tok + pos)
+    for block in self.blocks:
+        x = block(x)
+    logits = self.lm_head(self.ln_final(x))
+    return logits</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="6">W6</span> <span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+<div class="term-card" data-cat="Tools & Libraries" data-weeks="2,3,4,5">
+<div class="term-head">
+<span class="term-name">GPT-2</span>
+<span class="term-cat cat-tools-libraries">Tools & Libraries</span>
+</div>
+<div class="term-desc">OpenAI's second-generation language model and the architectural blueprint for the model built in the course. GPT-2 Small: d_model=768, 12 heads, 12 layers, ~124M parameters.</div>
+<div class="term-weeks"><span class="wk-badge" data-wk="2">W2</span> <span class="wk-badge" data-wk="3">W3</span> <span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span></div>
+</div>
+<div class="term-card" data-cat="Tools & Libraries" data-weeks="2,5">
+<div class="term-head">
+<span class="term-name">GPT-3 / GPT-4</span>
+<span class="term-cat cat-tools-libraries">Tools & Libraries</span>
+</div>
+<div class="term-desc">Successors to GPT-2 with vastly more parameters (175B / ~1T) and larger context windows. Mentioned as real-world applications of the same architecture students build.</div>
+<div class="term-weeks"><span class="wk-badge" data-wk="2">W2</span> <span class="wk-badge" data-wk="5">W5</span></div>
+</div>
+<div class="term-card" data-cat="Architecture & Components" data-weeks="2,3,4,5,6,7">
+<div class="term-head">
+<span class="term-name">GPTEmbedding Module</span>
+<span class="term-cat cat-architecture-components">Architecture & Components</span>
+</div>
+<div class="term-desc">A custom <code>nn.Module</code> wrapping token embeddings, positional embeddings, and dropout. Accepts <code>input_ids</code> of shape (batch, seq_len) and returns (batch, seq_len, embed_dim).</div>
+<pre class="code-block"><code>tok_emb = self.token_embedding(input_ids)         # (B, S, D)
+positions = torch.arange(seq_len, device=x.device)
+pos_emb = self.position_embedding(positions)       # (S, D)
+x = self.dropout(tok_emb + pos_emb)                # (B, S, D)</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="2">W2</span> <span class="wk-badge" data-wk="3">W3</span> <span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="6">W6</span> <span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="1">
+<div class="term-head">
+<span class="term-name">Gradient</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">The partial derivative of the loss with respect to a model parameter, indicating the direction and magnitude by which that parameter should be adjusted to reduce the loss.</div>
+<pre class="code-block"><code>x = torch.tensor([1.0, 2.0, 3.0], requires_grad=True)
+loss = (x ** 2).sum()
+loss.backward()
+print(x.grad)   # tensor([2., 4., 6.])  ← gradient is 2x</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="4,5,6,7">
+<div class="term-head">
+<span class="term-name">Gradient Clipping</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">Capping the gradient norm to a maximum value (e.g., 1.0) via <code>torch.nn.utils.clip_grad_norm_</code> to prevent exploding gradients during training, especially important for transformers.</div>
+<pre class="code-block"><code>loss.backward()
+torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
+optimizer.step()</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="6">W6</span> <span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="1">
+<div class="term-head">
+<span class="term-name">Gradient Descent</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">An iterative optimisation algorithm that updates parameters by subtracting a fraction (the learning rate) of the gradient: <code>x = x - lr * grad</code>. The course demonstrates it converging to the minimum of a parabola before applying it inside training loops.</div>
+<pre class="code-block"><code>lr = 0.1
+for step in range(20):
+    loss = x ** 2          # f(x) = x²
+    loss.backward()
+    with torch.no_grad():
+        x -= lr * x.grad    # update: x = x - lr * grad
+    x.grad.zero_()</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="5">
+<div class="term-head">
+<span class="term-name">Greedy Decoding</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">Always selecting the token with the highest probability at each step. Deterministic but often produces repetitive, boring text because it never explores less-likely but creative continuations.</div>
+<pre class="code-block"><code>def greedy_decode(logits):
+    return logits.argmax(dim=-1)   # always pick highest prob</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="5">W5</span></div>
+</div>
+<div class="term-card" data-cat="Architecture & Components" data-weeks="3,4,5,6,7">
+<div class="term-head">
+<span class="term-name">head_dim</span>
+<span class="term-cat cat-architecture-components">Architecture & Components</span>
+</div>
+<div class="term-desc">The dimensionality of each attention head: <code>d_model / num_heads</code>. GPT-2 consistently uses head_dim=64.</div>
+<pre class="code-block"><code>head_dim = d_model // num_heads   # 768 // 12 = 64</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="3">W3</span> <span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="6">W6</span> <span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+<div class="term-card" data-cat="Tools & Libraries" data-weeks="5,7">
+<div class="term-head">
+<span class="term-name">Hugging Face Hub</span>
+<span class="term-cat cat-tools-libraries">Tools & Libraries</span>
+</div>
+<div class="term-desc">The online repository at huggingface.co/models hosting thousands of pre-trained models (GPT-2, BERT, LLaMA, Mistral, etc.). Models are downloaded with <code>from_pretrained()</code> and cached locally.</div>
+<pre class="code-block"><code># Auto-downloads from hub and caches locally
+model = GPT2LMHeadModel.from_pretrained(&#x27;gpt2&#x27;)
+# Available: &#x27;gpt2&#x27;, &#x27;gpt2-medium&#x27;, &#x27;gpt2-large&#x27;, &#x27;gpt2-xl&#x27;</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+<div class="term-card" data-cat="Tools & Libraries" data-weeks="2,7">
+<div class="term-head">
+<span class="term-name">Hugging Face Tokenizers</span>
+<span class="term-cat cat-tools-libraries">Tools & Libraries</span>
+</div>
+<div class="term-desc">A fast tokeniser library from Hugging Face supporting BPE, WordPiece, and Unigram. <code>AutoTokenizer.from_pretrained('gpt2')</code> gives a production-quality tokeniser.</div>
+<pre class="code-block"><code>from transformers import AutoTokenizer
+tok = AutoTokenizer.from_pretrained(&#x27;gpt2&#x27;)
+ids = tok.encode(&#x27;Hello world&#x27;)    # [15496, 995]
+tok.decode(ids)                    # &#x27;Hello world&#x27;</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="2">W2</span> <span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+<div class="term-card" data-cat="Tools & Libraries" data-weeks="5,7">
+<div class="term-head">
+<span class="term-name">Hugging Face Transformers</span>
+<span class="term-cat cat-tools-libraries">Tools & Libraries</span>
+</div>
+<div class="term-desc">A library providing thousands of pre-trained models with a unified API: <code>AutoModel.from_pretrained('gpt2')</code>. Used in Week 7 to load and compare with the hand-built model.</div>
+<pre class="code-block"><code>from transformers import GPT2LMHeadModel, GPT2Tokenizer
+tokenizer = GPT2Tokenizer.from_pretrained(&#x27;gpt2&#x27;)
+model = GPT2LMHeadModel.from_pretrained(&#x27;gpt2&#x27;)</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="1">
+<div class="term-head">
+<span class="term-name">Hyperparameter</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">A configuration value set before training that is not learned from data, such as learning rate, batch size, number of epochs, hidden layer size, and dropout rate.</div>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="5,6,7">
+<div class="term-head">
+<span class="term-name">Inference</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">Using a trained model to make predictions without updating its weights. Done inside <code>torch.no_grad()</code> and with <code>model.eval()</code> to disable dropout and save memory.</div>
+<pre class="code-block"><code>model.eval()
+with torch.no_grad():
+    logits, _ = model(input_ids)
+    probs = F.softmax(logits[:, -1, :], dim=-1)</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="6">W6</span> <span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="6,7">
+<div class="term-head">
+<span class="term-name">Instruction Tuning</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">A form of fine-tuning where the model is trained on instruction&ndash;response pairs (e.g., &lsquo;Q: What is X? A: X is...&rsquo;) to follow user requests. Week 6 uses this format to build the chatbot.</div>
+<pre class="code-block"><code># Only compute loss on the RESPONSE tokens
+labels = [-100] * len(prompt_tokens) + response_tokens
+# -100 tells cross_entropy to ignore prompt positions</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="6">W6</span> <span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+<div class="term-card" data-cat="Python Essentials" data-weeks="2,5,6,7">
+<div class="term-head">
+<span class="term-name">json Module</span>
+<span class="term-cat cat-python-essentials">Python Essentials</span>
+</div>
+<div class="term-desc">Python's built-in JSON serialiser. Used to save tokeniser vocabularies (<code>json.dump</code>) and to load/save model configurations as JSON files.</div>
+<pre class="code-block"><code>import json
+with open(&#x27;vocab.json&#x27;, &#x27;w&#x27;) as f:
+    json.dump(stoi, f)
+with open(&#x27;vocab.json&#x27;) as f:
+    stoi = json.load(f)</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="2">W2</span> <span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="6">W6</span> <span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="5">
+<div class="term-head">
+<span class="term-name">KV Cache</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">An optimisation for autoregressive generation that caches the Key and Value tensors from previous positions so they don't need to be recomputed at each generation step. Reduces inference cost.</div>
+<div class="term-weeks"><span class="wk-badge" data-wk="5">W5</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="4">
+<div class="term-head">
+<span class="term-name">Label Smoothing</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">A regularisation technique that replaces hard 0/1 labels with soft labels (e.g., 0.1/0.9) to prevent the model from becoming overconfident. Mentioned as an optional improvement for training.</div>
+<div class="term-weeks"><span class="wk-badge" data-wk="4">W4</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="2,3">
+<div class="term-head">
+<span class="term-name">Language Modelling</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">The task of predicting the next token given all previous tokens. Datasets are constructed by shifting the token sequence by one: <code>input = tokens[:-1], target = tokens[1:]</code>. This is the training objective for GPT.</div>
+<pre class="code-block"><code># Next-token prediction: shift by 1
+input_ids  = tokens[:-1]   # [The, cat, sat, on]
+target_ids = tokens[1:]    # [cat, sat, on, mat]</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="2">W2</span> <span class="wk-badge" data-wk="3">W3</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="4,5,6,7">
+<div class="term-head">
+<span class="term-name">Layer Normalisation (LayerNorm)</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">Normalises activations across the feature dimension (not the batch) at each layer: <code>y = &gamma; &times; (x&minus;&mu;)/&sigma; + &beta;</code>. Applied before each sublayer in the GPT architecture for training stability.</div>
+<pre class="code-block"><code>layer_norm = nn.LayerNorm(d_model)
+x = torch.randn(2, 4, d_model) * 10 + 5   # mean≈5, std≈10
+normalized = layer_norm(x)
+# After: mean ≈ 0, std ≈ 1 (then scaled by γ, β)</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="6">W6</span> <span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+<div class="term-card" data-cat="Architecture & Components" data-weeks="3">
+<div class="term-head">
+<span class="term-name">Learnable Projections (W_q, W_k, W_v, W_o)</span>
+<span class="term-cat cat-architecture-components">Architecture & Components</span>
+</div>
+<div class="term-desc">Four linear layers transforming embeddings into specialised Query, Key, Value, and Output representations. They let each attention role specialise independently.</div>
+<pre class="code-block"><code>self.W_q = nn.Linear(d_model, d_model)   # Query projection
+self.W_k = nn.Linear(d_model, d_model)   # Key projection
+self.W_v = nn.Linear(d_model, d_model)   # Value projection
+self.W_o = nn.Linear(d_model, d_model)   # Output projection</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="3">W3</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="1">
+<div class="term-head">
+<span class="term-name">Learning Rate</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">The hyperparameter that controls the step size during gradient descent: <code>param -= lr * grad</code>. Typical values are 0.001 for Adam; too large causes divergence, too small causes slow convergence.</div>
+<pre class="code-block"><code>optimizer = torch.optim.Adam(model.parameters(), lr=0.001)</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span></div>
+</div>
+<div class="term-card" data-cat="Python Essentials" data-weeks="1,2,3,4,5,6,7">
+<div class="term-head">
+<span class="term-name">List Comprehension</span>
+<span class="term-cat cat-python-essentials">Python Essentials</span>
+</div>
+<div class="term-desc">A concise Python syntax for creating lists: <code>[x**2 for x in range(10)]</code>. Used throughout the course for data processing, token filtering, and parameter counting.</div>
+<pre class="code-block"><code>ids = [stoi.get(w, 1) for w in words]   # encode tokens
+squares = [x**2 for x in range(10)]
+params = [p for p in model.parameters() if p.requires_grad]</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span> <span class="wk-badge" data-wk="2">W2</span> <span class="wk-badge" data-wk="3">W3</span> <span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="6">W6</span> <span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="4,5">
+<div class="term-head">
+<span class="term-name">LM Head (Language Model Head)</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">The final linear projection that maps the transformer's d_model-dimensional output to vocabulary-sized logits. When weight tying is used, this layer shares weights with the token embedding.</div>
+<pre class="code-block"><code># Final projection: d_model → vocab_size
+logits = self.lm_head(self.ln_final(x))
+# logits shape: (batch, seq_len, vocab_size)</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="1,2,3">
+<div class="term-head">
+<span class="term-name">Logits</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">The raw, unnormalised output scores from the final layer of a classification model before any activation. <code>CrossEntropyLoss</code> expects logits directly; softmax converts them to probabilities.</div>
+<pre class="code-block"><code>logits = model(x)                    # raw scores
+probs = F.softmax(logits, dim=-1)    # probabilities
+prediction = logits.argmax(dim=-1)   # predicted class</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span> <span class="wk-badge" data-wk="2">W2</span> <span class="wk-badge" data-wk="3">W3</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="3">
+<div class="term-head">
+<span class="term-name">Long-Range Dependencies</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">Relationships between distant tokens in a sequence (e.g., a pronoun referring to a noun ten words earlier). Attention solves this in O(1) steps per pair, unlike RNNs where information degrades over many sequential steps.</div>
+<div class="term-weeks"><span class="wk-badge" data-wk="3">W3</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="4,5,6">
+<div class="term-head">
+<span class="term-name">Loss Curve</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">A plot of training (and optionally validation) loss over epochs or steps. Used to diagnose overfitting (training loss decreases but validation loss increases) and to decide when to stop training.</div>
+<pre class="code-block"><code>import matplotlib.pyplot as plt
+plt.plot(train_losses, label=&#x27;Train&#x27;)
+plt.plot(val_losses, label=&#x27;Validation&#x27;)
+plt.xlabel(&#x27;Epoch&#x27;); plt.ylabel(&#x27;Loss&#x27;)
+plt.legend(); plt.show()</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="6">W6</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="1">
+<div class="term-head">
+<span class="term-name">Loss Function</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">A scalar measure of how wrong a model's predictions are. The course uses MSELoss for regression tasks and CrossEntropyLoss for classification; the loss value is what <code>backward()</code> differentiates.</div>
+<pre class="code-block"><code>criterion = nn.CrossEntropyLoss()
+loss = criterion(logits, labels)   # scalar tensor
+loss.backward()</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span></div>
+</div>
+<div class="term-card" data-cat="Python Essentials" data-weeks="3">
+<div class="term-head">
+<span class="term-name">math.sqrt()</span>
+<span class="term-cat cat-python-essentials">Python Essentials</span>
+</div>
+<div class="term-desc">Standard-library square-root function. Used in every attention implementation as <code>math.sqrt(d_k)</code> for the scaling factor.</div>
+<pre class="code-block"><code>import math
+scores = Q @ K.T / math.sqrt(d_k)   # scale factor</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="3">W3</span></div>
+</div>
+<div class="term-card" data-cat="Python Essentials" data-weeks="1,3,4,5,6">
+<div class="term-head">
+<span class="term-name">matplotlib</span>
+<span class="term-cat cat-python-essentials">Python Essentials</span>
+</div>
+<div class="term-desc">Python's primary plotting library. Used to visualise loss curves, accuracy plots, attention weight heatmaps, and embedding distributions.</div>
+<pre class="code-block"><code>import matplotlib.pyplot as plt
+plt.plot(losses)
+plt.xlabel(&#x27;Epoch&#x27;); plt.ylabel(&#x27;Loss&#x27;)
+plt.title(&#x27;Training Loss Curve&#x27;)
+plt.show()</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span> <span class="wk-badge" data-wk="3">W3</span> <span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="6">W6</span></div>
+</div>
+<div class="term-card" data-cat="Architecture & Components" data-weeks="2,3,4,5,6,7">
+<div class="term-head">
+<span class="term-name">max_seq_length</span>
+<span class="term-cat cat-architecture-components">Architecture & Components</span>
+</div>
+<div class="term-desc">The maximum tokens the model can process; determines the size of the causal mask and positional embedding table. GPT-2 uses 1024; the course uses 128&ndash;1024.</div>
+<div class="term-weeks"><span class="wk-badge" data-wk="2">W2</span> <span class="wk-badge" data-wk="3">W3</span> <span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="6">W6</span> <span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="1">
+<div class="term-head">
+<span class="term-name">Mean Squared Error (MSE)</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">A loss function that averages the squared differences between predictions and true values, used for regression. Implemented as <code>nn.MSELoss()</code> in PyTorch.</div>
+<pre class="code-block"><code>criterion = nn.MSELoss()
+predictions = model(x)
+loss = criterion(predictions, targets)</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="4,5,6,7">
+<div class="term-head">
+<span class="term-name">MiniGPT</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">The small GPT model built from scratch in the course (2-4 layers, 128-256 d_model) that is trainable on a single CPU/GPU. Used as the architecture for the chatbot project.</div>
+<div class="term-weeks"><span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="6">W6</span> <span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="1">
+<div class="term-head">
+<span class="term-name">MNIST</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">A benchmark dataset of 70,000 grayscale 28&times;28 images of handwritten digits (0-9), used as the Week 1 project. The goal is to build a classifier exceeding 95% test accuracy.</div>
+<pre class="code-block"><code>from torchvision import datasets, transforms
+mnist = datasets.MNIST(&#x27;data&#x27;, download=True,
+    transform=transforms.Compose([
+        transforms.ToTensor(),
+        transforms.Normalize((0.1307,), (0.3081,))
+    ]))</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="4,5,6,7">
+<div class="term-head">
+<span class="term-name">Model Configuration</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">A dictionary or class holding all hyperparameters defining the model architecture: vocab_size, d_model, num_heads, num_layers, max_seq_length, dropout rate, etc.</div>
+<pre class="code-block"><code>config = {
+    &#x27;vocab_size&#x27;: 50257, &#x27;d_model&#x27;: 768,
+    &#x27;num_heads&#x27;: 12, &#x27;num_layers&#x27;: 12,
+    &#x27;max_seq_length&#x27;: 1024, &#x27;dropout&#x27;: 0.1
+}
+model = GPT(**config)</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="6">W6</span> <span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+<div class="term-card" data-cat="PyTorch Functions & Classes" data-weeks="1,4,5">
+<div class="term-head">
+<span class="term-name">model.parameters() / named_parameters()</span>
+<span class="term-cat cat-pytorch-functions-classes">PyTorch Functions & Classes</span>
+</div>
+<div class="term-desc">Iterators over all learnable tensors. Used to count parameters and pass weights to an optimiser.</div>
+<pre class="code-block"><code># Count total parameters
+total = sum(p.numel() for p in model.parameters())
+# Pass to optimizer
+optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span> <span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span></div>
+</div>
+<div class="term-card" data-cat="PyTorch Functions & Classes" data-weeks="1,4,5,6,7">
+<div class="term-head">
+<span class="term-name">model.state_dict() / load_state_dict()</span>
+<span class="term-cat cat-pytorch-functions-classes">PyTorch Functions & Classes</span>
+</div>
+<div class="term-desc"><code>state_dict()</code> returns an ordered dict of parameter names to tensors; <code>load_state_dict()</code> restores them into a model for inference or continued training.</div>
+<pre class="code-block"><code># Save
+state = model.state_dict()   # OrderedDict of param tensors
+torch.save(state, &#x27;weights.pt&#x27;)
+# Load
+model = MyModel()
+model.load_state_dict(torch.load(&#x27;weights.pt&#x27;))</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span> <span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="6">W6</span> <span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+<div class="term-card" data-cat="PyTorch Functions & Classes" data-weeks="1,2,3,4,5,6,7">
+<div class="term-head">
+<span class="term-name">model.train() / model.eval()</span>
+<span class="term-cat cat-pytorch-functions-classes">PyTorch Functions & Classes</span>
+</div>
+<div class="term-desc">Switches between training mode (dropout active) and evaluation mode (dropout disabled). Always call <code>model.eval()</code> before inference.</div>
+<pre class="code-block"><code>model.train()   # enable dropout, batchnorm accumulates
+# ... training loop ...
+model.eval()    # disable dropout for inference</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span> <span class="wk-badge" data-wk="2">W2</span> <span class="wk-badge" data-wk="3">W3</span> <span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="6">W6</span> <span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="3">
+<div class="term-head">
+<span class="term-name">Multi-Head Attention</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">Running multiple independent attention heads in parallel, each with its own Q/K/V projections in a head_dim subspace. Outputs are concatenated and projected. Different heads learn syntax, semantics, or positional patterns.</div>
+<pre class="code-block"><code># Split d_model into num_heads × head_dim
+Q = Q.view(batch, seq, num_heads, head_dim).transpose(1, 2)
+K = K.view(batch, seq, num_heads, head_dim).transpose(1, 2)
+V = V.view(batch, seq, num_heads, head_dim).transpose(1, 2)
+# Each head attends independently</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="3">W3</span></div>
+</div>
+<div class="term-card" data-cat="Architecture & Components" data-weeks="3,4,5,6,7">
+<div class="term-head">
+<span class="term-name">MultiHeadCausalAttention Module</span>
+<span class="term-cat cat-architecture-components">Architecture & Components</span>
+</div>
+<div class="term-desc">The complete attention module using a single combined QKV projection, reshaping into multiple heads, applying causal masking, and projecting the concatenated output.</div>
+<pre class="code-block"><code>qkv = self.qkv_proj(x)                           # (B, S, 3*D)
+qkv = qkv.view(B, S, 3, H, D//H).permute(2,0,3,1,4)
+Q, K, V = qkv[0], qkv[1], qkv[2]                # split
+scores = Q @ K.transpose(-2,-1) / math.sqrt(D//H)
+scores.masked_fill_(self.mask[:S,:S]==0, -1e9)
+out = F.softmax(scores, -1) @ V                  # attend</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="3">W3</span> <span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="6">W6</span> <span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="4,5">
+<div class="term-head">
+<span class="term-name">Next-Token Prediction</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">The self-supervised training objective for GPT models: given tokens [t1, t2, ..., tn], predict [t2, t3, ..., tn+1]. The model learns language by predicting what comes next, requiring no labelled data.</div>
+<pre class="code-block"><code>input_ids  = tokens[:-1]   # [The, cat, sat, on]
+target_ids = tokens[1:]    # [cat, sat, on, mat]
+loss = F.cross_entropy(logits.view(-1, V), target_ids.view(-1))</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span></div>
+</div>
+<div class="term-card" data-cat="Architecture & Components" data-weeks="1,2,4,5,6">
+<div class="term-head">
+<span class="term-name">nn.CrossEntropyLoss</span>
+<span class="term-cat cat-architecture-components">Architecture & Components</span>
+</div>
+<div class="term-desc">Combines log_softmax and NLLLoss for classification. Supports <code>ignore_index=-100</code> to skip padded positions in language modelling.</div>
+<pre class="code-block"><code>criterion = nn.CrossEntropyLoss(ignore_index=-100)
+logits = model(input_ids)   # (batch, seq, vocab)
+loss = criterion(logits.view(-1, vocab), targets.view(-1))</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span> <span class="wk-badge" data-wk="2">W2</span> <span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="6">W6</span></div>
+</div>
+<div class="term-card" data-cat="Architecture & Components" data-weeks="1,2,3,4,5,6,7">
+<div class="term-head">
+<span class="term-name">nn.Dropout</span>
+<span class="term-cat cat-architecture-components">Architecture & Components</span>
+</div>
+<div class="term-desc">Randomly zeroes elements with probability p during training. Used on attention weights and layer outputs as a regulariser.</div>
+<pre class="code-block"><code>self.dropout = nn.Dropout(p=0.1)
+x = self.dropout(x)   # 10% of values → 0 during training
+# Automatically disabled when model.eval()</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span> <span class="wk-badge" data-wk="2">W2</span> <span class="wk-badge" data-wk="3">W3</span> <span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="6">W6</span> <span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+<div class="term-card" data-cat="Architecture & Components" data-weeks="2,3,4,5,6,7">
+<div class="term-head">
+<span class="term-name">nn.Embedding</span>
+<span class="term-cat cat-architecture-components">Architecture & Components</span>
+</div>
+<div class="term-desc">A lookup table of shape <code>(num_embeddings, embedding_dim)</code> converting integer token IDs to dense vectors. Used for both token and positional embeddings.</div>
+<pre class="code-block"><code>embedding = nn.Embedding(num_embeddings=50257, embedding_dim=768)
+ids = torch.tensor([100, 200, 300])
+vectors = embedding(ids)   # shape: (3, 768)</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="2">W2</span> <span class="wk-badge" data-wk="3">W3</span> <span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="6">W6</span> <span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+<div class="term-card" data-cat="Architecture & Components" data-weeks="4,5,6,7">
+<div class="term-head">
+<span class="term-name">nn.GELU</span>
+<span class="term-cat cat-architecture-components">Architecture & Components</span>
+</div>
+<div class="term-desc">Module-based GELU activation used inside transformer FFN blocks. Smoother than ReLU, allowing small negative values to pass through.</div>
+<pre class="code-block"><code># Inside FeedForward:
+self.act = nn.GELU()
+x = self.act(self.fc1(x))   # smooth activation</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="6">W6</span> <span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+<div class="term-card" data-cat="Architecture & Components" data-weeks="4,5,6,7">
+<div class="term-head">
+<span class="term-name">nn.LayerNorm</span>
+<span class="term-cat cat-architecture-components">Architecture & Components</span>
+</div>
+<div class="term-desc">Normalises across the feature dimension with learnable affine parameters &gamma; and &beta;. Applied before each sublayer in the GPT transformer blocks.</div>
+<pre class="code-block"><code>self.ln = nn.LayerNorm(d_model)   # d_model = 768
+x = self.ln(x)   # normalises last dim to mean=0, std=1</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="6">W6</span> <span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+<div class="term-card" data-cat="Architecture & Components" data-weeks="1,2,3,4,5,6,7">
+<div class="term-head">
+<span class="term-name">nn.Linear</span>
+<span class="term-cat cat-architecture-components">Architecture & Components</span>
+</div>
+<div class="term-desc">Fully connected (dense) layer: <code>y = xW<sup>T</sup> + b</code>. The universal building block for every projection in self-attention and feedforward networks.</div>
+<pre class="code-block"><code>layer = nn.Linear(in_features=4, out_features=3)
+x = torch.randn(2, 4)   # batch=2, features=4
+y = layer(x)             # shape: (2, 3)</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span> <span class="wk-badge" data-wk="2">W2</span> <span class="wk-badge" data-wk="3">W3</span> <span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="6">W6</span> <span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+<div class="term-card" data-cat="Architecture & Components" data-weeks="1,2,3,4,5,6,7">
+<div class="term-head">
+<span class="term-name">nn.Module</span>
+<span class="term-cat cat-architecture-components">Architecture & Components</span>
+</div>
+<div class="term-desc">The base class for all neural network models in PyTorch. Subclasses define learnable components in <code>__init__</code> and data-flow logic in <code>forward()</code>. Automatically registers parameters and enables GPU transfer.</div>
+<pre class="code-block"><code>class SimpleNet(nn.Module):
+    def __init__(self, in_dim, out_dim):
+        super().__init__()
+        self.fc = nn.Linear(in_dim, out_dim)
+
+    def forward(self, x):
+        return self.fc(x)</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span> <span class="wk-badge" data-wk="2">W2</span> <span class="wk-badge" data-wk="3">W3</span> <span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="6">W6</span> <span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+<div class="term-card" data-cat="Architecture & Components" data-weeks="4,5,6,7">
+<div class="term-head">
+<span class="term-name">nn.ModuleList</span>
+<span class="term-cat cat-architecture-components">Architecture & Components</span>
+</div>
+<div class="term-desc">A container for <code>nn.Module</code> objects that correctly registers all sub-modules. Used to hold the stack of transformer blocks: <code>self.blocks = nn.ModuleList([Block(...) for _ in range(n)])</code>.</div>
+<pre class="code-block"><code>self.blocks = nn.ModuleList([
+    TransformerBlock(d_model, num_heads, d_ff)
+    for _ in range(num_layers)
+])
+for block in self.blocks:
+    x = block(x)</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="6">W6</span> <span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+<div class="term-card" data-cat="Architecture & Components" data-weeks="1">
+<div class="term-head">
+<span class="term-name">nn.MSELoss</span>
+<span class="term-cat cat-architecture-components">Architecture & Components</span>
+</div>
+<div class="term-desc">Mean Squared Error loss module for regression problems. Returns the average of squared differences between predictions and targets.</div>
+<pre class="code-block"><code>criterion = nn.MSELoss()
+pred = torch.tensor([2.5, 0.0])
+true = torch.tensor([3.0, -0.5])
+loss = criterion(pred, true)   # tensor(0.25)</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span></div>
+</div>
+<div class="term-card" data-cat="Architecture & Components" data-weeks="1">
+<div class="term-head">
+<span class="term-name">nn.ReLU</span>
+<span class="term-cat cat-architecture-components">Architecture & Components</span>
+</div>
+<div class="term-desc">Module-based ReLU activation that can be inserted as a layer in <code>nn.Sequential</code>. Interchangeable with <code>F.relu()</code>.</div>
+<pre class="code-block"><code># As a module in Sequential:
+nn.Sequential(nn.Linear(128, 64), nn.ReLU(), nn.Linear(64, 10))
+# Or functionally in forward():
+x = F.relu(self.fc(x))</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span></div>
+</div>
+<div class="term-card" data-cat="Architecture & Components" data-weeks="1">
+<div class="term-head">
+<span class="term-name">nn.Sequential</span>
+<span class="term-cat cat-architecture-components">Architecture & Components</span>
+</div>
+<div class="term-desc">A container that chains layers in order. Used to build simple classifiers concisely without writing a full <code>nn.Module</code> subclass.</div>
+<pre class="code-block"><code>model = nn.Sequential(
+    nn.Linear(784, 128),
+    nn.ReLU(),
+    nn.Linear(128, 10)
+)</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span></div>
+</div>
+<div class="term-card" data-cat="Architecture & Components" data-weeks="3,4,5,6,7">
+<div class="term-head">
+<span class="term-name">num_heads</span>
+<span class="term-cat cat-architecture-components">Architecture & Components</span>
+</div>
+<div class="term-desc">The number of parallel attention heads. GPT-2 Small uses 12; each head independently attends in a head_dim-dimensional subspace.</div>
+<div class="term-weeks"><span class="wk-badge" data-wk="3">W3</span> <span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="6">W6</span> <span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+<div class="term-card" data-cat="Architecture & Components" data-weeks="4,5,6,7">
+<div class="term-head">
+<span class="term-name">num_layers (N)</span>
+<span class="term-cat cat-architecture-components">Architecture & Components</span>
+</div>
+<div class="term-desc">The number of stacked transformer blocks. GPT-2 Small uses 12 layers; MiniGPT in the course uses 2&ndash;4 layers.</div>
+<div class="term-weeks"><span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="6">W6</span> <span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+<div class="term-card" data-cat="Tools & Libraries" data-weeks="1">
+<div class="term-head">
+<span class="term-name">NumPy</span>
+<span class="term-cat cat-tools-libraries">Tools & Libraries</span>
+</div>
+<div class="term-desc">The foundational Python numerical computing library. Introduced in Week 1 alongside PyTorch to show tensor interoperability (<code>torch.from_numpy</code>).</div>
+<pre class="code-block"><code>import numpy as np
+arr = np.array([[1, 2], [3, 4]])
+tensor = torch.from_numpy(arr)   # shares memory</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span></div>
+</div>
+<div class="term-card" data-cat="PyTorch Functions & Classes" data-weeks="1">
+<div class="term-head">
+<span class="term-name">optimizer.zero_grad()</span>
+<span class="term-cat cat-pytorch-functions-classes">PyTorch Functions & Classes</span>
+</div>
+<div class="term-desc">Resets gradient accumulators to zero before the next backward pass. Must be called at the start of every training step because PyTorch accumulates gradients by default.</div>
+<pre class="code-block"><code>optimizer.zero_grad()   # MUST do this first!
+loss.backward()         # accumulate new gradients
+optimizer.step()        # update parameters</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span></div>
+</div>
+<div class="term-card" data-cat="Python Essentials" data-weeks="1,2">
+<div class="term-head">
+<span class="term-name">os Module</span>
+<span class="term-cat cat-python-essentials">Python Essentials</span>
+</div>
+<div class="term-desc">Python's standard operating-system interface. Used to check for and delete checkpoint files (<code>os.path.exists</code>, <code>os.remove</code>).</div>
+<pre class="code-block"><code>import os
+if os.path.exists(&#x27;checkpoint.pt&#x27;):
+    os.remove(&#x27;checkpoint.pt&#x27;)</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span> <span class="wk-badge" data-wk="2">W2</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="2">
+<div class="term-head">
+<span class="term-name">Out-of-Vocabulary (OOV)</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">The problem that arises with word-level tokenisers when a word encountered at inference time was never seen during training. BPE solves this by decomposing unknown words into known character-level pieces.</div>
+<div class="term-weeks"><span class="wk-badge" data-wk="2">W2</span></div>
+</div>
+<div class="term-card" data-cat="Architecture & Components" data-weeks="3,4">
+<div class="term-head">
+<span class="term-name">Output Projection (W_o)</span>
+<span class="term-cat cat-architecture-components">Architecture & Components</span>
+</div>
+<div class="term-desc">A linear layer applied after concatenating attended values across heads. Mixes information across heads and restores d_model dimensionality.</div>
+<pre class="code-block"><code>attended = attended.transpose(1, 2).reshape(B, S, d_model)
+output = self.out_proj(attended)   # (B, S, d_model)</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="3">W3</span> <span class="wk-badge" data-wk="4">W4</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="1,2,3">
+<div class="term-head">
+<span class="term-name">Overfitting</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">When a model memorises training data instead of learning generalisable patterns, leading to low training loss but high validation loss. Addressed through dropout regularisation and train/validation splitting.</div>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span> <span class="wk-badge" data-wk="2">W2</span> <span class="wk-badge" data-wk="3">W3</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="2,4,5">
+<div class="term-head">
+<span class="term-name">Padding</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">Appending a special <code>&lt;PAD&gt;</code> token (ID 0) to shorter sequences to make all sequences in a batch the same length. Padded positions are excluded from attention and loss via the attention mask.</div>
+<pre class="code-block"><code># Pad sequences to max_len with PAD token (id=0)
+pad_len = max_len - len(token_ids)
+padded = token_ids + [0] * pad_len
+mask = [1] * len(token_ids) + [0] * pad_len</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="2">W2</span> <span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="4,5">
+<div class="term-head">
+<span class="term-name">Parameter Count</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">The total number of learnable values in a model. GPT-2 Small has ~124M parameters. The course shows how to calculate it with <code>sum(p.numel() for p in model.parameters())</code>.</div>
+<pre class="code-block"><code>total = sum(p.numel() for p in model.parameters())
+print(f&#x27;Parameters: {total:,}&#x27;)   # e.g. &quot;Parameters: 124,439,808&quot;</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span></div>
+</div>
+<div class="term-card" data-cat="Python Essentials" data-weeks="5,6,7">
+<div class="term-head">
+<span class="term-name">pathlib / Path</span>
+<span class="term-cat cat-python-essentials">Python Essentials</span>
+</div>
+<div class="term-desc">Object-oriented filesystem paths. Used as a modern alternative to <code>os.path</code> for constructing file paths to checkpoints and data files.</div>
+<pre class="code-block"><code>from pathlib import Path
+checkpoint_dir = Path(&#x27;checkpoints&#x27;)
+checkpoint_dir.mkdir(exist_ok=True)
+save_path = checkpoint_dir / &#x27;model_epoch10.pt&#x27;</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="6">W6</span> <span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="4,5">
+<div class="term-head">
+<span class="term-name">Perplexity</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">The standard evaluation metric for language models, defined as <code>exp(cross-entropy loss)</code>. A perplexity of N means the model is as uncertain as choosing uniformly among N options. Lower is better.</div>
+<pre class="code-block"><code>import math
+perplexity = math.exp(cross_entropy_loss)
+print(f&#x27;Perplexity: {perplexity:.2f}&#x27;)</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="2,3">
+<div class="term-head">
+<span class="term-name">Positional Embedding</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">A learned vector added to each token embedding to encode the position of that token in the sequence. Without positional embeddings, 'cat bit man' and 'man bit cat' would look identical to the model.</div>
+<pre class="code-block"><code>pos_embedding = nn.Embedding(max_seq_length, d_model)
+positions = torch.arange(seq_len)          # [0, 1, 2, ..., seq_len-1]
+x = token_embedding(ids) + pos_embedding(positions)</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="2">W2</span> <span class="wk-badge" data-wk="3">W3</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="4">
+<div class="term-head">
+<span class="term-name">Pre-LayerNorm</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">The GPT convention of applying layer normalisation BEFORE each sublayer (attention or FFN) rather than after: <code>x = x + sublayer(LayerNorm(x))</code>. Improves training stability.</div>
+<pre class="code-block"><code># Pre-norm: normalise THEN apply sublayer
+x = x + self.attn(self.ln1(x))  # LayerNorm before attention
+x = x + self.ffn(self.ln2(x))   # LayerNorm before FFN</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="4">W4</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="4,5,6">
+<div class="term-head">
+<span class="term-name">Pre-training</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">Training a language model on a large general corpus (e.g., Shakespeare, web text) to learn language patterns before fine-tuning on task-specific data.</div>
+<div class="term-weeks"><span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="6">W6</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="5,6,7">
+<div class="term-head">
+<span class="term-name">Prompt / Prompt Engineering</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">The input text provided to a language model to guide its generation. In the chatbot, prompts follow the format <code>'Q: user question\nA:'</code> to trigger the model's learned QA behaviour.</div>
+<pre class="code-block"><code>prompt = f&quot;Q: {user_question}\nA:&quot;
+input_ids = tokenizer.encode(prompt)
+output = generate(model, input_ids)</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="6">W6</span> <span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+<div class="term-card" data-cat="Tools & Libraries" data-weeks="1,2,3,4,5,6,7">
+<div class="term-head">
+<span class="term-name">PyTorch</span>
+<span class="term-cat cat-tools-libraries">Tools & Libraries</span>
+</div>
+<div class="term-desc">The primary deep-learning framework used throughout the course. Provides automatic differentiation, GPU-accelerated tensor operations, and a rich ecosystem of neural-network modules.</div>
+<pre class="code-block"><code>import torch
+import torch.nn as nn
+import torch.nn.functional as F</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span> <span class="wk-badge" data-wk="2">W2</span> <span class="wk-badge" data-wk="3">W3</span> <span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="6">W6</span> <span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="6,7">
+<div class="term-head">
+<span class="term-name">QA Pair (Question-Answer)</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">The data format used for fine-tuning in Week 6+7: each training example is a question string and an answer string, formatted as <code>'Q: ... A: ...'</code> with a separator token.</div>
+<pre class="code-block"><code>def format_qa(question, answer):
+    return f&quot;Q: {question}\nA: {answer}&quot;</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="6">W6</span> <span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="3">
+<div class="term-head">
+<span class="term-name">Query-Key-Value (Q, K, V)</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">The three-role decomposition at the heart of attention: Query asks 'what am I looking for?', Key answers 'what do I offer?', Value provides 'what information do I return?'. Analogous to a database search.</div>
+<pre class="code-block"><code>Q = self.W_q(x)   # Query: &quot;what am I looking for?&quot;
+K = self.W_k(x)   # Key:   &quot;what do I contain?&quot;
+V = self.W_v(x)   # Value: &quot;what info do I return?&quot;</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="3">W3</span></div>
+</div>
+<div class="term-card" data-cat="Python Essentials" data-weeks="2">
+<div class="term-head">
+<span class="term-name">re (Regular Expressions)</span>
+<span class="term-cat cat-python-essentials">Python Essentials</span>
+</div>
+<div class="term-desc">Python's built-in regex module. Used in tokeniser preprocessing to separate punctuation (<code>re.sub</code>) and collapse multiple spaces.</div>
+<pre class="code-block"><code>import re
+text = &quot;Hello, world!&quot;
+text = re.sub(r&#x27;([.,!?;:])&#x27;, r&#x27; \1 &#x27;, text)
+# &quot;Hello ,  world !&quot;</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="2">W2</span></div>
+</div>
+<div class="term-card" data-cat="PyTorch Functions & Classes" data-weeks="3,4">
+<div class="term-head">
+<span class="term-name">register_buffer()</span>
+<span class="term-cat cat-pytorch-functions-classes">PyTorch Functions & Classes</span>
+</div>
+<div class="term-desc">Registers a tensor as a persistent non-learnable buffer (e.g., the causal mask). Saved with checkpoints and moves to GPU with the model.</div>
+<pre class="code-block"><code># In __init__:
+mask = torch.tril(torch.ones(max_seq, max_seq))
+self.register_buffer(&#x27;mask&#x27;, mask)
+# Now self.mask moves with model.to(device)</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="3">W3</span> <span class="wk-badge" data-wk="4">W4</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="1">
+<div class="term-head">
+<span class="term-name">Regularisation</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">Techniques applied during training to reduce overfitting, including dropout, weight decay (L2 penalty), and learning-rate scheduling.</div>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="1">
+<div class="term-head">
+<span class="term-name">ReLU (Rectified Linear Unit)</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">An activation function defined as <code>max(0, x)</code> that zeroes all negative values. The most commonly used activation in hidden layers.</div>
+<pre class="code-block"><code>x = torch.tensor([-2.0, -1.0, 0.0, 1.0, 2.0])
+print(F.relu(x))   # tensor([0., 0., 0., 1., 2.])</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="5">
+<div class="term-head">
+<span class="term-name">Repetition Penalty</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">A technique that divides the logits of recently generated tokens by a factor &gt;1 to discourage the model from repeating phrases. Commonly applied alongside temperature and top-k/top-p.</div>
+<pre class="code-block"><code># Penalise tokens that already appeared
+for token_id in generated_ids:
+    logits[token_id] /= repetition_penalty   # e.g. 1.2</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="5">W5</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="4,5,6,7">
+<div class="term-head">
+<span class="term-name">Residual Connection</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">A skip connection that adds the sublayer input directly to its output: <code>output = x + sublayer(x)</code>. Allows gradients to flow backward without passing through every layer, making deep networks trainable.</div>
+<pre class="code-block"><code># Residual: add input to sublayer output
+x = x + self.attention(self.ln1(x))
+x = x + self.ffn(self.ln2(x))</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="6">W6</span> <span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="3">
+<div class="term-head">
+<span class="term-name">RNN (Recurrent Neural Network)</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">A predecessor architecture to transformers that processes sequences step-by-step, passing a hidden state forward. Mentioned as the approach attention replaced; it suffers from vanishing gradients and slow parallelisation.</div>
+<div class="term-weeks"><span class="wk-badge" data-wk="3">W3</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="3">
+<div class="term-head">
+<span class="term-name">Scaled Dot-Product Attention</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">The formula <code>Attention(Q,K,V) = softmax(QK<sup>T</sup> / &radic;d<sub>k</sub>) &times; V</code>. The &radic;d<sub>k</sub> scaling prevents softmax saturation when embedding dimensions are high.</div>
+<pre class="code-block"><code>scores = Q @ K.transpose(-2, -1) / math.sqrt(d_k)
+weights = F.softmax(scores, dim=-1)
+weights = self.dropout(weights)
+output = weights @ V</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="3">W3</span></div>
+</div>
+<div class="term-card" data-cat="Architecture & Components" data-weeks="3">
+<div class="term-head">
+<span class="term-name">Scaling Factor (&radic;d<sub>k</sub>)</span>
+<span class="term-cat cat-architecture-components">Architecture & Components</span>
+</div>
+<div class="term-desc">The term &radic;d<sub>k</sub> used to scale dot-product attention scores. Prevents high-dimensional dot products from pushing softmax into saturation.</div>
+<pre class="code-block"><code>d_k = K.shape[-1]
+scores = Q @ K.transpose(-2, -1) / math.sqrt(d_k)</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="3">W3</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="3">
+<div class="term-head">
+<span class="term-name">Self-Attention</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">Attention where Q, K, and V all come from the same input sequence via learnable linear projections. This allows each token to contextualise itself against all other tokens in the same sequence.</div>
+<pre class="code-block"><code># Self-attention: Q, K, V all derived from same input x
+Q = self.W_q(x)   # (batch, seq, d_model)
+K = self.W_k(x)
+V = self.W_v(x)
+output = attention(Q, K, V)</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="3">W3</span></div>
+</div>
+<div class="term-card" data-cat="Architecture & Components" data-weeks="3">
+<div class="term-head">
+<span class="term-name">SelfAttention Module</span>
+<span class="term-cat cat-architecture-components">Architecture & Components</span>
+</div>
+<div class="term-desc">A custom <code>nn.Module</code> encapsulating W_q, W_k, W_v, W_o projections plus dropout, implementing full learnable self-attention.</div>
+<pre class="code-block"><code>self.W_q = nn.Linear(d_model, d_model)
+self.W_k = nn.Linear(d_model, d_model)
+self.W_v = nn.Linear(d_model, d_model)
+self.W_o = nn.Linear(d_model, d_model)</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="3">W3</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="2">
+<div class="term-head">
+<span class="term-name">SentencePiece</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">A language-agnostic tokenisation library that treats text as a raw byte stream, enabling tokenisation of any language without language-specific preprocessing rules.</div>
+<div class="term-weeks"><span class="wk-badge" data-wk="2">W2</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="2,4,5">
+<div class="term-head">
+<span class="term-name">Sequence Length</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">The number of tokens in a single input sample. The model's <code>max_seq_length</code> sets the upper bound; shorter sequences are padded, longer ones are truncated or chunked.</div>
+<div class="term-weeks"><span class="wk-badge" data-wk="2">W2</span> <span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="1">
+<div class="term-head">
+<span class="term-name">Sigmoid</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">An activation function <code>1/(1+e^-x)</code> that squashes any real value into (0, 1), suitable for binary classification output layers.</div>
+<pre class="code-block"><code>x = torch.tensor([-2.0, 0.0, 2.0])
+print(torch.sigmoid(x))   # tensor([0.1192, 0.5000, 0.8808])</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="1,3">
+<div class="term-head">
+<span class="term-name">Softmax</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">Converts a vector of logits into a valid probability distribution that sums to 1. Used in the attention formula (<code>F.softmax</code>) and implicitly inside <code>CrossEntropyLoss</code>.</div>
+<pre class="code-block"><code>logits = torch.tensor([2.0, 1.0, 0.1])
+probs = F.softmax(logits, dim=-1)
+print(probs)       # tensor([0.6590, 0.2424, 0.0986])
+print(probs.sum()) # tensor(1.)</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span> <span class="wk-badge" data-wk="3">W3</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="2">
+<div class="term-head">
+<span class="term-name">Special Tokens</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">Reserved tokens with fixed IDs used to communicate structure to the model: <code>&lt;PAD&gt;</code> for padding, <code>&lt;UNK&gt;</code> for unknown words, <code>&lt;BOS&gt;</code>/<code>&lt;EOS&gt;</code> for sequence boundaries.</div>
+<pre class="code-block"><code>SPECIAL = [&#x27;&lt;PAD&gt;&#x27;, &#x27;&lt;UNK&gt;&#x27;, &#x27;&lt;BOS&gt;&#x27;, &#x27;&lt;EOS&gt;&#x27;]
+for i, tok in enumerate(SPECIAL):
+    word2id[tok] = i
+# &lt;PAD&gt;=0, &lt;UNK&gt;=1, &lt;BOS&gt;=2, &lt;EOS&gt;=3</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="2">W2</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="2">
+<div class="term-head">
+<span class="term-name">Subword Tokenization</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">A tokenization strategy that splits rare words into smaller pieces while keeping frequent words whole, balancing vocabulary size and sequence length. Used by GPT, BERT, and all modern LLMs.</div>
+<div class="term-weeks"><span class="wk-badge" data-wk="2">W2</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="1">
+<div class="term-head">
+<span class="term-name">Tanh</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">An activation function that squashes values into (-1, 1) and is zero-centred. Used in some recurrent architectures as a historical contrast to attention.</div>
+<pre class="code-block"><code>x = torch.tensor([-2.0, 0.0, 2.0])
+print(torch.tanh(x))   # tensor([-0.9640, 0.0000, 0.9640])</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="5">
+<div class="term-head">
+<span class="term-name">Temperature Scaling</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">Dividing logits by a temperature T before softmax: <code>p = softmax(logits / T)</code>. T&lt;1 sharpens the distribution (more confident, less creative); T&gt;1 flattens it (more random, more creative).</div>
+<pre class="code-block"><code>def temperature_sample(logits, temperature=1.0):
+    scaled = logits / temperature
+    probs = F.softmax(scaled, dim=-1)
+    return torch.multinomial(probs, num_samples=1)</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="5">W5</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="1">
+<div class="term-head">
+<span class="term-name">Tensor</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">A multi-dimensional array (0-D scalar, 1-D vector, 2-D matrix, or higher) that is the fundamental data structure in PyTorch. Tensors can live on GPU for fast computation and automatically track operations for gradient computation during backpropagation.</div>
+<pre class="code-block"><code>data = [1, 2, 3, 4, 5]
+tensor = torch.tensor(data)
+print(tensor.shape)   # torch.Size([5])
+print(tensor.dtype)   # torch.int64</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span></div>
+</div>
+<div class="term-card" data-cat="PyTorch Functions & Classes" data-weeks="1,2">
+<div class="term-head">
+<span class="term-name">Tensor.argmax()</span>
+<span class="term-cat cat-pytorch-functions-classes">PyTorch Functions & Classes</span>
+</div>
+<div class="term-desc">Returns the index of the maximum value along a dimension. Used to convert logit vectors into predicted class labels: <code>preds = outputs.argmax(dim=1)</code>.</div>
+<pre class="code-block"><code>logits = torch.tensor([0.2, 0.7, 0.1])
+pred = logits.argmax(dim=-1)   # tensor(1) — class 1</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span> <span class="wk-badge" data-wk="2">W2</span></div>
+</div>
+<div class="term-card" data-cat="PyTorch Functions & Classes" data-weeks="1">
+<div class="term-head">
+<span class="term-name">Tensor.backward()</span>
+<span class="term-cat cat-pytorch-functions-classes">PyTorch Functions & Classes</span>
+</div>
+<div class="term-desc">Triggers reverse-mode automatic differentiation through the computational graph, computing and accumulating gradients into each leaf tensor's <code>.grad</code> attribute.</div>
+<pre class="code-block"><code>loss = (model(x) - y).pow(2).mean()
+loss.backward()   # computes all gradients
+print(w.grad)      # gradient of loss w.r.t. w</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span></div>
+</div>
+<div class="term-card" data-cat="PyTorch Functions & Classes" data-weeks="3,4">
+<div class="term-head">
+<span class="term-name">Tensor.contiguous()</span>
+<span class="term-cat cat-pytorch-functions-classes">PyTorch Functions & Classes</span>
+</div>
+<div class="term-desc">Returns a contiguous-in-memory copy of the tensor. Required before <code>.view()</code> after operations like <code>transpose()</code> or <code>permute()</code> that change the memory layout.</div>
+<pre class="code-block"><code>x = x.transpose(1, 2)     # may break contiguity
+x = x.contiguous()         # fix memory layout
+x = x.view(batch, -1)      # now .view() works</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="3">W3</span> <span class="wk-badge" data-wk="4">W4</span></div>
+</div>
+<div class="term-card" data-cat="PyTorch Functions & Classes" data-weeks="1">
+<div class="term-head">
+<span class="term-name">Tensor.detach()</span>
+<span class="term-cat cat-pytorch-functions-classes">PyTorch Functions & Classes</span>
+</div>
+<div class="term-desc">Returns a new tensor detached from the computational graph. Used when converting model outputs to NumPy for visualisation without gradient tracking.</div>
+<pre class="code-block"><code>output = model(x)
+numpy_output = output.detach().cpu().numpy()</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span></div>
+</div>
+<div class="term-card" data-cat="PyTorch Functions & Classes" data-weeks="1">
+<div class="term-head">
+<span class="term-name">Tensor.grad / requires_grad</span>
+<span class="term-cat cat-pytorch-functions-classes">PyTorch Functions & Classes</span>
+</div>
+<div class="term-desc"><code>requires_grad=True</code> tells PyTorch to track operations; after <code>.backward()</code>, gradients are accessible via <code>.grad</code>. Essential for understanding autograd.</div>
+<pre class="code-block"><code>x = torch.tensor(2.0, requires_grad=True)
+y = x ** 3
+y.backward()
+print(x.grad)   # tensor(12.)  ← dy/dx = 3x² = 12</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span></div>
+</div>
+<div class="term-card" data-cat="PyTorch Functions & Classes" data-weeks="1">
+<div class="term-head">
+<span class="term-name">Tensor.item()</span>
+<span class="term-cat cat-pytorch-functions-classes">PyTorch Functions & Classes</span>
+</div>
+<div class="term-desc">Extracts the Python scalar from a 0-D tensor. Used throughout the course to print loss and gradient values.</div>
+<pre class="code-block"><code>loss = criterion(output, y)   # 0-D tensor
+print(f&#x27;Loss: {loss.item():.4f}&#x27;)   # Python float</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span></div>
+</div>
+<div class="term-card" data-cat="PyTorch Functions & Classes" data-weeks="3">
+<div class="term-head">
+<span class="term-name">Tensor.masked_fill()</span>
+<span class="term-cat cat-pytorch-functions-classes">PyTorch Functions & Classes</span>
+</div>
+<div class="term-desc">Fills positions where a boolean mask is True with a specified value. In causal attention: <code>scores.masked_fill(mask == 0, float('-inf'))</code>.</div>
+<pre class="code-block"><code>scores = Q @ K.transpose(-2, -1) / math.sqrt(d_k)
+scores = scores.masked_fill(mask == 0, float(&#x27;-inf&#x27;))
+weights = F.softmax(scores, dim=-1)   # -inf → 0 after softmax</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="3">W3</span></div>
+</div>
+<div class="term-card" data-cat="PyTorch Functions & Classes" data-weeks="4,5">
+<div class="term-head">
+<span class="term-name">Tensor.numel()</span>
+<span class="term-cat cat-pytorch-functions-classes">PyTorch Functions & Classes</span>
+</div>
+<div class="term-desc">Returns the total number of elements in a tensor. Used in the parameter-counting idiom: <code>sum(p.numel() for p in model.parameters())</code>.</div>
+<pre class="code-block"><code>layer = nn.Linear(768, 3072)
+print(layer.weight.numel())   # 768 × 3072 = 2,359,296</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span></div>
+</div>
+<div class="term-card" data-cat="PyTorch Functions & Classes" data-weeks="1,2">
+<div class="term-head">
+<span class="term-name">Tensor.squeeze() / Tensor.unsqueeze()</span>
+<span class="term-cat cat-pytorch-functions-classes">PyTorch Functions & Classes</span>
+</div>
+<div class="term-desc"><code>squeeze()</code> removes dimensions of size 1; <code>unsqueeze(dim)</code> adds one. Used to add/remove batch dimensions and align shapes for broadcasting.</div>
+<pre class="code-block"><code>x = torch.tensor([1, 2, 3])      # shape: (3,)
+x = x.unsqueeze(0)               # shape: (1, 3)  — add batch dim
+x = x.squeeze(0)                 # shape: (3,)    — remove it</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span> <span class="wk-badge" data-wk="2">W2</span></div>
+</div>
+<div class="term-card" data-cat="PyTorch Functions & Classes" data-weeks="1">
+<div class="term-head">
+<span class="term-name">Tensor.to(device)</span>
+<span class="term-cat cat-pytorch-functions-classes">PyTorch Functions & Classes</span>
+</div>
+<div class="term-desc">Moves a tensor or model to a target device such as <code>'cuda'</code> or <code>'cpu'</code>. The standard pattern <code>device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')</code>.</div>
+<pre class="code-block"><code>device = torch.device(&#x27;cuda&#x27; if torch.cuda.is_available() else &#x27;cpu&#x27;)
+model = model.to(device)
+x = x.to(device)</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span></div>
+</div>
+<div class="term-card" data-cat="PyTorch Functions & Classes" data-weeks="1,3">
+<div class="term-head">
+<span class="term-name">Tensor.transpose() / Tensor.permute()</span>
+<span class="term-cat cat-pytorch-functions-classes">PyTorch Functions & Classes</span>
+</div>
+<div class="term-desc"><code>transpose(dim0, dim1)</code> swaps two axes; <code>permute(*dims)</code> reorders all axes. In attention, <code>transpose(-2, -1)</code> swaps the last two dims of K for the dot product.</div>
+<pre class="code-block"><code>K = torch.randn(2, 4, 64)       # (batch, seq, d_k)
+K_T = K.transpose(-2, -1)       # (batch, d_k, seq)
+scores = Q @ K_T                # dot product for attention</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span> <span class="wk-badge" data-wk="3">W3</span></div>
+</div>
+<div class="term-card" data-cat="PyTorch Functions & Classes" data-weeks="1,3">
+<div class="term-head">
+<span class="term-name">Tensor.view() / Tensor.reshape()</span>
+<span class="term-cat cat-pytorch-functions-classes">PyTorch Functions & Classes</span>
+</div>
+<div class="term-desc">Reshapes a tensor to a new shape without changing data. <code>view</code> requires contiguous memory; <code>reshape</code> copies if needed. Heavily used in attention to split d_model into (num_heads, head_dim).</div>
+<pre class="code-block"><code>t = torch.arange(12)
+print(t.view(3, 4))       # 3 rows × 4 cols
+print(t.reshape(2, 2, 3)) # 3D tensor</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span> <span class="wk-badge" data-wk="3">W3</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="5,6,7">
+<div class="term-head">
+<span class="term-name">Text Generation</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">The process of producing new text by repeatedly predicting and appending the next token. The course implements it from scratch with a generate() function using various decoding strategies.</div>
+<pre class="code-block"><code>@torch.no_grad()
+def generate(model, input_ids, max_new=50, temp=1.0):
+    for _ in range(max_new):
+        logits, _ = model(input_ids[:, -max_seq:])
+        probs = F.softmax(logits[:, -1, :] / temp, dim=-1)
+        next_tok = torch.multinomial(probs, 1)
+        input_ids = torch.cat([input_ids, next_tok], dim=1)
+    return input_ids</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="6">W6</span> <span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+<div class="term-card" data-cat="Tools & Libraries" data-weeks="2">
+<div class="term-head">
+<span class="term-name">tiktoken</span>
+<span class="term-cat cat-tools-libraries">Tools & Libraries</span>
+</div>
+<div class="term-desc">OpenAI's fast BPE tokeniser library used in production GPT models. Recommended for obtaining GPT-2/3/4-compatible token IDs.</div>
+<pre class="code-block"><code>import tiktoken
+enc = tiktoken.get_encoding(&#x27;gpt2&#x27;)
+ids = enc.encode(&#x27;Hello, world!&#x27;)   # [15496, 11, 995, 0]</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="2">W2</span></div>
+</div>
+<div class="term-card" data-cat="Python Essentials" data-weeks="3">
+<div class="term-head">
+<span class="term-name">time Module</span>
+<span class="term-cat cat-python-essentials">Python Essentials</span>
+</div>
+<div class="term-desc">Python's standard timing module. Used to benchmark forward-pass performance of the attention module.</div>
+<pre class="code-block"><code>import time
+start = time.time()
+output = model(x)
+print(f&#x27;Forward pass: {time.time() - start:.3f}s&#x27;)</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="3">W3</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="2">
+<div class="term-head">
+<span class="term-name">Token ID</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">The integer index assigned to each token in the vocabulary. Neural networks operate on token IDs, which are looked up in an embedding table to produce dense vector representations.</div>
+<pre class="code-block"><code>token_ids = [stoi.get(w, stoi[&#x27;&lt;UNK&gt;&#x27;]) for w in words]
+# &quot;hello world&quot; → [45, 892]</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="2">W2</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="2">
+<div class="term-head">
+<span class="term-name">Tokenization</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">The process of splitting raw text into discrete units (tokens) that a neural network can process. Week 2 examines word-level, character-level, and subword approaches and their trade-offs.</div>
+<pre class="code-block"><code>text = &quot;Hello, world!&quot;
+# Word-level:  [&quot;Hello&quot;, &quot;,&quot;, &quot;world&quot;, &quot;!&quot;]
+# Char-level:  [&quot;H&quot;,&quot;e&quot;,&quot;l&quot;,&quot;l&quot;,&quot;o&quot;,&quot;,&quot;,&quot; &quot;,&quot;w&quot;,...]
+# Subword BPE: [&quot;Hello&quot;, &quot;,&quot;, &quot;Ġworld&quot;, &quot;!&quot;]</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="2">W2</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="2,5,6,7">
+<div class="term-head">
+<span class="term-name">Tokenizer Encode / Decode</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc"><code>encode(text)</code> converts a string to a list of token IDs; <code>decode(ids)</code> converts a list of IDs back to a string. These form the interface between human-readable text and model input.</div>
+<pre class="code-block"><code>ids = tokenizer.encode(&quot;Hello world&quot;)   # [15496, 995]
+text = tokenizer.decode(ids)            # &quot;Hello world&quot;</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="2">W2</span> <span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="6">W6</span> <span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="2,5,6,7">
+<div class="term-head">
+<span class="term-name">Tokenizer Vocabulary Mapping</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">The mapping between the character/subword-level vocabulary used by the tokenizer and the integer IDs used by the model. Stored as <code>stoi</code> (string-to-int) and <code>itos</code> (int-to-string) dictionaries.</div>
+<pre class="code-block"><code>stoi = {word: i for i, word in enumerate(vocab)}
+itos = {i: word for word, i in stoi.items()}
+ids = [stoi[w] for w in text.split()]</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="2">W2</span> <span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="6">W6</span> <span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="5">
+<div class="term-head">
+<span class="term-name">Top-k Sampling</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">Restricting the next-token selection to the k highest-probability tokens before sampling. Prevents the model from choosing very unlikely tokens while still allowing creative diversity.</div>
+<pre class="code-block"><code>def top_k_sample(logits, k=50, temperature=1.0):
+    scaled = logits / temperature
+    top_k_logits, top_k_idx = torch.topk(scaled, k)
+    probs = F.softmax(top_k_logits, dim=-1)
+    idx = torch.multinomial(probs, 1)
+    return top_k_idx.gather(-1, idx)</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="5">W5</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="5">
+<div class="term-head">
+<span class="term-name">Top-p (Nucleus) Sampling</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">Dynamically selecting the smallest set of tokens whose cumulative probability &ge; p, then sampling from that set. Adapts the candidate pool size to the model's confidence at each step.</div>
+<pre class="code-block"><code>sorted_probs, sorted_idx = torch.sort(probs, descending=True)
+cumsum = torch.cumsum(sorted_probs, dim=-1)
+mask = cumsum &lt;= p
+mask[..., 0] = True   # always keep the top token
+filtered = probs.clone()
+filtered[sorted_idx[~mask]] = 0
+return torch.multinomial(filtered / filtered.sum(), 1)</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="5">W5</span></div>
+</div>
+<div class="term-card" data-cat="PyTorch Functions & Classes" data-weeks="1">
+<div class="term-head">
+<span class="term-name">torch.allclose()</span>
+<span class="term-cat cat-pytorch-functions-classes">PyTorch Functions & Classes</span>
+</div>
+<div class="term-desc">Returns True if two tensors are element-wise equal within a tolerance. Used to verify checkpoint loading produces identical outputs.</div>
+<pre class="code-block"><code>out1 = model(x)
+model2 = MyModel()
+model2.load_state_dict(torch.load(&#x27;model.pt&#x27;))
+out2 = model2(x)
+assert torch.allclose(out1, out2)</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span></div>
+</div>
+<div class="term-card" data-cat="PyTorch Functions & Classes" data-weeks="1,2">
+<div class="term-head">
+<span class="term-name">torch.arange() / torch.linspace()</span>
+<span class="term-cat cat-pytorch-functions-classes">PyTorch Functions & Classes</span>
+</div>
+<div class="term-desc"><code>torch.arange(n)</code> produces integer sequences [0..n-1] for position indices; <code>torch.linspace(a,b,n)</code> produces n evenly spaced values between a and b.</div>
+<pre class="code-block"><code>positions = torch.arange(10)          # [0, 1, ..., 9]
+xs = torch.linspace(-3, 3, steps=7)  # 7 evenly spaced</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span> <span class="wk-badge" data-wk="2">W2</span></div>
+</div>
+<div class="term-card" data-cat="PyTorch Functions & Classes" data-weeks="1,2">
+<div class="term-head">
+<span class="term-name">torch.cat()</span>
+<span class="term-cat cat-pytorch-functions-classes">PyTorch Functions & Classes</span>
+</div>
+<div class="term-desc">Concatenates a sequence of tensors along a given dimension. Used to combine data arrays and in multi-head attention to recombine head outputs.</div>
+<pre class="code-block"><code>a = torch.tensor([1, 2])
+b = torch.tensor([3, 4])
+c = torch.cat([a, b])   # tensor([1, 2, 3, 4])</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span> <span class="wk-badge" data-wk="2">W2</span></div>
+</div>
+<div class="term-card" data-cat="PyTorch Functions & Classes" data-weeks="1,7">
+<div class="term-head">
+<span class="term-name">torch.cuda.is_available()</span>
+<span class="term-cat cat-pytorch-functions-classes">PyTorch Functions & Classes</span>
+</div>
+<div class="term-desc">Returns True if a CUDA-capable GPU is detected. The standard device-selection idiom appears in every project file.</div>
+<pre class="code-block"><code>device = torch.device(&#x27;cuda&#x27; if torch.cuda.is_available() else &#x27;cpu&#x27;)
+print(f&#x27;Using: {device}&#x27;)</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span> <span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+<div class="term-card" data-cat="PyTorch Functions & Classes" data-weeks="5">
+<div class="term-head">
+<span class="term-name">torch.cumsum()</span>
+<span class="term-cat cat-pytorch-functions-classes">PyTorch Functions & Classes</span>
+</div>
+<div class="term-desc">Computes the cumulative sum along a dimension. Used in top-p (nucleus) sampling to find the smallest set of tokens whose cumulative probability exceeds p.</div>
+<pre class="code-block"><code>sorted_probs = torch.tensor([0.4, 0.3, 0.2, 0.1])
+cumulative = torch.cumsum(sorted_probs, dim=-1)
+# tensor([0.4, 0.7, 0.9, 1.0])</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="5">W5</span></div>
+</div>
+<div class="term-card" data-cat="PyTorch Functions & Classes" data-weeks="1">
+<div class="term-head">
+<span class="term-name">torch.eye()</span>
+<span class="term-cat cat-pytorch-functions-classes">PyTorch Functions & Classes</span>
+</div>
+<div class="term-desc">Creates a 2-D identity matrix (ones on the diagonal, zeros elsewhere). Useful as an initialisation or baseline comparison matrix.</div>
+<pre class="code-block"><code>I = torch.eye(3)
+# tensor([[1., 0., 0.],
+#         [0., 1., 0.],
+#         [0., 0., 1.]])</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span></div>
+</div>
+<div class="term-card" data-cat="PyTorch Functions & Classes" data-weeks="1">
+<div class="term-head">
+<span class="term-name">torch.from_numpy()</span>
+<span class="term-cat cat-pytorch-functions-classes">PyTorch Functions & Classes</span>
+</div>
+<div class="term-desc">Converts a NumPy array into a PyTorch tensor, sharing the same underlying memory. Used when loading data that arrives as NumPy arrays.</div>
+<pre class="code-block"><code>import numpy as np
+arr = np.array([1.0, 2.0, 3.0])
+t = torch.from_numpy(arr)   # shares memory with arr</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span></div>
+</div>
+<div class="term-card" data-cat="PyTorch Functions & Classes" data-weeks="5">
+<div class="term-head">
+<span class="term-name">torch.multinomial()</span>
+<span class="term-cat cat-pytorch-functions-classes">PyTorch Functions & Classes</span>
+</div>
+<div class="term-desc">Samples indices from a probability distribution tensor. Used in top-k and top-p sampling to randomly select the next token: <code>next_id = torch.multinomial(probs, 1)</code>.</div>
+<pre class="code-block"><code>probs = F.softmax(logits, dim=-1)
+next_token = torch.multinomial(probs, num_samples=1)
+input_ids = torch.cat([input_ids, next_token], dim=1)</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="5">W5</span></div>
+</div>
+<div class="term-card" data-cat="PyTorch Functions & Classes" data-weeks="4,5,6,7">
+<div class="term-head">
+<span class="term-name">torch.nn.utils.clip_grad_norm_()</span>
+<span class="term-cat cat-pytorch-functions-classes">PyTorch Functions & Classes</span>
+</div>
+<div class="term-desc">Clips the total gradient norm to a maximum value (typically 1.0) to prevent exploding gradients. Called after <code>loss.backward()</code> and before <code>optimizer.step()</code>.</div>
+<pre class="code-block"><code>loss.backward()
+torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
+optimizer.step()</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="6">W6</span> <span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+<div class="term-card" data-cat="PyTorch Functions & Classes" data-weeks="1,2,3">
+<div class="term-head">
+<span class="term-name">torch.no_grad()</span>
+<span class="term-cat cat-pytorch-functions-classes">PyTorch Functions & Classes</span>
+</div>
+<div class="term-desc">A context manager that disables gradient tracking, saving memory and speeding up computation. Used in every evaluation/validation loop and during inference.</div>
+<pre class="code-block"><code>model.eval()
+with torch.no_grad():    # no gradient computation
+    output = model(x)
+    loss = criterion(output, y)</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span> <span class="wk-badge" data-wk="2">W2</span> <span class="wk-badge" data-wk="3">W3</span></div>
+</div>
+<div class="term-card" data-cat="PyTorch Functions & Classes" data-weeks="1,4,5,6,7">
+<div class="term-head">
+<span class="term-name">torch.optim.Adam / AdamW</span>
+<span class="term-cat cat-pytorch-functions-classes">PyTorch Functions & Classes</span>
+</div>
+<div class="term-desc">Adaptive-learning-rate optimisers. <code>Adam</code> maintains per-parameter moment estimates; <code>AdamW</code> adds decoupled weight decay for better regularisation. Default choice throughout the course.</div>
+<pre class="code-block"><code>optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
+# With weight decay for transformers:
+optimizer = torch.optim.AdamW(model.parameters(), lr=5e-5, weight_decay=0.01)</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span> <span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="6">W6</span> <span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+<div class="term-card" data-cat="PyTorch Functions & Classes" data-weeks="1,4,5">
+<div class="term-head">
+<span class="term-name">torch.optim.lr_scheduler</span>
+<span class="term-cat cat-pytorch-functions-classes">PyTorch Functions & Classes</span>
+</div>
+<div class="term-desc">Classes that adjust the learning rate during training. Common schedulers used in the course include <code>CosineAnnealingLR</code> and <code>StepLR</code>.</div>
+<pre class="code-block"><code>scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=100)
+for epoch in range(100):
+    train()
+    scheduler.step()   # adjust learning rate</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span> <span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span></div>
+</div>
+<div class="term-card" data-cat="PyTorch Functions & Classes" data-weeks="1">
+<div class="term-head">
+<span class="term-name">torch.rand() / torch.randn()</span>
+<span class="term-cat cat-pytorch-functions-classes">PyTorch Functions & Classes</span>
+</div>
+<div class="term-desc"><code>torch.rand</code> samples from uniform [0,1); <code>torch.randn</code> samples from standard normal. Used for synthetic data and random initialisation.</div>
+<pre class="code-block"><code>uniform = torch.rand(3, 3)     # values in [0, 1)
+normal = torch.randn(3, 3)    # mean=0, std=1</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span></div>
+</div>
+<div class="term-card" data-cat="PyTorch Functions & Classes" data-weeks="1,4,5,6,7">
+<div class="term-head">
+<span class="term-name">torch.save() / torch.load()</span>
+<span class="term-cat cat-pytorch-functions-classes">PyTorch Functions & Classes</span>
+</div>
+<div class="term-desc">Serialises/deserialises a Python object (typically <code>model.state_dict()</code> or a full checkpoint dict) to/from disk.</div>
+<pre class="code-block"><code>torch.save(model.state_dict(), &#x27;model.pt&#x27;)
+# Later:
+model.load_state_dict(torch.load(&#x27;model.pt&#x27;))</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span> <span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="6">W6</span> <span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+<div class="term-card" data-cat="PyTorch Functions & Classes" data-weeks="5">
+<div class="term-head">
+<span class="term-name">torch.scatter_()</span>
+<span class="term-cat cat-pytorch-functions-classes">PyTorch Functions & Classes</span>
+</div>
+<div class="term-desc">Writes values into a tensor at positions specified by an index tensor. Used in top-p sampling to map filtered probabilities back to the original vocabulary order after sorting.</div>
+<pre class="code-block"><code># Scatter filtered probs back to original positions
+result = torch.zeros(vocab_size)
+result.scatter_(0, sorted_indices, filtered_probs)</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="5">W5</span></div>
+</div>
+<div class="term-card" data-cat="PyTorch Functions & Classes" data-weeks="1,3">
+<div class="term-head">
+<span class="term-name">torch.softmax() / F.softmax()</span>
+<span class="term-cat cat-pytorch-functions-classes">PyTorch Functions & Classes</span>
+</div>
+<div class="term-desc">Computes softmax along a given dimension, converting scores to a probability distribution. Used in attention and for interpretable output probabilities.</div>
+<pre class="code-block"><code>logits = torch.tensor([2.0, 1.0, 0.1])
+probs = F.softmax(logits, dim=-1)
+# tensor([0.6590, 0.2424, 0.0986])  — sums to 1.0</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span> <span class="wk-badge" data-wk="3">W3</span></div>
+</div>
+<div class="term-card" data-cat="PyTorch Functions & Classes" data-weeks="5">
+<div class="term-head">
+<span class="term-name">torch.sort()</span>
+<span class="term-cat cat-pytorch-functions-classes">PyTorch Functions & Classes</span>
+</div>
+<div class="term-desc">Sorts a tensor along a dimension in ascending or descending order, returning both sorted values and their original indices. Used in top-p sampling to rank token probabilities.</div>
+<pre class="code-block"><code>probs = torch.tensor([0.1, 0.4, 0.2, 0.3])
+sorted_p, indices = torch.sort(probs, descending=True)
+# sorted_p: [0.4, 0.3, 0.2, 0.1], indices: [1, 3, 2, 0]</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="5">W5</span></div>
+</div>
+<div class="term-card" data-cat="PyTorch Functions & Classes" data-weeks="1">
+<div class="term-head">
+<span class="term-name">torch.tensor()</span>
+<span class="term-cat cat-pytorch-functions-classes">PyTorch Functions & Classes</span>
+</div>
+<div class="term-desc">Creates a tensor from a Python list or array, inferring the data type automatically. The most direct way to create a tensor from existing data.</div>
+<pre class="code-block"><code>a = torch.tensor([1, 2, 3])           # int64
+b = torch.tensor([1.0, 2.0, 3.0])     # float32
+c = torch.tensor([[1,2],[3,4]])        # 2D: shape (2,2)</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span></div>
+</div>
+<div class="term-card" data-cat="PyTorch Functions & Classes" data-weeks="5">
+<div class="term-head">
+<span class="term-name">torch.topk()</span>
+<span class="term-cat cat-pytorch-functions-classes">PyTorch Functions & Classes</span>
+</div>
+<div class="term-desc">Returns the k largest values and their indices from a tensor. Used in top-k sampling to find the k most probable tokens before sampling.</div>
+<pre class="code-block"><code>values, indices = torch.topk(logits, k=50)
+# values: top-50 logit scores
+# indices: their positions in the vocabulary</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="5">W5</span></div>
+</div>
+<div class="term-card" data-cat="PyTorch Functions & Classes" data-weeks="3">
+<div class="term-head">
+<span class="term-name">torch.tril()</span>
+<span class="term-cat cat-pytorch-functions-classes">PyTorch Functions & Classes</span>
+</div>
+<div class="term-desc">Returns the lower-triangular part of a matrix. Used to create the causal mask: <code>mask = torch.tril(torch.ones(seq_len, seq_len))</code>.</div>
+<pre class="code-block"><code>mask = torch.tril(torch.ones(4, 4))
+# [[1, 0, 0, 0],
+#  [1, 1, 0, 0],
+#  [1, 1, 1, 0],
+#  [1, 1, 1, 1]]</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="3">W3</span></div>
+</div>
+<div class="term-card" data-cat="Tools & Libraries" data-weeks="1,2,4,5,6">
+<div class="term-head">
+<span class="term-name">torch.utils.data.DataLoader</span>
+<span class="term-cat cat-tools-libraries">Tools & Libraries</span>
+</div>
+<div class="term-desc">Wraps a Dataset for automatic batching, shuffling, and multi-process loading. <code>batch_size</code> and <code>shuffle</code> are key arguments.</div>
+<pre class="code-block"><code>loader = DataLoader(dataset, batch_size=32, shuffle=True)
+for batch_x, batch_y in loader:
+    loss = train_step(batch_x, batch_y)</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span> <span class="wk-badge" data-wk="2">W2</span> <span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="6">W6</span></div>
+</div>
+<div class="term-card" data-cat="Tools & Libraries" data-weeks="1,2,4,5,6">
+<div class="term-head">
+<span class="term-name">torch.utils.data.Dataset</span>
+<span class="term-cat cat-tools-libraries">Tools & Libraries</span>
+</div>
+<div class="term-desc">Abstract base class for datasets. Subclasses implement <code>__len__</code> and <code>__getitem__</code>. Both <code>SimpleDataset</code> and <code>LanguageModelDataset</code> subclass it.</div>
+<pre class="code-block"><code>class MyDataset(Dataset):
+    def __len__(self):
+        return len(self.data)
+    def __getitem__(self, idx):
+        return self.data[idx]</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span> <span class="wk-badge" data-wk="2">W2</span> <span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="6">W6</span></div>
+</div>
+<div class="term-card" data-cat="Tools & Libraries" data-weeks="1">
+<div class="term-head">
+<span class="term-name">torch.utils.data.random_split</span>
+<span class="term-cat cat-tools-libraries">Tools & Libraries</span>
+</div>
+<div class="term-desc">Splits a Dataset into non-overlapping subsets of given sizes. Used for train/validation splits without manual index slicing.</div>
+<pre class="code-block"><code>train_set, val_set = random_split(dataset, [800, 200])</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span></div>
+</div>
+<div class="term-card" data-cat="Tools & Libraries" data-weeks="2">
+<div class="term-head">
+<span class="term-name">torch.utils.data.SubsetRandomSampler</span>
+<span class="term-cat cat-tools-libraries">Tools & Libraries</span>
+</div>
+<div class="term-desc">Samples elements from predefined indices without replacement. Used to create train/validation loaders from the same dataset.</div>
+<div class="term-weeks"><span class="wk-badge" data-wk="2">W2</span></div>
+</div>
+<div class="term-card" data-cat="PyTorch Functions & Classes" data-weeks="1">
+<div class="term-head">
+<span class="term-name">torch.zeros() / torch.ones()</span>
+<span class="term-cat cat-pytorch-functions-classes">PyTorch Functions & Classes</span>
+</div>
+<div class="term-desc">Factory functions creating tensors filled with all zeros or ones of a given shape. Used for initialising masks, bias vectors, and accumulators.</div>
+<pre class="code-block"><code>zeros = torch.zeros(3, 4)      # 3×4 matrix of zeros
+ones = torch.ones(2, 2)        # 2×2 matrix of ones
+mask = torch.ones(seq_len)     # all-ones attention mask</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span></div>
+</div>
+<div class="term-card" data-cat="Tools & Libraries" data-weeks="1">
+<div class="term-head">
+<span class="term-name">torchvision</span>
+<span class="term-cat cat-tools-libraries">Tools & Libraries</span>
+</div>
+<div class="term-desc">A PyTorch companion library for computer vision. Used in the MNIST project via <code>torchvision.datasets.MNIST</code> and <code>torchvision.transforms</code>.</div>
+<pre class="code-block"><code>from torchvision import datasets, transforms
+mnist = datasets.MNIST(&#x27;data&#x27;, download=True,
+    transform=transforms.ToTensor())</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span></div>
+</div>
+<div class="term-card" data-cat="Tools & Libraries" data-weeks="1">
+<div class="term-head">
+<span class="term-name">torchvision.transforms</span>
+<span class="term-cat cat-tools-libraries">Tools & Libraries</span>
+</div>
+<div class="term-desc">Image preprocessing transformations. <code>transforms.Compose</code> chains transforms; <code>ToTensor()</code> converts images to float32; <code>Normalize</code> standardises pixel values.</div>
+<pre class="code-block"><code>transform = transforms.Compose([
+    transforms.ToTensor(),
+    transforms.Normalize((0.1307,), (0.3081,))
+])</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span></div>
+</div>
+<div class="term-card" data-cat="Python Essentials" data-weeks="4,5,6,7">
+<div class="term-head">
+<span class="term-name">tqdm</span>
+<span class="term-cat cat-python-essentials">Python Essentials</span>
+</div>
+<div class="term-desc">A progress-bar library that wraps iterables to show training progress. Used as <code>for batch in tqdm(dataloader)</code> to display a progress bar during training epochs.</div>
+<pre class="code-block"><code>from tqdm import tqdm
+for batch in tqdm(dataloader, desc=&#x27;Training&#x27;):
+    loss = train_step(batch)
+# Training: 100%|████████| 500/500 [00:42&lt;00:00]</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="6">W6</span> <span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="1,2">
+<div class="term-head">
+<span class="term-name">Train / Validation Split</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">Dividing the dataset into a training set (used to update weights) and a held-out validation set (used only to measure generalisation). The course uses 80/20 and 90/10 splits.</div>
+<pre class="code-block"><code>train_size = int(0.8 * len(dataset))
+val_size = len(dataset) - train_size
+train_set, val_set = random_split(dataset, [train_size, val_size])</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span> <span class="wk-badge" data-wk="2">W2</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="1,4,5,6,7">
+<div class="term-head">
+<span class="term-name">Training Loop</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">The core pattern: for each batch &mdash; zero gradients, forward pass, compute loss, backward pass, optimiser step. The course builds this from scratch in every project week.</div>
+<pre class="code-block"><code>for batch_x, batch_y in dataloader:
+    optimizer.zero_grad()          # 1. Clear gradients
+    output = model(batch_x)        # 2. Forward pass
+    loss = criterion(output, batch_y)  # 3. Compute loss
+    loss.backward()                # 4. Backprop
+    optimizer.step()               # 5. Update weights</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span> <span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="6">W6</span> <span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="6,7">
+<div class="term-head">
+<span class="term-name">Transfer Learning</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">The broader principle behind fine-tuning: knowledge learned from a large general corpus transfers to new tasks, reducing the data and compute needed compared to training from scratch.</div>
+<div class="term-weeks"><span class="wk-badge" data-wk="6">W6</span> <span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+<div class="term-card" data-cat="Architecture & Components" data-weeks="3,4,5,6,7">
+<div class="term-head">
+<span class="term-name">Transformer</span>
+<span class="term-cat cat-architecture-components">Architecture & Components</span>
+</div>
+<div class="term-desc">The neural-network architecture from 'Attention Is All You Need' (Vaswani et al., 2017) that replaced RNNs by relying entirely on self-attention. GPT is decoder-only; BERT is encoder-only.</div>
+<div class="term-weeks"><span class="wk-badge" data-wk="3">W3</span> <span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="6">W6</span> <span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="4,5,6,7">
+<div class="term-head">
+<span class="term-name">Transformer Block</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">The repeating structural unit of GPT, containing LayerNorm, multi-head causal attention, a feed-forward network, and residual connections. GPT-2 Small stacks 12 of these blocks.</div>
+<pre class="code-block"><code>class TransformerBlock(nn.Module):
+    def __init__(self, d_model, num_heads, d_ff, ...):
+        super().__init__()
+        self.ln1 = nn.LayerNorm(d_model)
+        self.ln2 = nn.LayerNorm(d_model)
+        self.attn = MultiHeadCausalAttention(...)
+        self.ffn = FeedForward(d_model, d_ff)
+
+    def forward(self, x):
+        x = x + self.attn(self.ln1(x))   # residual + attention
+        x = x + self.ffn(self.ln2(x))    # residual + FFN
+        return x</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="6">W6</span> <span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+<div class="term-card" data-cat="Architecture & Components" data-weeks="4,5,6,7">
+<div class="term-head">
+<span class="term-name">TransformerBlock Module</span>
+<span class="term-cat cat-architecture-components">Architecture & Components</span>
+</div>
+<div class="term-desc">A single transformer layer containing LayerNorm &rarr; MultiHead Attention &rarr; Residual &rarr; LayerNorm &rarr; FFN &rarr; Residual. Stacked N times to form the full GPT model.</div>
+<pre class="code-block"><code>def forward(self, x):
+    x = x + self.attn(self.ln1(x))   # attention + residual
+    x = x + self.ffn(self.ln2(x))    # FFN + residual
+    return x</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="6">W6</span> <span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+<div class="term-card" data-cat="Python Essentials" data-weeks="3,4,5,6,7">
+<div class="term-head">
+<span class="term-name">Type Hints</span>
+<span class="term-cat cat-python-essentials">Python Essentials</span>
+</div>
+<div class="term-desc">Python's optional type annotations (e.g., <code>def forward(self, x: torch.Tensor) -&gt; torch.Tensor</code>) used in the course code for documentation and IDE support.</div>
+<pre class="code-block"><code>def forward(self, x: torch.Tensor) -&gt; torch.Tensor:
+    return self.linear(x)</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="3">W3</span> <span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="6">W6</span> <span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="2">
+<div class="term-head">
+<span class="term-name">Unigram Language Model Tokenization</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">A subword algorithm used by T5 and XLNet that starts with a large vocabulary and prunes tokens with low probability, as opposed to BPE's bottom-up merging approach.</div>
+<div class="term-weeks"><span class="wk-badge" data-wk="2">W2</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="4">
+<div class="term-head">
+<span class="term-name">Vanishing / Exploding Gradients</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">When gradients become extremely small or large during backpropagation through many layers. Residual connections and LayerNorm mitigate this in deep transformer networks.</div>
+<div class="term-weeks"><span class="wk-badge" data-wk="4">W4</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="2">
+<div class="term-head">
+<span class="term-name">Vocabulary</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">The complete set of tokens a model recognises, stored as a mapping from token strings to integer IDs. GPT-2 has ~50,257 tokens; vocabulary size affects embedding table size and sequence length.</div>
+<pre class="code-block"><code># Build vocabulary from corpus
+stoi = {ch: i for i, ch in enumerate(sorted(set(text)))}
+itos = {i: ch for ch, i in stoi.items()}
+vocab_size = len(stoi)</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="2">W2</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="4,5">
+<div class="term-head">
+<span class="term-name">Warmup Schedule</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">A learning-rate schedule that starts with a very small learning rate and linearly increases it over the first few hundred steps before decaying. Stabilises early training of transformers.</div>
+<div class="term-weeks"><span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="1">
+<div class="term-head">
+<span class="term-name">Weight / Bias</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">Learnable parameters of a linear layer: the weight matrix W and bias vector b in the formula <code>y = Wx + b</code>. Initialised randomly and updated by the optimiser during training.</div>
+<pre class="code-block"><code>layer = nn.Linear(4, 3)
+print(layer.weight.shape)   # torch.Size([3, 4])
+print(layer.bias.shape)     # torch.Size([3])</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="4">
+<div class="term-head">
+<span class="term-name">Weight Initialisation</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">Setting the initial values of model parameters before training begins. PyTorch defaults work well for most cases; the course discusses how bad initialisation can cause vanishing/exploding gradients.</div>
+<div class="term-weeks"><span class="wk-badge" data-wk="4">W4</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="4,5">
+<div class="term-head">
+<span class="term-name">Weight Tying</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">Sharing the same weight matrix for the token embedding layer and the final output projection (LM head). Reduces parameters by millions and provides a consistent embedding space throughout the model.</div>
+<pre class="code-block"><code>self.token_embedding = nn.Embedding(vocab_size, d_model)
+self.lm_head = nn.Linear(d_model, vocab_size, bias=False)
+# Tie weights: embedding and output share the SAME matrix
+self.lm_head.weight = self.token_embedding.weight</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span></div>
+</div>
+<div class="term-card" data-cat="Python Essentials" data-weeks="1,2,3,4,5,6,7">
+<div class="term-head">
+<span class="term-name">with Statement (Context Manager)</span>
+<span class="term-cat cat-python-essentials">Python Essentials</span>
+</div>
+<div class="term-desc">Ensures proper resource cleanup. Used with <code>torch.no_grad()</code> for inference, <code>open()</code> for file I/O, and <code>torch.cuda.amp.autocast()</code> for mixed precision.</div>
+<pre class="code-block"><code>with torch.no_grad():          # auto-disables gradients
+    output = model(x)
+
+with open(&#x27;data.csv&#x27;) as f:    # auto-closes file
+    data = f.read()</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span> <span class="wk-badge" data-wk="2">W2</span> <span class="wk-badge" data-wk="3">W3</span> <span class="wk-badge" data-wk="4">W4</span> <span class="wk-badge" data-wk="5">W5</span> <span class="wk-badge" data-wk="6">W6</span> <span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="2">
+<div class="term-head">
+<span class="term-name">Word2Vec</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">An early method for learning word embeddings that demonstrated semantic relationships in vector space (e.g., king &minus; man + woman &asymp; queen). Motivation for why embeddings are valuable.</div>
+<div class="term-weeks"><span class="wk-badge" data-wk="2">W2</span></div>
+</div>
+<div class="term-card" data-cat="ML & LLM Concepts" data-weeks="2">
+<div class="term-head">
+<span class="term-name">WordPiece</span>
+<span class="term-cat cat-ml-llm-concepts">ML & LLM Concepts</span>
+</div>
+<div class="term-desc">A subword tokenization algorithm used by BERT that selects merges based on a likelihood criterion; continuation tokens are prefixed with <code>##</code>.</div>
+<div class="term-weeks"><span class="wk-badge" data-wk="2">W2</span></div>
+</div>
+<div class="term-card" data-cat="Python Essentials" data-weeks="1,2,6,7">
+<div class="term-head">
+<span class="term-name">zip()</span>
+<span class="term-cat cat-python-essentials">Python Essentials</span>
+</div>
+<div class="term-desc">Built-in that aggregates elements from multiple iterables. Used to pair questions with answers, or predictions with labels for accuracy computation.</div>
+<pre class="code-block"><code>questions = [&#x27;What is ML?&#x27;, &#x27;What is NLP?&#x27;]
+answers = [&#x27;Machine Learning&#x27;, &#x27;Natural Language Processing&#x27;]
+for q, a in zip(questions, answers):
+    pairs.append(f&#x27;Q: {q}\nA: {a}&#x27;)</code></pre>
+<div class="term-weeks"><span class="wk-badge" data-wk="1">W1</span> <span class="wk-badge" data-wk="2">W2</span> <span class="wk-badge" data-wk="6">W6</span> <span class="wk-badge" data-wk="7">W7</span></div>
+</div>
+</div>
+
+<!-- ═══ PRINT ═══ -->
+<div style="text-align:center" class="no-print">
+<button class="btn-print" onclick="window.print()">Print / Save as PDF</button>
+</div>
+
+<!-- ═══ FOOTER ═══ -->
+<div class="footer">ML2 - Meisam Taheri</div>
+
+</div>
+
+<script>
+(function(){
+  const cards = Array.from(document.querySelectorAll('.term-card'));
+  const countBar = document.getElementById('countBar');
+  const total = cards.length;
+  const searchInput = document.getElementById('searchInput');
+  const catTabs = document.querySelectorAll('.filters .tab');
+  const wkTabs = document.querySelectorAll('.wk-filters .wk-tab');
+
+  let activeCat = 'All';
+  let activeWk = 0;
+  let searchText = '';
+
+  function applyFilters() {
+    let n = 0;
+    cards.forEach(c => {
+      const cat = c.dataset.cat;
+      const weeks = c.dataset.weeks.split(',').map(Number);
+      const text = c.textContent.toLowerCase();
+      const matchCat = activeCat === 'All' || cat === activeCat;
+      const matchWk = activeWk === 0 || weeks.includes(activeWk);
+      const matchSearch = !searchText || text.includes(searchText);
+      if (matchCat && matchWk && matchSearch) {
+        c.classList.remove('hidden');
+        n++;
+      } else {
+        c.classList.add('hidden');
+      }
+    });
+    countBar.innerHTML = 'Showing <b>' + n + '</b> of ' + total + ' terms';
+  }
+
+  catTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      catTabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      activeCat = tab.dataset.cat;
+      applyFilters();
+    });
+  });
+
+  wkTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      wkTabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      activeWk = parseInt(tab.dataset.wk, 10);
+      applyFilters();
+    });
+  });
+
+  searchInput.addEventListener('input', () => {
+    searchText = searchInput.value.toLowerCase().trim();
+    applyFilters();
+  });
+})();
+</script>
+</body>
+</html>
